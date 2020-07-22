@@ -6,6 +6,7 @@ import {Form, Container, TextArea, Button, Message} from 'semantic-ui-react'
 import Header from '../component/Header'
 import ReactMarkdown from 'react-markdown'
 import Footer from "../component/Footer";
+import {useHistory} from "react-router-dom";
 
 
 function Main({match}) {
@@ -15,12 +16,15 @@ function Main({match}) {
   const [success, setSuccess] = useState(false)
   const [fail, setFail] = useState(false)
   const [solvers, setSolvers] = useState(0)
+  let history = useHistory()
 
   useEffect(() => {
     axios.get(`/check/prob/${match.params.prob_num}/`).then(res => {
         setProblemInput(res.data.input);
       }
-    )
+    ).catch(e => {
+      history.push(/signin/);
+    })
     axios.get(`/check/solvers/${match.params.prob_num}/`).then(res => {
       setSolvers(res.data.number);
     })
