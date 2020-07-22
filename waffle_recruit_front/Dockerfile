@@ -4,6 +4,7 @@ COPY package.json .
 COPY src/ src/
 COPY public/ public/
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY default.conf /etc/nginx/sites-enabled/default.conf
 RUN apt-get update && apt-get install -y nodejs npm gettext-base
 RUN npm install --silent
 RUN npm run build --prod --silent
