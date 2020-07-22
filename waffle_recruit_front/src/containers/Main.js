@@ -22,7 +22,7 @@ function Main({match}) {
     axios.get(`/check/prob/${match.params.prob_num}/`).then(res => {
         setProblemInput(res.data.input);
       }
-    ).catch(e => {
+    ).catch(_ => {
       history.push(/signin/);
     })
     axios.get(`/check/solvers/${match.params.prob_num}/`).then(res => {
