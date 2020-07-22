@@ -1,0 +1,26 @@
+.head{
+    margin-top: 30px;
+    text-align: left;
+    flex: 1;
+}
+.sidebar{
+    margin-top: 30px;
+    text-align: left;
+    position: absolute;
+    flex: 1;
+}
+.additional{
+    margin-left: 8%;
+}
+
+@media only screen and (max-width: 600px) {
+    .head{
+        position: relative;
+    }
+    .sidebar{
+        position: relative;
+    }
+    .additional{
+        margin-left: 0;
+    }
+}

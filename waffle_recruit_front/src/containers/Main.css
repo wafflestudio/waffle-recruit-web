@@ -1,0 +1,55 @@
+.articles {
+    width: 41%;
+    align-self: center;
+}
+
+.ReviewContainer {
+    font-family: 'NanumSquare', sans-serif;
+    padding-left: 20%;
+    padding-right: 20%;
+    margin: 10px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    text-align: left;
+    line-height: 1.5;
+    font-size: 16px;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+}
+
+.createReviewLogo {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.createCurationLogo {
+    margin-bottom: 20px;
+}
+
+.form {
+    background-color: rgb(255,250,245);
+    padding: 8%;
+    border-radius: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+    .articles {
+        width: 100%;
+    }
+
+    #createReviewLogo {
+        width: 90%;
+    }
+
+    #createCurationLogo {
+        width: 90%;
+    }
+
+    .ReviewContainer {
+        padding-left: 0%;
+        padding-right: 0%;
+    }
+}
