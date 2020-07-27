@@ -53,7 +53,7 @@ function Signin() {
           iconPosition="left"
           label="Username"
           id="username-input"
-          placeholder="Enter username"
+          placeholder="Enter github name"
           value={username}
           onChange={event =>
             setUsername(event.target.value)
