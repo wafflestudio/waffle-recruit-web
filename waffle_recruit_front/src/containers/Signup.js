@@ -4,6 +4,7 @@ import {Button} from 'semantic-ui-react';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import {useHistory} from 'react-router-dom'
+import storage from '../lib/storage';
 
 function Signup() {
   const [username, setUsername] = useState('')
@@ -25,7 +26,7 @@ function Signup() {
     axios
       .post('/check/signup/', user)
       .then(res => {
-        console.log(res);
+        storage.set("logged_in_user", res)
         history.push('/main/');
       })
       .catch(err => {

@@ -9,7 +9,7 @@ import Footer from "../component/Footer";
 import { useHistory } from "react-router-dom";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import emoji from "emoji-dictionary";
-import storage from '../lib/storage';
+import storage from "../lib/storage";
 
 function Main({ match }) {
   const [problem, setProblem] = useState("");
@@ -196,8 +196,7 @@ function Main({ match }) {
 
   useEffect(() => {
     if (!storage.get("logged_in_user")) {
-      console.log("asdfafs")
-      history.push('/signin')
+      history.push("/signin");
     }
     setSuccess(false);
     setFail(false);
@@ -217,13 +216,18 @@ function Main({ match }) {
           );
         }
       })
+      .catch((_) => {
+        storage.remove("logged_in_user");
+        history.push("/signin")
+      });
     axios
       .get(`/check/solvers/${match.params.prob_num}/`)
       .then((res) => {
         setSolvers(res.data.number);
       })
       .catch((_) => {
-        history.push(/signin/);
+        storage.remove("logged_in_user");
+        history.push("/signin");
       });
   }, [match.params.prob_num]);
 
@@ -240,7 +244,6 @@ function Main({ match }) {
     axios
       .post(`/check/prob/${match.params.prob_num}/`, { answer: userInput })
       .then((res) => {
-        console.log("what?" + res.status);
         if (res.status === 202) {
           alert("이미 정답을 맞추셨습니다.");
           setSuccess(false);
@@ -278,9 +281,6 @@ function Main({ match }) {
       <Header />
       <div className="ReviewContainer">
         <ReactMarkdown source={problem} renderers={{ text: emojiSupport }} />
-        {/* <div>
-          <h4>맞춘 사람 : {solvers}</h4>
-        </div> */}
         <h2 className="titleTrailing">당신을 위한 입력</h2>
         <CopyToClipboard text={problemInput}>
           <p className="titleTrailing-clickable">복사하기</p>

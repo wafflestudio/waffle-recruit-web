@@ -30,8 +30,8 @@ function Signin() {
   const onLoginUser = user => {
     axios
       .post('/check/signin/', user)
-      .then(_ => {
-        storage.set("logged_in_user", user)
+      .then(res => {
+        storage.set("logged_in_user", res)
         history.push('/main/');
       })
       .catch(_ => {
@@ -41,7 +41,10 @@ function Signin() {
 
   useEffect(() => {
     axios.get('/check/token/').then(res => {
-      if (res.status === 200) history.push('/main/1');
+      if (res.status === 200) {
+        storage.set("logged_in_user", res)
+        history.push('/main/1');
+      }
     });
   }, []);
 

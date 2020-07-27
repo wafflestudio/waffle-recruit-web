@@ -11,12 +11,10 @@ function Sidebar() {
     axios
       .get("/check/signout/")
       .then((res) => {
-        console.log(res);
         storage.remove("logged_in_user");
         history.push("/signin");
       })
       .catch((err) => {
-        console.log(err);
         alert("로그아웃 실패.");
       });
   };
