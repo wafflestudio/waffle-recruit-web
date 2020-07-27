@@ -12,7 +12,7 @@ function Sidebar() {
       .get("/check/signout/")
       .then((res) => {
         storage.remove("logged_in_user");
-        history.push("/signin");
+        history.replace("/signin");
       })
       .catch((err) => {
         alert("로그아웃 실패.");
@@ -20,7 +20,7 @@ function Sidebar() {
   };
   return (
     <div className="additional">
-      <div className="sidebar">
+      <div className="sidebar">    
         <Link to={"/main/1/"}>Problem 1</Link>
         <br />
         <Link to={"/main/2/"}>Problem 2</Link>

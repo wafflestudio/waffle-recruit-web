@@ -196,7 +196,7 @@ function Main({ match }) {
 
   useEffect(() => {
     if (!storage.get("logged_in_user")) {
-      history.push("/signin");
+      history.replace("/signin");
     }
     setSuccess(false);
     setFail(false);
@@ -218,7 +218,7 @@ function Main({ match }) {
       })
       .catch((_) => {
         storage.remove("logged_in_user");
-        history.push("/signin")
+        history.replace("/signin")
       });
     axios
       .get(`/check/solvers/${match.params.prob_num}/`)
@@ -227,7 +227,7 @@ function Main({ match }) {
       })
       .catch((_) => {
         storage.remove("logged_in_user");
-        history.push("/signin");
+        history.replace("/signin");
       });
   }, [match.params.prob_num]);
 
@@ -273,9 +273,10 @@ function Main({ match }) {
     text.value.replace(/:\w+:/gi, (name) => emoji.getUnicode(name));
 
   let markdownInputStr = "> ````\n" + problemInput + "\n````\n";
-
   let markdownSolverStatus =
     "#### *지금까지 총 " + solvers + "명이 성공했습니다 :fire:*\n";
+  let username = storage.get("logged_in_user")
+
   return (
     <div>
       <Header />

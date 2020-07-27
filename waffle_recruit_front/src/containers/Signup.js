@@ -26,8 +26,8 @@ function Signup() {
     axios
       .post('/check/signup/', user)
       .then(res => {
-        storage.set("logged_in_user", res)
-        history.push('/main/');
+        storage.set("logged_in_user", res.data.user)
+        history.replace('/main/');
       })
       .catch(err => {
         alert('중복된 아이디입니다.');
