@@ -34,7 +34,7 @@ def signup(request):
         user = authenticate(request, username=username, password=password)
         login(request, user)
         user.save()
-        return HttpResponse(status=201)
+        return JsonResponse({"user": user.username}, status=201)
     else:
         return HttpResponseNotAllowed(['POST'])
 
@@ -48,7 +48,7 @@ def signin(request):
         if user is not None:
             login(request, user)
             user.save()
-            return HttpResponse(status=200)
+            return JsonResponse({"user": user.username}, status=200)
         else:
             return HttpResponse(status=400)
     else:
@@ -63,6 +63,7 @@ def signout(request):
         return HttpResponseNotAllowed(['GET'])
 
 # check implemented
+
 
 def grade(request, prob_num):
     if not request.user.is_authenticated:
@@ -85,11 +86,12 @@ def grade(request, prob_num):
 
         # block too many request per time
         if last_visit is None or last_visit + timedelta(seconds=10) < time_now:
-            Waffle.objects.filter(pk=request.user.pk).update(last_visit=time_now)
+            Waffle.objects.filter(pk=request.user.pk).update(
+                last_visit=time_now)
         else:
             time_remain = 10 - int((time_now - last_visit).total_seconds())
             return JsonResponse({"remain": time_remain}, status=402)
-    
+
         if str(answer).lower() == str(ans.answer).lower():
 
             if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
@@ -122,7 +124,7 @@ def prob_solvers(request, prob_num):
 def token(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
-            return HttpResponse(status=200)
+            return JsonResponse({"user": request.user.username}, status=200)
         return HttpResponse(status=204)
     else:
         return HttpResponseNotAllowed(['GET'])
