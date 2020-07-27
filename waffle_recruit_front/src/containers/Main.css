@@ -28,11 +28,32 @@
 .createCurationLogo {
     margin-bottom: 20px;
 }
-
+/* 
 .form {
-    background-color: rgb(255,250,245);
-    padding: 8%;
+    background-color: rgb(255,255,255);
+    padding: 3%;
     border-radius: 30px;
+} */
+
+.inputData {
+    background-color: rgb(230,230,230);
+    padding: 1%;
+    border-radius: 5px;
+}
+
+.titleTrailing {
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.titleTrailing-clickable {
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    cursor: pointer;
 }
 
 @media only screen and (max-width: 600px) {

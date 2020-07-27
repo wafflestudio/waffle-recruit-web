@@ -1,27 +1,38 @@
-import React, {Component} from 'react';
-import {Button, Image} from "semantic-ui-react";
+import React from "react";
 import storage from "../lib/storage";
-import {Link} from "react-router-dom";
-import './Header.css'
+import { Link, useHistory } from "react-router-dom";
+import axios from "axios";
+import "./Header.css";
 
-export default class Sidebar extends Component {
-  logout = () => {
-    storage.remove('logged_in_user');
-  }
+function Sidebar() {
+  let history = useHistory();
 
-  render() {
-    return (
-      <div className="additional">
-        <div className="head">
-          <Image src='/logo.png' size='small'/>
-        </div>
-
-        <div className="sidebar">
-          <Link to={'/main/1/'}>Problem 1</Link>
-          <br/>
-          <Link to={'/main/2/'}>Problem 2</Link>
-        </div>
+  const onClickSignOut = () => {
+    axios
+      .get("/check/signout/")
+      .then((res) => {
+        console.log(res);
+        storage.remove("logged_in_user");
+        history.push("/signin");
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("로그아웃 실패.");
+      });
+  };
+  return (
+    <div className="additional">
+      <div className="sidebar">
+        <Link to={"/main/1/"}>Problem 1</Link>
+        <br />
+        <Link to={"/main/2/"}>Problem 2</Link>
+        <br />
+        <Link to={"/"} onClick={onClickSignOut}>
+          Logout
+        </Link>
       </div>
-    )
-  }
+    </div>
+  );
 }
+
+export default Sidebar;

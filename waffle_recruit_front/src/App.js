@@ -5,6 +5,7 @@ import {Route, Redirect, Switch, BrowserRouter} from 'react-router-dom';
 import Signin from './containers/Signin';
 import Signup from './containers/Signup';
 import Main from './containers/Main';
+import Footer from './component/Footer'
 
 class App extends Component {
 
@@ -19,6 +20,7 @@ class App extends Component {
             <Redirect from="/" to="/signin"/>
           </Switch>
         </div>
+        <Footer />
       </BrowserRouter>
     );
   }

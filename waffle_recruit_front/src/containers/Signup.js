@@ -10,7 +10,7 @@ function Signup() {
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
   const [major, setMajor] = useState('')
-  const [year, setYear] = useState('')
+  const [grade, setGrade] = useState('')
   let history = useHistory()
 
   const onClickSignUpButton = e => {
@@ -19,7 +19,7 @@ function Signup() {
       username: username,
       password: password,
       major: major,
-      year: year,
+      grade: grade,
     };
     e.preventDefault();
     axios
@@ -91,9 +91,9 @@ function Signup() {
           <Form.Label className="SignUpSmallLabel">학년</Form.Label>
           <Form.Control
             type="number"
-            value={year}
+            value={grade}
             onChange={event =>
-              setYear(parseInt(event.target.value))
+              setGrade(parseInt(event.target.value))
             }
             required
           />

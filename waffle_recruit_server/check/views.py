@@ -1,11 +1,12 @@
 import hashlib
 import json
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponseNotAllowed, HttpResponse, JsonResponse
-# check implemented
+from django.utils.timezone import now
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from datetime import timedelta
 
 from check.generate_input import problem1, problem2
 from check.models import Waffle, Solver, Answer
@@ -20,15 +21,16 @@ def signup(request):
         email = req_data['email']
         password = req_data['password']
         major = req_data['major']
-        year = req_data['year']
+        grade = req_data['grade']
         User.objects.create_user(username, email, password)
         user = User.objects.get(username=username)
         hash_byte = hashlib.sha256(username.encode()).digest()
         hash_int = int.from_bytes(hash_byte, byteorder='big') & 0xffffffff
-        Waffle.objects.create(user=user, major=major, year=year)
+        Waffle.objects.create(user=user, major=major, grade=grade)
         for index, problem in enumerate(problems):
             random_input, answer = problem(hash_int)
-            Answer.objects.create(user=user, problem_num=index + 1, question=random_input, answer=answer)
+            Answer.objects.create(
+                user=user, problem_num=index + 1, question=random_input, answer=answer)
         user = authenticate(request, username=username, password=password)
         login(request, user)
         user.save()
@@ -53,6 +55,13 @@ def signin(request):
         return HttpResponseNotAllowed(['POST'])
 
 
+def signout(request):
+    if request.method == 'GET':
+        logout(request)
+        return HttpResponse(status=200)
+    else:
+        return HttpResponseNotAllowed(['GET'])
+
 # check implemented
 
 def grade(request, prob_num):
@@ -60,27 +69,48 @@ def grade(request, prob_num):
         return HttpResponse(status=401)
     elif request.method == 'GET':
         ans = Answer.objects.get(user=request.user, problem_num=prob_num)
-        result = {'input': ans.question}
+        solved = Solver.objects.filter(
+            user=request.user, problem_num=prob_num).exists()
+        result = {'input': ans.question, 'solved': solved}
+
         return JsonResponse(result, status=200)
+
     elif request.method == 'POST':
         ans = Answer.objects.get(user=request.user, problem_num=prob_num)
         req_data = json.loads(request.body.decode())
         answer = req_data['answer']
+
+        last_visit = Waffle.objects.get(pk=request.user.pk).last_visit
+        time_now = now()
+
+        # block too many request per time
+        if last_visit is None or last_visit + timedelta(seconds=10) < time_now:
+            Waffle.objects.filter(pk=request.user.pk).update(last_visit=time_now)
+        else:
+            time_remain = 10 - int((time_now - last_visit).total_seconds())
+            return JsonResponse({"remain": time_remain}, status=402)
+    
         if str(answer).lower() == str(ans.answer).lower():
-            try:
-                Solver.objects.get(problem_num=prob_num, user=request.user)
-                return HttpResponse(status=202)
-            except Solver.DoesNotExist:
+
+            if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
+                # First solve of problem
                 Solver(problem_num=prob_num, user=request.user).save()
                 return HttpResponse(status=200)
+            else:
+                # Already solved problem
+                return HttpResponse(status=202)
+
         else:
             return HttpResponse(status=400)
+
     else:
         return HttpResponseNotAllowed(['POST', 'GET'])
 
 
 def prob_solvers(request, prob_num):
-    if request.method == 'GET':
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+    elif request.method == 'GET':
         count = Solver.objects.all().filter(problem_num=prob_num).count()
         result = {'number': count}
         return JsonResponse(result, status=200)

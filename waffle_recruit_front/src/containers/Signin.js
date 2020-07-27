@@ -10,6 +10,7 @@ import {
 import axios from 'axios';
 import './containers.css';
 import {useHistory} from 'react-router-dom'
+import storage from '../lib/storage';
 
 
 function Signin() {
@@ -30,6 +31,7 @@ function Signin() {
     axios
       .post('/check/signin/', user)
       .then(_ => {
+        storage.set("logged_in_user", user)
         history.push('/main/');
       })
       .catch(_ => {
