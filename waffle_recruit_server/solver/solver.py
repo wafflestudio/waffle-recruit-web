@@ -7,18 +7,9 @@ import subprocess
 
 # @app.task
 def run(language, filename, prob_num):
-    if prob_num == 0:
-        test_case = open('../solve/problem0/testcase.txt', "r")
-        solution = open('../solve/problem0/solution.txt', "r")
-    elif prob_num == 1:
-        test_case = open('../solve/problem1/testcase.txt', "r")
-        solution = open('../solve/problem1/solution.txt', "r")
-    elif prob_num == 2:
-        test_case = open('../solve/problem2/testcase.txt', "r")
-        solution = open('../solve/problem2/solution.txt', "r")
-    elif prob_num == 3:
-        test_case = open('../solve/problem3/testcase.txt', "r")
-        solution = open('../solve/problem3/solution.txt', "r")
+    if prob_num in range(0,4):
+        test_case = open(f"../solve/problem{prob_num}/testcase.txt", "r")
+        solution = open(f'../solve/problem{prob_num}/solution.txt', "r")
     else:
         raise Exception("problem number error")
 
