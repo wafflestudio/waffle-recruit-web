@@ -1,12 +1,11 @@
 // code from https://backend-intro.vlpt.us/6/04.html
 
 const storage = {
-  set: (key, object) => {
+  set: (key: string, object: unknown): void => {
     if (!localStorage) return;
-    localStorage[key] =
-      typeof object === 'string' ? object : JSON.stringify(object);
+    localStorage[key] = typeof object === 'string' ? object : JSON.stringify(object);
   },
-  get: key => {
+  get: (key: string): unknown => {
     if (!localStorage) return null;
 
     if (!localStorage[key]) {
@@ -19,8 +18,8 @@ const storage = {
       return localStorage[key];
     }
   },
-  remove: key => {
-    if (!localStorage) return null;
+  remove: (key: string): void => {
+    if (!localStorage) return;
 
     if (localStorage[key]) {
       localStorage.removeItem(key);

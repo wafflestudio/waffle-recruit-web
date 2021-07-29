@@ -1,21 +1,19 @@
 import React from 'react';
+
+import axios from 'axios';
 import ReactDOM from 'react-dom';
-import './index.css';
+
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'semantic-ui-css/semantic.min.css';
-import axios from 'axios'
+import './index.css';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+ReactDOM.render(<App />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

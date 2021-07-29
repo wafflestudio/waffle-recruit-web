@@ -1,20 +1,24 @@
-import React, {useState} from 'react';
-import './containers.css';
-import {Button} from 'semantic-ui-react';
-import Form from 'react-bootstrap/Form';
+import React, { useState } from 'react';
+
 import axios from 'axios';
-import {useHistory} from 'react-router-dom'
+import toNumber from 'lodash/toNumber';
+import Form from 'react-bootstrap/Form';
+import { useHistory } from 'react-router-dom';
+import { Button } from 'semantic-ui-react';
+
 import storage from '../lib/storage';
 
-function Signup() {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [email, setEmail] = useState('')
-  const [major, setMajor] = useState('')
-  const [grade, setGrade] = useState('')
-  let history = useHistory()
+import './containers.css';
 
-  const onClickSignUpButton = e => {
+const Signup: React.FC = () => {
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [major, setMajor] = useState<string>('');
+  const [grade, setGrade] = useState<number>();
+  const history = useHistory();
+
+  const onClickSignUpButton = () => {
     const user = {
       email: email,
       username: username,
@@ -22,14 +26,13 @@ function Signup() {
       major: major,
       grade: grade,
     };
-    e.preventDefault();
     axios
       .post('/check/signup/', user)
-      .then(res => {
-        storage.set("logged_in_user", res.data.user)
+      .then((res) => {
+        storage.set('logged_in_user', res.data.user);
         history.replace('/main/');
       })
-      .catch(err => {
+      .catch(() => {
         alert('중복된 아이디입니다.');
       });
   };
@@ -44,12 +47,10 @@ function Signup() {
             type="email"
             placeholder="연락 가능한 이메일 주소를 적어주세요."
             value={email}
-            onChange={event => setEmail(event.target.value)}
+            onChange={(event) => setEmail(event.target.value)}
             required
           />
-          <Form.Control.Feedback type="invalid">
-            올바른 이메일 주소가 아닙니다.
-          </Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">올바른 이메일 주소가 아닙니다.</Form.Control.Feedback>
         </Form.Group>
         <Form.Group controlId="validationFormUsername">
           <Form.Label className="SignUpSmallLabel">아이디</Form.Label>
@@ -58,9 +59,7 @@ function Signup() {
             placeholder="Github ID와 동일하게 해주시기 바랍니다."
             aria-describedby="inputGroupPrepend"
             value={username}
-            onChange={event =>
-              setUsername(event.target.value)
-            }
+            onChange={(event) => setUsername(event.target.value)}
             required
           />
         </Form.Group>
@@ -70,9 +69,7 @@ function Signup() {
             type="password"
             placeholder="Enter password"
             value={password}
-            onChange={event =>
-              setPassword(event.target.value)
-            }
+            onChange={(event) => setPassword(event.target.value)}
             required
           />
         </Form.Group>
@@ -82,9 +79,7 @@ function Signup() {
             type="text"
             placeholder="Enter major"
             value={major}
-            onChange={event =>
-              setMajor(event.target.value)
-            }
+            onChange={(event) => setMajor(event.target.value)}
             required
           />
         </Form.Group>
@@ -93,9 +88,7 @@ function Signup() {
           <Form.Control
             type="number"
             value={grade}
-            onChange={event =>
-              setGrade(parseInt(event.target.value))
-            }
+            onChange={(event) => setGrade(toNumber(event.currentTarget.value))}
             required
           />
         </Form.Group>
@@ -107,6 +100,6 @@ function Signup() {
       </Form>
     </div>
   );
-}
+};
 
 export default Signup;
