@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {useState} from 'react';
 import './containers.css';
 import {Button} from 'semantic-ui-react';
 import Form from 'react-bootstrap/Form';
