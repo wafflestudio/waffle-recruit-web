@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -9,7 +10,8 @@ from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from datetime import timedelta
 
 from check.generate_input import problem1, problem2
-from check.models import Waffle, Solver, Answer
+from check.models import Profile, Solver
+from check.solver import solve
 
 problems = [problem1, problem2]
 
@@ -24,13 +26,8 @@ def signup(request):
         grade = req_data['grade']
         User.objects.create_user(username, email, password)
         user = User.objects.get(username=username)
-        hash_byte = hashlib.sha256(username.encode()).digest()
-        hash_int = int.from_bytes(hash_byte, byteorder='big') & 0xffffffff
-        Waffle.objects.create(user=user, major=major, grade=grade)
-        for index, problem in enumerate(problems):
-            random_input, answer = problem(hash_int)
-            Answer.objects.create(
-                user=user, problem_num=index + 1, question=random_input, answer=answer)
+        hash_value = hashlib.sha256(username.encode()).digest().decode()
+        Profile.objects.create(user=user, major=major, grade=grade, credential=hash_value)
         user = authenticate(request, username=username, password=password)
         login(request, user)
         user.save()
@@ -62,48 +59,64 @@ def signout(request):
     else:
         return HttpResponseNotAllowed(['GET'])
 
+
 # check implemented
 
 
-def grade(request, prob_num):
+def problem(request, prob_num):
     if not request.user.is_authenticated:
         return HttpResponse(status=401)
     elif request.method == 'GET':
-        ans = Answer.objects.get(user=request.user, problem_num=prob_num)
         solved = Solver.objects.filter(
             user=request.user, problem_num=prob_num).exists()
-        result = {'input': ans.question, 'solved': solved}
+        result = {'solved': solved}
 
         return JsonResponse(result, status=200)
-
     elif request.method == 'POST':
-        ans = Answer.objects.get(user=request.user, problem_num=prob_num)
         req_data = json.loads(request.body.decode())
-        answer = req_data['answer']
-
-        last_visit = Waffle.objects.get(pk=request.user.pk).last_visit
+        code = req_data['code']
+        language = req_data['language']
+        profile = Profile.objects.get(pk=request.user.pk)
+        last_visit = profile.last_visit
+        credential = profile.credential
         time_now = now()
+        try:
+            os.makedirs(f"codes/{credential}/{prob_num}/")
+        except Exception:
+            pass
+        if language == "java":
+            filename = f"codes/{credential}/{prob_num}/Main.java"
+        elif language == "kotlin":
+            filename = f"codes/{credential}/{prob_num}/main.kt"
+        elif language == "js":
+            filename = f"codes/{credential}/{prob_num}/main.js"
+        elif language == "python":
+            filename = f"codes/{credential}/{prob_num}/main.py"
+        elif language == "ts":
+            filename = f"codes/{credential}/{prob_num}/main.ts"
+        else:
+            return JsonResponse({"error":"language error"}, status=400)
 
         # block too many request per time
         if last_visit is None or last_visit + timedelta(seconds=10) < time_now:
-            Waffle.objects.filter(pk=request.user.pk).update(
+            Profile.objects.filter(pk=request.user.pk).update(
                 last_visit=time_now)
         else:
             time_remain = 10 - int((time_now - last_visit).total_seconds())
             return JsonResponse({"remain": time_remain}, status=402)
 
-        if str(answer).lower() == str(ans.answer).lower():
+        try:
+            solve(language,filename,prob_num)
+        except Exception as e:
+            return JsonResponse({"error":str(e)}, status=400)
 
-            if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
-                # First solve of problem
-                Solver(problem_num=prob_num, user=request.user).save()
-                return HttpResponse(status=200)
-            else:
-                # Already solved problem
-                return HttpResponse(status=202)
-
+        if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
+            # First solve of problem
+            Solver(problem_num=prob_num, user=request.user).save()
+            return HttpResponse(status=200)
         else:
-            return HttpResponse(status=400)
+            # Already solved problem
+            return HttpResponse(status=202)
 
     else:
         return HttpResponseNotAllowed(['POST', 'GET'])
