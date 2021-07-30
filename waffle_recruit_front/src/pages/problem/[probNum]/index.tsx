@@ -36,7 +36,7 @@ const ProblemPage: React.FC = () => {
 
   useEffect(() => {
     if (!['1', '2', '3'].includes(prob_num)) {
-      history.push('/prob/1');
+      history.push('/problem/1');
       return;
     }
 
