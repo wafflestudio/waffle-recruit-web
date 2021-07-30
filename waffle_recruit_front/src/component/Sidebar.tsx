@@ -3,7 +3,7 @@ import React from 'react';
 import axios from 'axios';
 import { Link, useHistory } from 'react-router-dom';
 
-import storage from '../lib/storage';
+import storage, { StorageKey } from '../lib/storage';
 
 import './Sidebar.css';
 
@@ -14,7 +14,7 @@ const Sidebar: React.FC = () => {
     axios
       .get('/check/signout/')
       .then(() => {
-        storage.remove('logged_in_user');
+        storage.remove(StorageKey.LoggedInUser);
         history.replace('/signin');
       })
       .catch(() => {
@@ -24,11 +24,11 @@ const Sidebar: React.FC = () => {
   return (
     <div className="additional">
       <div className="sidebar">
-        <Link to={'/problem/1/'}>Problem 1</Link>
+        <Link to={'/prob/1/'}>Problem 1</Link>
         <br />
-        <Link to={'/problem/2/'}>Problem 2</Link>
+        <Link to={'/prob/2/'}>Problem 2</Link>
         <br />
-        <Link to={'/problem/3/'}>Problem 3</Link>
+        <Link to={'/prob/3/'}>Problem 3</Link>
         <br />
         <Link to={'/'} onClick={onClickSignOut}>
           Logout

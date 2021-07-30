@@ -39,12 +39,18 @@ const Signin: React.FC = () => {
   };
 
   useEffect(() => {
-    axios.get('/check/token/').then((res) => {
-      if (res.status === 200) {
-        storage.set('logged_in_user', res.data.user);
-        history.replace('/problem/1');
-      }
-    });
+    axios
+      .get('/check/token/')
+      .then((res) => {
+        // 자동 로그인 성공
+        if (res.status === 200) {
+          storage.set('logged_in_user', res.data.user);
+          history.replace('/problem/1');
+        }
+      })
+      .catch(() => {
+        alert('에러 발생');
+      });
   }, []);
 
   return (
