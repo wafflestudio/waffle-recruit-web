@@ -4,9 +4,9 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { Button, Form } from 'semantic-ui-react';
 
-import storage from '../lib/storage';
+import storage from '../../lib/storage';
 
-import './containers.css';
+import '../containers.css';
 
 interface User {
   username: string;
@@ -31,7 +31,7 @@ const Signin: React.FC = () => {
       .post('/check/signin/', user)
       .then((res) => {
         storage.set('logged_in_user', res.data.user);
-        history.replace('/main/');
+        history.replace('/problem/');
       })
       .catch(() => {
         alert('가입되지 않은 유저거나 아이디/비밀번호가 틀렸습니다.');
@@ -39,12 +39,18 @@ const Signin: React.FC = () => {
   };
 
   useEffect(() => {
-    axios.get('/check/token/').then((res) => {
-      if (res.status === 200) {
-        storage.set('logged_in_user', res.data.user);
-        history.replace('/main/1');
-      }
-    });
+    axios
+      .get('/check/token/')
+      .then((res) => {
+        // 자동 로그인 성공
+        if (res.status === 200) {
+          storage.set('logged_in_user', res.data.user);
+          history.replace('/problem/1');
+        }
+      })
+      .catch(() => {
+        alert('에러 발생');
+      });
   }, []);
 
   return (
