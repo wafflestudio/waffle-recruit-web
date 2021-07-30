@@ -4,7 +4,8 @@ import axios from 'axios';
 import { Link, useHistory } from 'react-router-dom';
 
 import storage from '../lib/storage';
-import './Header.css';
+
+import './Sidebar.css';
 
 const Sidebar: React.FC = () => {
   const history = useHistory();
@@ -23,9 +24,11 @@ const Sidebar: React.FC = () => {
   return (
     <div className="additional">
       <div className="sidebar">
-        <Link to={'/main/1/'}>Problem 1</Link>
+        <Link to={'/problem/1/'}>Problem 1</Link>
         <br />
-        <Link to={'/main/2/'}>Problem 2</Link>
+        <Link to={'/problem/2/'}>Problem 2</Link>
+        <br />
+        <Link to={'/problem/3/'}>Problem 3</Link>
         <br />
         <Link to={'/'} onClick={onClickSignOut}>
           Logout

@@ -1,5 +1,9 @@
 // code from https://backend-intro.vlpt.us/6/04.html
 
+export enum StorageKey {
+  LoggedInUser = 'logged_in_user',
+}
+
 const storage = {
   set: (key: string, object: unknown): void => {
     if (!localStorage) return;
