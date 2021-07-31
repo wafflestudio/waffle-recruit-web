@@ -26,7 +26,7 @@ def signup(request):
         grade = req_data['grade']
         User.objects.create_user(username, email, password)
         user = User.objects.get(username=username)
-        hash_value = hashlib.sha256(username.encode()).digest().decode()
+        hash_value = hashlib.sha256(username.encode()).digest().hex()
         Profile.objects.create(user=user, major=major, grade=grade, credential=hash_value)
         user = authenticate(request, username=username, password=password)
         login(request, user)
@@ -76,10 +76,18 @@ def problem(request, prob_num):
         req_data = json.loads(request.body.decode())
         code = req_data['code']
         language = req_data['language']
-        profile = Profile.objects.get(pk=request.user.pk)
+        profile = Profile.objects.get(user=request.user)
         last_visit = profile.last_visit
         credential = profile.credential
         time_now = now()
+        # block too many request per time
+        if last_visit is None or last_visit + timedelta(seconds=10) < time_now:
+            Profile.objects.filter(pk=request.user.pk).update(
+                last_visit=time_now)
+        else:
+            time_remain = 10 - int((time_now - last_visit).total_seconds())
+            return JsonResponse({"remain": time_remain}, status=402)
+
         try:
             os.makedirs(f"codes/{credential}/{prob_num}/")
         except Exception:
@@ -97,13 +105,9 @@ def problem(request, prob_num):
         else:
             return JsonResponse({"error":"language error"}, status=400)
 
-        # block too many request per time
-        if last_visit is None or last_visit + timedelta(seconds=10) < time_now:
-            Profile.objects.filter(pk=request.user.pk).update(
-                last_visit=time_now)
-        else:
-            time_remain = 10 - int((time_now - last_visit).total_seconds())
-            return JsonResponse({"remain": time_remain}, status=402)
+        file = open(filename, 'w')
+        file.write(code)
+        file.close()
 
         try:
             solve(language,filename,prob_num)
