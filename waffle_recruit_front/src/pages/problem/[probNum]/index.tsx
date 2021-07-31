@@ -7,6 +7,7 @@ import toNumber from 'lodash/toNumber';
 import ReactMarkdown from 'react-markdown';
 import { useQuery } from 'react-query';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Button } from 'semantic-ui-react';
 
 import Header from '../../../component/Sidebar';
@@ -29,7 +30,7 @@ const ProblemPage: React.FC = () => {
 
   useEffect(() => {
     if (!['0', '1', '2'].includes(prob_num)) {
-      alert('올바르지 않은 url입니다.');
+      toast.error('올바르지 않은 url입니다.');
       history.push('/problem/0');
       return;
     }

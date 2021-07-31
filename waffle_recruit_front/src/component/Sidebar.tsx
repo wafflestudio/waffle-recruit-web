@@ -2,6 +2,7 @@ import React from 'react';
 
 import axios from 'axios';
 import { Link, useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import storage, { StorageKey } from '../lib/storage';
 
@@ -18,9 +19,10 @@ const Sidebar: React.FC = () => {
         history.replace('/signin');
       })
       .catch(() => {
-        alert('로그아웃 실패.');
+        toast.error('로그아웃 실패.');
       });
   };
+
   return (
     <div className="additional">
       <div className="sidebar">

@@ -4,6 +4,7 @@ import axios, { AxiosResponse } from 'axios';
 import { useFormik } from 'formik';
 import { useMutation } from 'react-query';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Button, Form, Input, Select, Tab, TextArea } from 'semantic-ui-react';
 
 import styles from './Submit.module.css';
@@ -46,7 +47,7 @@ const Submit: React.FC = () => {
 
   useEffect(() => {
     if (!['0', '1', '2'].includes(prob_num)) {
-      alert('올바르지 않은 url입니다.');
+      toast.error('올바르지 않은 url입니다.');
       history.push('/problem/0');
       return;
     }
@@ -65,20 +66,20 @@ const Submit: React.FC = () => {
     {
       onSuccess: (res) => {
         if (res.status === 200) {
-          alert('정답입니다!');
+          toast.success('정답입니다!');
         } else if (res.status === 202) {
-          alert('이미 해결된 문제입니다.');
+          toast.info('이미 해결된 문제입니다.');
         }
         history.push(`/problem/${prob_num}`);
       },
       onError: (res) => {
         if (res.status === 400 && 'error' in res.data) {
-          alert('오답입니다!');
+          toast.error('오답입니다!');
         } else if (res.status === 402 && 'remain' in res.data) {
           const remain = res.data.remain;
-          alert(remain + ' 초 뒤에 제출할 수 있습니다.');
+          toast.info(remain + ' 초 뒤에 제출할 수 있습니다.');
         } else {
-          alert('알 수 없는 오류가 발생했습니다. 오류가 지속되면 recruit@wafflestudio.com 으로 문의 부탁드립니다.');
+          toast.error('알 수 없는 오류가 발생했습니다. 오류가 지속되면 recruit@wafflestudio.com 으로 문의 부탁드립니다.');
           history.push('/problem/0');
         }
       },
@@ -87,7 +88,7 @@ const Submit: React.FC = () => {
 
   const handleDeleteFile = (index: number) => {
     if (values.files.length === 1) {
-      window.alert('파일은 한 개 이상 있어야 합니다.');
+      toast.error('파일은 한 개 이상 있어야 합니다.');
       return;
     }
 

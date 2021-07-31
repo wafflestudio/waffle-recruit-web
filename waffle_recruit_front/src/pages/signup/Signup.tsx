@@ -11,6 +11,7 @@ import { Button } from 'semantic-ui-react';
 import storage from '../../lib/storage';
 
 import '../containers.css';
+import {toast} from "react-toastify";
 
 interface ISignupForm {
   username: string;
@@ -46,7 +47,7 @@ const Signup: React.FC = () => {
         history.replace('/problem/');
       },
       onError: () => {
-        alert('중복된 아이디입니다.');
+        toast.error('중복된 아이디입니다.');
       },
     }
   );

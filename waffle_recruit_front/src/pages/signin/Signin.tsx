@@ -7,6 +7,7 @@ import { Button, Form } from 'semantic-ui-react';
 import storage from '../../lib/storage';
 
 import '../containers.css';
+import {toast} from "react-toastify";
 
 interface User {
   username: string;
@@ -34,7 +35,7 @@ const Signin: React.FC = () => {
         history.replace('/problem/');
       })
       .catch(() => {
-        alert('가입되지 않은 유저거나 아이디/비밀번호가 틀렸습니다.');
+        toast.error('가입되지 않은 유저거나 아이디/비밀번호가 틀렸습니다.');
       });
   };
 
@@ -49,7 +50,9 @@ const Signin: React.FC = () => {
         }
       })
       .catch(() => {
-        alert('에러 발생');
+        // 자동 로그인 실패
+        // TODO check
+        toast.error('에러 발생');
       });
   }, []);
 
