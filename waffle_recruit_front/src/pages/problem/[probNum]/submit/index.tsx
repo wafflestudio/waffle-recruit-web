@@ -2,6 +2,7 @@ import React, { SyntheticEvent, useEffect, useState } from 'react';
 
 import axios, { AxiosResponse } from 'axios';
 import { useFormik } from 'formik';
+import produce from 'immer';
 import { useMutation } from 'react-query';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -21,15 +22,15 @@ interface ISubmit {
 const Submit: React.FC = () => {
   const history = useHistory();
   const [selectedTab, setSelectedTab] = useState<number>(0);
+  const [mainFileIndex, setMainFileIndex] = useState<number | null>(null);
 
   const {
     params: { prob_num },
   } = useRouteMatch<{ prob_num: string }>();
 
-  const { values, resetForm, handleSubmit, setFieldValue } = useFormik<ISubmit>({
+  const { values, resetForm, handleSubmit, setFieldValue } = useFormik<Omit<ISubmit, 'main_filename'>>({
     initialValues: {
       language: null,
-      main_filename: null,
       files: [
         {
           filename: '새 파일',
@@ -38,7 +39,7 @@ const Submit: React.FC = () => {
       ],
     },
     onSubmit: (values) => {
-      if (values.main_filename === null) {
+      if (mainFileIndex === null) {
         toast.error('메인 파일을 선택해 주세요.');
         return;
       } else if (values.language === null) {
@@ -46,7 +47,7 @@ const Submit: React.FC = () => {
         toast.error('언어를 선택해 주세요.');
         return;
       }
-      submitAnswerMutation.mutate(values);
+      submitAnswerMutation.mutate({ ...values, main_filename: values.files[mainFileIndex].filename });
     },
   });
 
@@ -132,6 +133,15 @@ const Submit: React.FC = () => {
                 className={styles.code}
                 key={i}
                 value={item.code}
+                onChange={(e) =>
+                  setFieldValue(
+                    'files',
+                    produce(values.files, (draft) => {
+                      draft[i].code = e.currentTarget.value;
+                      return draft;
+                    })
+                  )
+                }
                 placeholder={`#include <stdio.h>\n\nint main() {\n  printf("Hello World!");\n}`}
               />
             </Tab.Pane>
@@ -183,7 +193,7 @@ const Submit: React.FC = () => {
             className={styles.radioWrapper}
             options={values.files.map((item, i) => ({ key: i, value: i, text: item.filename }))}
             placeholder={'Main 파일을 선택하세요'}
-            onChange={(_, data) => setFieldValue('main_filename', data.text)}
+            onChange={(_, data) => setMainFileIndex(data.value as number)}
           />
 
           <Tab
