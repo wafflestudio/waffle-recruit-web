@@ -28,7 +28,7 @@ const Signin: React.FC = () => {
 
   const onLoginUser = (user: User) => {
     axios
-      .post('/check/signin/', user)
+      .post<{ user: string }>('/check/signin/', user)
       .then((res) => {
         storage.set('logged_in_user', res.data.user);
         history.replace('/problem/');

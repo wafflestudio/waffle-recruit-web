@@ -36,7 +36,7 @@ const Signup: React.FC = () => {
     },
   });
 
-  const signUpMutation = useMutation<AxiosResponse<{ user: ISignupForm }>, unknown, { user: ISignupForm }, unknown>(
+  const signUpMutation = useMutation<AxiosResponse<{ user: string }>, unknown, { user: ISignupForm }, unknown>(
     ({ user }: { user: ISignupForm }) => {
       return axios.post('/check/signup/', user);
     },
