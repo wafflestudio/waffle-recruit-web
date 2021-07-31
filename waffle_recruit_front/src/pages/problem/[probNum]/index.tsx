@@ -10,7 +10,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button } from 'semantic-ui-react';
 
-import Header from '../../../component/Sidebar';
+import Sidebar from '../../../component/Sidebar';
 
 import styles from './Problem.module.css';
 import { problems } from './problems';
@@ -46,7 +46,7 @@ const ProblemPage: React.FC = () => {
 
   return (
     <div>
-      <Header />
+      <Sidebar />
       <Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>
       <br />
       <br />
