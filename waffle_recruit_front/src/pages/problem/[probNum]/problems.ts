@@ -248,14 +248,14 @@ export const problems: { title: string; content: string }[] = [
   { title: '테스트 문제', content: 'Hello World! 라고 출력해 보세요.' },
   {
     title: '성적 처리',
-    content: '문제 공개 전입니다.',
+    content: problem1,
   },
   {
     title: '아르바이트',
-    content: '문제 공개 전입니다.',
+    content: problem2,
   },
   {
     title: '와플고등학교 명단 관리 프로그램',
-    content: '문제 공개 전입니다.',
+    content: problem3,
   },
 ];

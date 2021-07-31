@@ -7,8 +7,6 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, Form, Input, Select, Tab, TextArea } from 'semantic-ui-react';
 
-import { useAuthContext } from '../../../../context/authContext';
-
 import styles from './Submit.module.css';
 
 interface ISubmit {
