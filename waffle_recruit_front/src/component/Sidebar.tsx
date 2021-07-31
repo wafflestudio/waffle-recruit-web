@@ -32,14 +32,16 @@ const Sidebar: React.FC = () => {
         <br />
         <Link to={'/problem/3/'}>Problem 3</Link>
         <br />
+        <br />
+        <br />
+        <br />
+        <br />
+
+        <p style={{ width: 150, wordBreak: 'break-all' }}>Signed as {user}</p>
+
         <Link to={'/'} onClick={onClickSignOut}>
           Logout
         </Link>
-        <br />
-        <br />
-        <br />
-        <br />
-        <p style={{ width: 150, wordBreak: 'break-all' }}>Signed as {user}</p>
       </div>
     </div>
   );

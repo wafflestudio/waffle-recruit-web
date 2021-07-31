@@ -10,22 +10,18 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button } from 'semantic-ui-react';
 
-import Header from '../../../component/Sidebar';
+import Sidebar from '../../../component/Sidebar';
 
+import styles from './Problem.module.css';
 import { problems } from './problems';
-import axios from 'axios';
 
 import '../../containers.css';
-import './Problem.css';
-import { useAuthContext } from '../../../context/authContext';
 
 const ProblemPage: React.FC = () => {
   const history = useHistory();
   const {
     params: { prob_num },
   } = useRouteMatch<{ prob_num: string }>();
-
-  const { clearUser } = useAuthContext();
 
   const isSolvedQuery = useQuery<{ solved: boolean }>(`/check/prob/${prob_num}/`);
   const isSolved = isSolvedQuery.data?.solved;
@@ -50,12 +46,19 @@ const ProblemPage: React.FC = () => {
 
   return (
     <div>
-      <Header />
+      <Sidebar />
       <Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>
       <br />
       <br />
-      <div className="ReviewContainer">
-        <ReactMarkdown source={`# ${title} ${isSolved ? ':white_check_mark:' : ''}`} renderers={{ text: emojiSupport }} />
+      <div className={styles.ReviewContainer}>
+        <div style={{ display: 'flex', height: 20, alignItems: 'center', gap: 8 }}>
+          <ReactMarkdown source={`# ${title}`} renderers={{ text: emojiSupport }} />
+          {isSolved ? (
+            <span className="ui green label mini tag">해결 완료</span>
+          ) : (
+            <span className="ui red label mini tag">미해결</span>
+          )}
+        </div>
         <ReactMarkdown source={markdownInputStr} />
         <ReactMarkdown source={markdownSolverStatus} renderers={{ text: emojiSupport }} />
       </div>

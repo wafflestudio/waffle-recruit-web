@@ -15,6 +15,10 @@
     font-size: 16px;
 }
 
+.ReviewContainer h1 {
+    margin: 0 !important;
+}
+
 .main {
     display: flex;
     flex-direction: column;
