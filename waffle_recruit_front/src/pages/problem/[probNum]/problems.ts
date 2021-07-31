@@ -245,6 +245,7 @@ $ Error 200
 `;
 
 export const problems: { title: string; content: string }[] = [
+  { title: '테스트 문제', content: 'Hello World! 라고 출력해 보세요.' },
   {
     title: '성적 처리',
     content: '문제 공개 전입니다.',

@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Route, Redirect, Switch, BrowserRouter } from 'react-router-dom';
+import axios from 'axios';
+import { Route, Redirect, Switch, useHistory, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { Loader } from 'semantic-ui-react';
 
 import Footer from './component/Footer';
+import { useAuthContext } from './context/authContext';
 import Main from './pages/problem/[probNum]';
 import Submit from './pages/problem/[probNum]/submit';
 import Signin from './pages/signin/Signin';
@@ -13,11 +16,36 @@ import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App: React.FC = () => {
+  const [isTokenChecked, setTokenChecked] = useState<boolean>(false);
+  const { setUser, clearUser } = useAuthContext();
+  const history = useHistory();
+
+  const { pathname } = useLocation();
+
+  const isAuthNeeded = pathname.includes('problem');
+
+  useEffect(() => {
+    axios.get<{ user: string }>('/check/token/').then((res) => {
+      setTokenChecked(true);
+      if (res.status === 204 && isAuthNeeded) {
+        clearUser();
+        history.replace('/signin');
+      } else if (res.status === 200) {
+        setUser(res.data.user);
+        if (!isAuthNeeded) {
+          history.replace('/problem/0');
+        }
+      }
+    });
+  }, [pathname]);
+
+  if (!isTokenChecked) return <Loader />;
+
   return (
-    <BrowserRouter>
+    <>
       <div className="App">
         <Switch>
-          <Route path="/signin" exact render={() => <Signin />} />
+          <Route path="/signin" exact component={Signin} />
           <Route path="/signup" exact component={Signup} />
           <Route path="/problem/:prob_num" exact component={Main} />
           <Route path="/problem/:prob_num/submit" exact component={Submit} />
@@ -36,7 +64,7 @@ const App: React.FC = () => {
         draggable
         pauseOnHover
       />
-    </BrowserRouter>
+    </>
   );
 };
 

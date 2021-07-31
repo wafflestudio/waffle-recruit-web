@@ -13,9 +13,11 @@ import { Button } from 'semantic-ui-react';
 import Header from '../../../component/Sidebar';
 
 import { problems } from './problems';
+import axios from 'axios';
 
 import '../../containers.css';
 import './Problem.css';
+import { useAuthContext } from '../../../context/authContext';
 
 const ProblemPage: React.FC = () => {
   const history = useHistory();
@@ -23,13 +25,15 @@ const ProblemPage: React.FC = () => {
     params: { prob_num },
   } = useRouteMatch<{ prob_num: string }>();
 
+  const { clearUser } = useAuthContext();
+
   const isSolvedQuery = useQuery<{ solved: boolean }>(`/check/prob/${prob_num}/`);
   const isSolved = isSolvedQuery.data?.solved;
   const solvedCountQuery = useQuery<{ number: number }>(`/check/solvers/${prob_num}/`);
-  const solvedCount = solvedCountQuery.data?.number || '-';
+  const solvedCount = solvedCountQuery.data ? solvedCountQuery.data.number : '-';
 
   useEffect(() => {
-    if (!['0', '1', '2'].includes(prob_num)) {
+    if (!['0', '1', '2', '3'].includes(prob_num)) {
       toast.error('올바르지 않은 url입니다.');
       history.push('/problem/0');
       return;

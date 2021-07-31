@@ -8,10 +8,11 @@
     text-align: left;
     position: absolute;
     flex: 1;
+    min-width: 180px;
 }
 .additional{
     margin-top: 80px;
-    margin-left: 8%;
+    margin-left: 4%;
 }
 
 @media only screen and (max-width: 600px) {

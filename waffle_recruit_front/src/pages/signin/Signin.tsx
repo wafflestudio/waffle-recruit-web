@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Button, Form } from 'semantic-ui-react';
 
-import storage from '../../lib/storage';
-
 import '../containers.css';
-import {toast} from "react-toastify";
+import { useAuthContext } from '../../context/authContext';
 
 interface User {
   username: string;
@@ -18,6 +17,8 @@ const Signin: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const history = useHistory();
+
+  const { setUser } = useAuthContext();
 
   const onClickSignInButton = () => {
     const user = {
@@ -31,30 +32,13 @@ const Signin: React.FC = () => {
     axios
       .post<{ user: string }>('/check/signin/', user)
       .then((res) => {
-        storage.set('logged_in_user', res.data.user);
+        setUser(res.data.user);
         history.replace('/problem/');
       })
       .catch(() => {
         toast.error('가입되지 않은 유저거나 아이디/비밀번호가 틀렸습니다.');
       });
   };
-
-  useEffect(() => {
-    axios
-      .get('/check/token/')
-      .then((res) => {
-        // 자동 로그인 성공
-        if (res.status === 200) {
-          storage.set('logged_in_user', res.data.user);
-          history.replace('/problem/1');
-        }
-      })
-      .catch(() => {
-        // 자동 로그인 실패
-        // TODO check
-        toast.error('에러 발생');
-      });
-  }, []);
 
   return (
     <div className="login_page">

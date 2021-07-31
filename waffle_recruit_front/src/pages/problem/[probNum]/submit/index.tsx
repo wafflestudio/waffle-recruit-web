@@ -7,6 +7,8 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, Form, Input, Select, Tab, TextArea } from 'semantic-ui-react';
 
+import { useAuthContext } from '../../../../context/authContext';
+
 import styles from './Submit.module.css';
 
 interface ISubmit {
@@ -46,7 +48,7 @@ const Submit: React.FC = () => {
   });
 
   useEffect(() => {
-    if (!['0', '1', '2'].includes(prob_num)) {
+    if (!['0', '1', '2', '3'].includes(prob_num)) {
       toast.error('올바르지 않은 url입니다.');
       history.push('/problem/0');
       return;
