@@ -38,10 +38,15 @@ const Submit: React.FC = () => {
       ],
     },
     onSubmit: (values) => {
-      const confirmed = window.confirm('제출하시겠습니까?');
-      if (confirmed) {
-        submitAnswerMutation.mutate(values);
+      if (values.main_filename === null) {
+        toast.error('메인 파일을 선택해 주세요.');
+        return;
+      } else if (values.language === null) {
+        // CANNOT REACH HERE
+        toast.error('언어를 선택해 주세요.');
+        return;
       }
+      submitAnswerMutation.mutate(values);
     },
   });
 
@@ -188,7 +193,7 @@ const Submit: React.FC = () => {
             panes={panes}
           />
 
-          <Button className={styles.titleTrailingClickable} onClick={() => submitAnswerMutation.mutate(values)}>
+          <Button className={styles.titleTrailingClickable} type={'submit'}>
             제출
           </Button>
         </>

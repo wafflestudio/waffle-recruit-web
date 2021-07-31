@@ -12,10 +12,10 @@ import { Button } from 'semantic-ui-react';
 
 import Header from '../../../component/Sidebar';
 
+import styles from './Problem.module.css';
 import { problems } from './problems';
 
 import '../../containers.css';
-import './Problem.css';
 
 const ProblemPage: React.FC = () => {
   const history = useHistory();
@@ -50,7 +50,7 @@ const ProblemPage: React.FC = () => {
       <Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>
       <br />
       <br />
-      <div className="ReviewContainer">
+      <div className={styles.ReviewContainer}>
         <ReactMarkdown source={`# ${title} ${isSolved ? ':white_check_mark:' : ''}`} renderers={{ text: emojiSupport }} />
         <ReactMarkdown source={markdownInputStr} />
         <ReactMarkdown source={markdownSolverStatus} renderers={{ text: emojiSupport }} />
