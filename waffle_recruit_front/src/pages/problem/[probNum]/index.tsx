@@ -51,7 +51,14 @@ const ProblemPage: React.FC = () => {
       <br />
       <br />
       <div className={styles.ReviewContainer}>
-        <ReactMarkdown source={`# ${title} ${isSolved ? ':white_check_mark:' : ''}`} renderers={{ text: emojiSupport }} />
+        <div style={{ display: 'flex', height: 20, alignItems: 'center', gap: 8 }}>
+          <ReactMarkdown source={`# ${title}`} renderers={{ text: emojiSupport }} />
+          {isSolved ? (
+            <span className="ui green label mini tag">해결 완료</span>
+          ) : (
+            <span className="ui red label mini tag">미해결</span>
+          )}
+        </div>
         <ReactMarkdown source={markdownInputStr} />
         <ReactMarkdown source={markdownSolverStatus} renderers={{ text: emojiSupport }} />
       </div>
