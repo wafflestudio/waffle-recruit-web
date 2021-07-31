@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-import axios from 'axios';
 import { Route, Redirect, Switch, useHistory, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { Loader } from 'semantic-ui-react';
 
+import { requester } from './apis/requester';
 import Footer from './component/Footer';
 import { useAuthContext } from './context/authContext';
 import Main from './pages/problem/[probNum]';
@@ -25,7 +25,7 @@ const App: React.FC = () => {
   const isAuthNeeded = pathname.includes('problem');
 
   useEffect(() => {
-    axios.get<{ user: string }>('/check/token/').then((res) => {
+    requester.get<{ user: string }>('/check/token/').then((res) => {
       setTokenChecked(true);
       if (res.status === 204 && isAuthNeeded) {
         clearUser();

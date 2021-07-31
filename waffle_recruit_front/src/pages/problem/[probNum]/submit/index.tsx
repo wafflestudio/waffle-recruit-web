@@ -1,12 +1,14 @@
 import React, { SyntheticEvent, useEffect, useState } from 'react';
 
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import { useFormik } from 'formik';
 import produce from 'immer';
 import { useMutation } from 'react-query';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, Form, Input, Select, Tab, TextArea } from 'semantic-ui-react';
+
+import { requester } from '../../../../apis/requester';
 
 import styles from './Submit.module.css';
 
@@ -67,7 +69,7 @@ const Submit: React.FC = () => {
     unknown
   >(
     (values) => {
-      return axios.post(`/check/prob/${prob_num}/`, values);
+      return requester.post(`/check/prob/${prob_num}/`, values);
     },
     {
       onSuccess: (res) => {

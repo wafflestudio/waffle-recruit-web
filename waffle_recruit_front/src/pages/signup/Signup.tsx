@@ -1,6 +1,6 @@
 import React from 'react';
 
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import { useFormik } from 'formik';
 import toNumber from 'lodash/toNumber';
 import Form from 'react-bootstrap/Form';
@@ -9,8 +9,9 @@ import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button } from 'semantic-ui-react';
 
-import '../containers.css';
+import { requester } from '../../apis/requester';
 import { useAuthContext } from '../../context/authContext';
+import '../containers.css';
 
 interface ISignupForm {
   username: string;
@@ -40,7 +41,7 @@ const Signup: React.FC = () => {
 
   const signUpMutation = useMutation<AxiosResponse<{ user: string }>, AxiosError, { user: ISignupForm }, unknown>(
     ({ user }: { user: ISignupForm }) => {
-      return axios.post('/check/signup/', user);
+      return requester.post('/check/signup/', user);
     },
     {
       onSuccess: (res) => {

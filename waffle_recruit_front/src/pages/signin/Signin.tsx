@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
-import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, Form } from 'semantic-ui-react';
 
-import '../containers.css';
+import { requester } from '../../apis/requester';
 import { useAuthContext } from '../../context/authContext';
+import '../containers.css';
 
 interface User {
   username: string;
@@ -29,7 +29,7 @@ const Signin: React.FC = () => {
   };
 
   const onLoginUser = (user: User) => {
-    axios
+    requester
       .post<{ user: string }>('/check/signin/', user)
       .then((res) => {
         setUser(res.data.user);
