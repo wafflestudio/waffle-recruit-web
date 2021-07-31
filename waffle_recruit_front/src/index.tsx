@@ -3,8 +3,10 @@ import React from 'react';
 import axios from 'axios';
 import ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { BrowserRouter } from 'react-router-dom';
 
 import App from './App';
+import { AuthContextProvider } from './context/authContext';
 import * as serviceWorker from './serviceWorker';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,17 +21,25 @@ const queryClient = new QueryClient({
     queries: {
       retry: false,
       queryFn: async ({ queryKey }) => {
-        const response = await axios.get(queryKey[0] as string);
-        return response.data;
+        try {
+          const response = await axios.get(queryKey[0] as string);
+          return response.data;
+        } catch (e) {
+          throw new Error(e);
+        }
       },
     },
   },
 });
 
 ReactDOM.render(
-  <QueryClientProvider client={queryClient}>
-    <App />
-  </QueryClientProvider>,
+  <AuthContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </QueryClientProvider>
+  </AuthContextProvider>,
   document.getElementById('root')
 );
 

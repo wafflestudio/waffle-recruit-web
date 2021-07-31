@@ -1,16 +1,16 @@
 import React from 'react';
 
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { useFormik } from 'formik';
 import toNumber from 'lodash/toNumber';
 import Form from 'react-bootstrap/Form';
 import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Button } from 'semantic-ui-react';
 
-import storage from '../../lib/storage';
-
 import '../containers.css';
+import { useAuthContext } from '../../context/authContext';
 
 interface ISignupForm {
   username: string;
@@ -22,6 +22,8 @@ interface ISignupForm {
 
 const Signup: React.FC = () => {
   const history = useHistory();
+
+  const { setUser } = useAuthContext();
 
   const { values, handleSubmit, handleChange, setFieldValue } = useFormik<ISignupForm>({
     initialValues: {
@@ -36,17 +38,18 @@ const Signup: React.FC = () => {
     },
   });
 
-  const signUpMutation = useMutation<AxiosResponse<{ user: string }>, unknown, { user: ISignupForm }, unknown>(
+  const signUpMutation = useMutation<AxiosResponse<{ user: string }>, AxiosError, { user: ISignupForm }, unknown>(
     ({ user }: { user: ISignupForm }) => {
       return axios.post('/check/signup/', user);
     },
     {
       onSuccess: (res) => {
-        storage.set('logged_in_user', res.data.user);
+        setUser(res.data.user);
         history.replace('/problem/');
       },
       onError: () => {
-        alert('중복된 아이디입니다.');
+        // TODO 체크 필요
+        toast.error('중복된 아이디입니다.');
       },
     }
   );
