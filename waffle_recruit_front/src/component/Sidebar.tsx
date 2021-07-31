@@ -1,11 +1,12 @@
 import React from 'react';
 
-import axios from 'axios';
 import { Link, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import './Sidebar.css';
+import { requester } from '../apis/requester';
 import { useAuthContext } from '../context/authContext';
+
+import './Sidebar.css';
 
 const Sidebar: React.FC = () => {
   const history = useHistory();
@@ -13,7 +14,7 @@ const Sidebar: React.FC = () => {
 
   const onClickSignOut = async () => {
     try {
-      await axios.get('/check/signout/');
+      await requester.get('/check/signout/');
       clearUser();
       history.replace('/signin');
     } catch (err) {

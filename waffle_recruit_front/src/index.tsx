@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
 
+import { requester } from './apis/requester';
 import App from './App';
 import { AuthContextProvider } from './context/authContext';
 import * as serviceWorker from './serviceWorker';
@@ -22,7 +23,7 @@ const queryClient = new QueryClient({
       retry: false,
       queryFn: async ({ queryKey }) => {
         try {
-          const response = await axios.get(queryKey[0] as string);
+          const response = await requester.get(queryKey[0] as string);
           return response.data;
         } catch (e) {
           throw new Error(e);
