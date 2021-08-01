@@ -1,19 +1,21 @@
 const problem1 = `
+## 성적 처리
+
 ### 문제
 
-프프리 교수는 와플대학교에서 '와플 굽기 기초' 과목을 가르치고 있다. 학생들을 평가하기 위해 프프리 교수는 $\\rm P$ 문제로 구성된 객관식 시험을 출제했다. 시험이 끝난 후 조교는 답안지를 걷어서 각 학생들의 답안으로 이루어진 리스트를 당신에게 전달해 주었다. 이제 프프리 교수로부터 정답 리스트를 받은 당신은 각 학생의 점수와 순위를 구해야 한다.
+프프리 교수는 와플대학교에서 '와플 굽기 기초' 과목을 가르치고 있다. 학생들을 평가하기 위해 프프리 교수는 ![$\\rm P$](/5qRJWZ9fw7vGHmSmb9-2vA/math_002.svg) 문제로 구성된 객관식 시험을 출제했다. 시험이 끝난 후 조교는 답안지를 걷어서 각 학생들의 답안으로 이루어진 리스트를 당신에게 전달해 주었다. 이제 프프리 교수로부터 정답 리스트를 받은 당신은 각 학생의 점수와 순위를 구해야 한다.
 
 ### 입력
 
-첫째 줄에 세 정수 $\\rm N$, $\\rm P$, $\\rm K$가 주어진다. $\\rm N$은 수강생 수, $\\rm P$는 시험의 문제 수, $\\rm K$는 각 문제의 보기 개수이다.
+첫째 줄에 세 정수 ![$\\rm N$](/5qRJWZ9fw7vGHmSmb9-2vA/math_011.svg), ![$\\rm P$](/5qRJWZ9fw7vGHmSmb9-2vA/math_002.svg), ![$\\rm K$](/5qRJWZ9fw7vGHmSmb9-2vA/math_009.svg)가 주어진다. ![$\\rm N$](/5qRJWZ9fw7vGHmSmb9-2vA/math_011.svg)은 수강생 수, ![$\\rm P$](/5qRJWZ9fw7vGHmSmb9-2vA/math_002.svg)는 시험의 문제 수, ![$\\rm K$](/5qRJWZ9fw7vGHmSmb9-2vA/math_009.svg)는 각 문제의 보기 개수이다.
 
-둘째 줄부터 $\\rm N$개의 줄에는 각 학생의 답안 정보가 주어진다. 각 줄은 학번을 의미하는 정수 $\\rm S$와 답안을 의미하는 $\\rm P$개의 정수 $\\rm A_1,A_2,\\cdots,A_P$로 이루어진다. $\\rm A_i$는 $i$번째 문제에 대한 학생의 답안이다.
+둘째 줄부터 ![$\\rm N$](/5qRJWZ9fw7vGHmSmb9-2vA/math_011.svg)개의 줄에는 각 학생의 답안 정보가 주어진다. 각 줄은 학번을 의미하는 정수 ![$\\rm S$](/5qRJWZ9fw7vGHmSmb9-2vA/math.svg)와 답안을 의미하는 ![$\\rm P$](/5qRJWZ9fw7vGHmSmb9-2vA/math_002.svg)개의 정수 ![$\\rm A_1,A_2,\\cdots,A_P$](/5qRJWZ9fw7vGHmSmb9-2vA/math_010.svg)로 이루어진다. ![$\\rm A_i$](/5qRJWZ9fw7vGHmSmb9-2vA/math_015.svg)는 ![$i$](/5qRJWZ9fw7vGHmSmb9-2vA/math_012.svg)번째 문제에 대한 학생의 답안이다.
 
-마지막 $\\rm N+2$번째 줄에는 정답을 의미하는 $\\rm P$개의 정수 $\\rm C_1,C_2,\\cdots,C_P$가 주어진다. $\\rm C_i$는 $i$번째 문제의 정답이다.
+마지막 ![$\\rm N+2$](/5qRJWZ9fw7vGHmSmb9-2vA/math_013.svg)번째 줄에는 정답을 의미하는 ![$\\rm P$](/5qRJWZ9fw7vGHmSmb9-2vA/math_002.svg)개의 정수 ![$\\rm C_1,C_2,\\cdots,C_P$](/5qRJWZ9fw7vGHmSmb9-2vA/math_014.svg)가 주어진다. ![$\\rm C_i$](/5qRJWZ9fw7vGHmSmb9-2vA/math_018.svg)는 ![$i$](/5qRJWZ9fw7vGHmSmb9-2vA/math_012.svg)번째 문제의 정답이다.
 
 ### 출력
 
-각 학생마다 \`Student #x: y z\` 를 한 줄에 하나씩 출력한다. \`x\` 는 학번 $\\rm S$, \`y\` 는 학생의 점수 (정답과 일치하는 답안의 수, $\\rm 0 \\leq y \\leq P$), \`z\` 는 학생의 순위이다. 순위는 1부터 시작하고, 동점인 학생들의 순위는 가능한 가장 높은 순위(가장 낮은 \`z\`)로 결정된다($\\rm 1 \\leq z \\leq N$).
+각 학생마다 \`Student #x: y z\` 를 한 줄에 하나씩 출력한다. \`x\` 는 학번 ![$\\rm S$](/5qRJWZ9fw7vGHmSmb9-2vA/math.svg), \`y\` 는 학생의 점수 (정답과 일치하는 답안의 수, ![$\\rm 0 \\leq y \\leq P$](/5qRJWZ9fw7vGHmSmb9-2vA/math_016.svg)), \`z\` 는 학생의 순위이다. 순위는 1부터 시작하고, 동점인 학생들의 순위는 가능한 가장 높은 순위(가장 낮은 \`z\`)로 결정된다(![$\\rm 1 \\leq z \\leq N$](/5qRJWZ9fw7vGHmSmb9-2vA/math_017.svg)).
 
 출력되는 줄은 학번을 기준으로 오름차순으로 정렬되어 있어야 한다.
 
@@ -23,17 +25,17 @@ const problem1 = `
 
 메모리 제한: 1GB.
 
-$\\rm 1 \\leq N \\leq 200$
+![$\\rm 1 \\leq N \\leq 200$](/5qRJWZ9fw7vGHmSmb9-2vA/math_006.svg)
 
-$\\rm 1 \\leq P \\leq 100$
+![$\\rm 1 \\leq P \\leq 100$](/5qRJWZ9fw7vGHmSmb9-2vA/math_003.svg)
 
-$\\rm 2 \\leq K \\leq 120$
+![$\\rm 2 \\leq K \\leq 120$](/5qRJWZ9fw7vGHmSmb9-2vA/math_005.svg)
 
-$190,000,000 \\leq S \\leq 210,000,000$
+![$190,000,000 \\leq S \\leq 210,000,000$](/5qRJWZ9fw7vGHmSmb9-2vA/math_007.svg)
 
-모든 $i$에 대해, $1 \\leq \\rm A_i \\leq K$ 
+모든 ![$i$](/5qRJWZ9fw7vGHmSmb9-2vA/math_012.svg)에 대해, ![$1 \\leq \\rm A_i \\leq K$](/5qRJWZ9fw7vGHmSmb9-2vA/math_004.svg)
 
-모든 $i$에 대해, $1 \\leq \\rm C_i \\leq K$
+모든 ![$i$](/5qRJWZ9fw7vGHmSmb9-2vA/math_012.svg)에 대해, ![$1 \\leq \\rm C_i \\leq K$](/5qRJWZ9fw7vGHmSmb9-2vA/math_008.svg)
 
 ### 입출력 예
 
