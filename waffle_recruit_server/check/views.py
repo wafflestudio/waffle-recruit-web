@@ -75,7 +75,9 @@ def problem(request, prob_num):
     elif request.method == 'POST':
         req_data = json.loads(request.body.decode())
         code = req_data['code']
+        files = req_data['files']
         language = req_data['language']
+        file_name = req_data['main_filename']
         profile = Profile.objects.get(user=request.user)
         last_visit = profile.last_visit
         credential = profile.credential
@@ -88,31 +90,22 @@ def problem(request, prob_num):
             time_remain = 10 - int((time_now - last_visit).total_seconds())
             return JsonResponse({"remain": time_remain}, status=402)
 
+        file_path = f"codes/{credential}/{prob_num}/"
+
         try:
-            os.makedirs(f"codes/{credential}/{prob_num}/")
+            os.makedirs(file_path)
         except Exception:
             pass
-        if language == "java":
-            filename = f"codes/{credential}/{prob_num}/Main.java"
-        elif language == "kotlin":
-            filename = f"codes/{credential}/{prob_num}/main.kt"
-        elif language == "js":
-            filename = f"codes/{credential}/{prob_num}/main.js"
-        elif language == "python":
-            filename = f"codes/{credential}/{prob_num}/main.py"
-        elif language == "ts":
-            filename = f"codes/{credential}/{prob_num}/main.ts"
-        else:
-            return JsonResponse({"error":"language error"}, status=400)
 
-        file = open(filename, 'w')
-        file.write(code)
-        file.close()
+        for file in files:
+            local_file = open(file_path + file['filename'], 'w')
+            local_file.write(file['code'])
+            local_file.close()
 
         try:
-            solve(language,filename,prob_num)
+            solve(language, file_path, file_name, prob_num)
         except Exception as e:
-            return JsonResponse({"error":str(e)}, status=400)
+            return JsonResponse({"error": str(e)}, status=400)
 
         if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
             # First solve of problem
