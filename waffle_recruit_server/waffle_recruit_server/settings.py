@@ -26,11 +26,6 @@ SECRET_KEY = '5hsh=^$_m-rn-6r5m5qiq*r1@wrhquf$ju@y&41wkv7e15uo12'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-    'https://recruit.wafflestudio.com/',
-)
-
 
 
 # Application definition
