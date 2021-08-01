@@ -26,6 +26,11 @@ SECRET_KEY = '5hsh=^$_m-rn-6r5m5qiq*r1@wrhquf$ju@y&41wkv7e15uo12'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    'https://recruit.wafflestudio.com/',
+)
+
 
 
 # Application definition
@@ -38,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -48,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'waffle_recruit_server.urls'
