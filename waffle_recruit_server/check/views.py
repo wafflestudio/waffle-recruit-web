@@ -74,7 +74,6 @@ def problem(request, prob_num):
         return JsonResponse(result, status=200)
     elif request.method == 'POST':
         req_data = json.loads(request.body.decode())
-        code = req_data['code']
         files = req_data['files']
         language = req_data['language']
         file_name = req_data['main_filename']
@@ -105,6 +104,7 @@ def problem(request, prob_num):
         try:
             solve(language, file_path, file_name, prob_num)
         except Exception as e:
+            print(e)
             return JsonResponse({"error": str(e)}, status=400)
 
         if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
