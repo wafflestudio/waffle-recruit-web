@@ -1,10 +1,11 @@
 import hashlib
 import json
 import os
+import boto3
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.http import HttpResponseNotAllowed, HttpResponse, JsonResponse
+from django.http import HttpResponseNotAllowed, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.utils.timezone import now
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt, get_token
 from datetime import timedelta
@@ -12,6 +13,7 @@ from datetime import timedelta
 from check.generate_input import problem1, problem2
 from check.models import Profile, Solver
 from check.solver import solve
+from waffle_recruit_server import settings
 
 problems = [problem1, problem2]
 
@@ -130,12 +132,29 @@ def prob_solvers(request, prob_num):
         return HttpResponseNotAllowed(['GET'])
 
 
+def skeleton(request, lang):
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+    elif request.method != 'GET':
+        return HttpResponseNotAllowed(['GET'])
+    else:
+        client = boto3.client('s3')
+        file_name = 'pr3_skel_{}.tar'.format(lang)
+        bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+        url = client.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': bucket_name, 'Key': file_name, },
+            ExpiresIn=600,
+        )
+        return HttpResponseRedirect(url)
+
+
 @ensure_csrf_cookie
 def token(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
             return JsonResponse({"user": request.user.username, "token": request.META["CSRF_COOKIE"]}, status=200)
-        return JsonResponse({"token": request.META["CSRF_COOKIE"]},status=200)
+        return JsonResponse({"token": request.META["CSRF_COOKIE"]}, status=200)
     else:
         return HttpResponseNotAllowed(['GET'])
 
