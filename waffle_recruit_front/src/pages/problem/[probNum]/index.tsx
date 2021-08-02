@@ -61,6 +61,17 @@ const ProblemPage: React.FC = () => {
           )}
         </div>
         <ReactMarkdown source={markdownInputStr} />
+        {prob_num === '3' && (
+          <>
+            <a href={'/skeleton/pr3_skel_java.tar'} download>
+              Java 스켈레톤 다운로드
+            </a>
+            <br />
+            <a href={'/skeleton/pr3_skel_py.tar'} download>
+              Python 스켈레톤 다운로드
+            </a>
+          </>
+        )}
         <ReactMarkdown source={markdownSolverStatus} renderers={{ text: emojiSupport }} />
       </div>
     </div>
