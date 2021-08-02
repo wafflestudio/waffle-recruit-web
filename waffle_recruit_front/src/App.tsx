@@ -18,7 +18,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const App: React.FC = () => {
   const [isTokenChecked, setTokenChecked] = useState<boolean>(false);
-  const { setUser, clearUser } = useAuthContext();
+  const { setUser, clearUser, setCsrf } = useAuthContext();
   const history = useHistory();
 
   const { pathname } = useLocation();
@@ -26,12 +26,14 @@ const App: React.FC = () => {
   const isAuthNeeded = pathname.includes('problem');
 
   useEffect(() => {
-    requester.get<{ user: string }>('/check/token/').then((res) => {
+    requester.get<{ user?: string; token: string }>('/check/token/').then((res) => {
       setTokenChecked(true);
-      if (res.status === 204 && isAuthNeeded) {
+      setCsrf(res.data.token);
+      requester.defaults.headers['X-CSRFToken'] = res.data.token;
+      if (!res.data.user && isAuthNeeded) {
         clearUser();
         history.replace('/signin');
-      } else if (res.status === 200) {
+      } else if (res.data.user) {
         setUser(res.data.user);
         if (!isAuthNeeded) {
           history.replace('/problem/0');
