@@ -78,7 +78,6 @@ def problem(request, prob_num):
         req_data = json.loads(request.body.decode())
         files = req_data['files']
         language = req_data['language']
-        file_name = req_data['main_filename']
         profile = Profile.objects.get(user=request.user)
         last_visit = profile.last_visit
         credential = profile.credential
@@ -104,7 +103,7 @@ def problem(request, prob_num):
             local_file.close()
 
         try:
-            solve(language, file_path, file_name, prob_num)
+            solve(language, file_path, prob_num)
         except Exception as e:
             print(e)
             return JsonResponse({"error": str(e)}, status=400)

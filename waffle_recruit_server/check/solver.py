@@ -8,10 +8,12 @@ import subprocess
 
 
 # @app.task
-def solve(language, file_path, filename, prob_num):
+def solve(language, file_path,  prob_num):
     if int(prob_num) in range(0, 4):
         solutions = os.listdir(f"solve/problem{prob_num}/solutions")
         testcases = os.listdir(f"solve/problem{prob_num}/testcases")
+        solutions.sort()
+        testcases.sort()
     else:
         raise Exception("problem number error")
 
@@ -20,7 +22,7 @@ def solve(language, file_path, filename, prob_num):
             compile_proc = subprocess.Popen(f"javac {file_path}*.java -d {file_path}", shell=True)
             compile_proc.wait()
         elif language == "kotlin":
-            compile_proc = subprocess.Popen(f"kotlinc {file_path}*.kt -include-runtime -d {file_path}{filename[:-3]}.jar", shell=True)
+            compile_proc = subprocess.Popen(f"kotlinc {file_path}*.kt -include-runtime -d {file_path}main.jar", shell=True)
             compile_proc.wait()
     except Exception:
         raise Exception("Compile Error")
@@ -30,11 +32,11 @@ def solve(language, file_path, filename, prob_num):
         solution_file = open(f"solve/problem{prob_num}/solutions/{solution_filename}", "r")
 
         if language == "python":
-            proc = subprocess.Popen(["python3", file_path + filename], stdout=subprocess.PIPE, stdin=test_case)
+            proc = subprocess.Popen(["python3", file_path + 'main.py'], stdout=subprocess.PIPE, stdin=test_case)
         elif language == "java":
-            proc = subprocess.Popen(["java", file_path + filename[:-5]], stdout=subprocess.PIPE, stdin=test_case)
+            proc = subprocess.Popen(["java", file_path + "Main"], stdout=subprocess.PIPE, stdin=test_case)
         elif language == "kotlin":
-            proc = subprocess.Popen(["java", "-jar", file_path + filename[:-3] + ".jar"], stdout=subprocess.PIPE,
+            proc = subprocess.Popen(["java", "-jar", file_path + "main.jar"], stdout=subprocess.PIPE,
                                     stdin=test_case)
         elif language == "javascript":
             proc = subprocess.Popen(["babel-node", file_path], stdout=subprocess.PIPE, stdin=test_case)
@@ -43,7 +45,7 @@ def solve(language, file_path, filename, prob_num):
         else:
             raise Exception("language error")
         try:
-            outs, errs = proc.communicate(timeout=2)
+            outs, errs = proc.communicate(timeout=1)
         except subprocess.TimeoutExpired:
             proc.kill()
             raise Exception("timeout")
