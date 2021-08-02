@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponseNotAllowed, HttpResponse, JsonResponse
 from django.utils.timezone import now
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt, get_token
 from datetime import timedelta
 
 from check.generate_input import problem1, problem2
@@ -74,8 +74,9 @@ def problem(request, prob_num):
         return JsonResponse(result, status=200)
     elif request.method == 'POST':
         req_data = json.loads(request.body.decode())
-        code = req_data['code']
+        files = req_data['files']
         language = req_data['language']
+        file_name = req_data['main_filename']
         profile = Profile.objects.get(user=request.user)
         last_visit = profile.last_visit
         credential = profile.credential
@@ -88,31 +89,23 @@ def problem(request, prob_num):
             time_remain = 10 - int((time_now - last_visit).total_seconds())
             return JsonResponse({"remain": time_remain}, status=402)
 
+        file_path = f"codes/{credential}/{prob_num}/"
+
         try:
-            os.makedirs(f"codes/{credential}/{prob_num}/")
+            os.makedirs(file_path)
         except Exception:
             pass
-        if language == "java":
-            filename = f"codes/{credential}/{prob_num}/Main.java"
-        elif language == "kotlin":
-            filename = f"codes/{credential}/{prob_num}/main.kt"
-        elif language == "js":
-            filename = f"codes/{credential}/{prob_num}/main.js"
-        elif language == "python":
-            filename = f"codes/{credential}/{prob_num}/main.py"
-        elif language == "ts":
-            filename = f"codes/{credential}/{prob_num}/main.ts"
-        else:
-            return JsonResponse({"error":"language error"}, status=400)
 
-        file = open(filename, 'w')
-        file.write(code)
-        file.close()
+        for file in files:
+            local_file = open(file_path + file['filename'], 'w')
+            local_file.write(file['code'])
+            local_file.close()
 
         try:
-            solve(language,filename,prob_num)
+            solve(language, file_path, file_name, prob_num)
         except Exception as e:
-            return JsonResponse({"error":str(e)}, status=400)
+            print(e)
+            return JsonResponse({"error": str(e)}, status=400)
 
         if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
             # First solve of problem
@@ -141,8 +134,8 @@ def prob_solvers(request, prob_num):
 def token(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
-            return JsonResponse({"user": request.user.username}, status=200)
-        return HttpResponse(status=204)
+            return JsonResponse({"user": request.user.username, "token": request.META["CSRF_COOKIE"]}, status=200)
+        return JsonResponse({"token": request.META["CSRF_COOKIE"]},status=200)
     else:
         return HttpResponseNotAllowed(['GET'])
 
