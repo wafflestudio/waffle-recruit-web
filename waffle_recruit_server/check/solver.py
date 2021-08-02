@@ -34,7 +34,7 @@ def solve(language, file_path,  prob_num):
         if language == "python":
             proc = subprocess.Popen(["python3", file_path + 'main.py'], stdout=subprocess.PIPE, stdin=test_case)
         elif language == "java":
-            proc = subprocess.Popen(["java", file_path + "Main"], stdout=subprocess.PIPE, stdin=test_case)
+            proc = subprocess.Popen(["java", "-cp", file_path, "Main"], stdout=subprocess.PIPE, stdin=test_case)
         elif language == "kotlin":
             proc = subprocess.Popen(["java", "-jar", file_path + "main.jar"], stdout=subprocess.PIPE,
                                     stdin=test_case)
