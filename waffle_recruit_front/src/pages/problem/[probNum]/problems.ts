@@ -1,6 +1,4 @@
 const problem1 = `
-## 성적 처리
-
 ### 문제
 
 프프리 교수는 와플대학교에서 '와플 굽기 기초' 과목을 가르치고 있다. 학생들을 평가하기 위해 프프리 교수는 ![$\\rm P$](/5qRJWZ9fw7vGHmSmb9-2vA/math_002.svg) 문제로 구성된 객관식 시험을 출제했다. 시험이 끝난 후 조교는 답안지를 걷어서 각 학생들의 답안으로 이루어진 리스트를 당신에게 전달해 주었다. 이제 프프리 교수로부터 정답 리스트를 받은 당신은 각 학생의 점수와 순위를 구해야 한다.
@@ -233,7 +231,7 @@ $ Error 200
 `;
 
 export const problems: { title: string; content: string }[] = [
-  { title: '테스트 문제', content: 'Hello World! 라고 출력해 보세요.' },
+  { title: '테스트 문제', content: '\n\nHello World! 라고 출력해 보세요.' },
   {
     title: '성적 처리',
     content: problem1,
