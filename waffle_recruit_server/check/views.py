@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponseNotAllowed, HttpResponse, JsonResponse
 from django.utils.timezone import now
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt, get_token
 from datetime import timedelta
 
 from check.generate_input import problem1, problem2
@@ -134,8 +134,8 @@ def prob_solvers(request, prob_num):
 def token(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
-            return JsonResponse({"user": request.user.username}, status=200)
-        return HttpResponse(status=204)
+            return JsonResponse({"user": request.user.username, "token": request.META["CSRF_COOKIE"]}, status=200)
+        return JsonResponse({"token": request.META["CSRF_COOKIE"]},status=204)
     else:
         return HttpResponseNotAllowed(['GET'])
 
