@@ -135,7 +135,7 @@ def token(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
             return JsonResponse({"user": request.user.username, "token": request.META["CSRF_COOKIE"]}, status=200)
-        return JsonResponse({"token": request.META["CSRF_COOKIE"]},status=204)
+        return JsonResponse({"token": request.META["CSRF_COOKIE"]},status=200)
     else:
         return HttpResponseNotAllowed(['GET'])
 
