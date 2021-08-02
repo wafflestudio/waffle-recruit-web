@@ -122,3 +122,8 @@ CORS_ORIGIN_WHITELIST = (
     'http://recruit.wafflestudio.com',
 )
 CORS_ALLOW_CREDENTIALS = True
+
+# AWS Setting
+AWS_REGION = 'ap-northeast-2'
+AWS_S3_HOST = 'waffle-recruit-web.s3.%s.amazonaws.com' % AWS_REGION
+AWS_STORAGE_BUCKET_NAME = 'waffle-recruit-web'
