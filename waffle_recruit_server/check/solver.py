@@ -12,6 +12,8 @@ def solve(language, file_path,  prob_num):
     if int(prob_num) in range(0, 4):
         solutions = os.listdir(f"solve/problem{prob_num}/solutions")
         testcases = os.listdir(f"solve/problem{prob_num}/testcases")
+        solutions.sort()
+        testcases.sort()
     else:
         raise Exception("problem number error")
 
