@@ -14,7 +14,6 @@ import styles from './Submit.module.css';
 
 interface ISubmit {
   language: 'java' | 'kotlin' | 'javascript' | 'typescript' | 'python' | null;
-  main_filename: string | null;
   files: {
     filename: string;
     code: string;
@@ -24,32 +23,23 @@ interface ISubmit {
 const Submit: React.FC = () => {
   const history = useHistory();
   const [selectedTab, setSelectedTab] = useState<number>(0);
-  const [mainFileIndex, setMainFileIndex] = useState<number | null>(null);
 
   const {
     params: { prob_num },
   } = useRouteMatch<{ prob_num: string }>();
 
-  const { values, resetForm, handleSubmit, setFieldValue } = useFormik<Omit<ISubmit, 'main_filename'>>({
+  const { values, resetForm, handleSubmit, setFieldValue } = useFormik<ISubmit>({
     initialValues: {
       language: null,
-      files: [
-        {
-          filename: '새 파일',
-          code: '',
-        },
-      ],
+      files: [],
     },
     onSubmit: (values) => {
-      if (mainFileIndex === null) {
-        toast.error('메인 파일을 선택해 주세요.');
-        return;
-      } else if (values.language === null) {
+      if (values.language === null) {
         // CANNOT REACH HERE
         toast.error('언어를 선택해 주세요.');
         return;
       }
-      submitAnswerMutation.mutate({ ...values, main_filename: values.files[mainFileIndex].filename });
+      submitAnswerMutation.mutate(values);
     },
   });
 
@@ -95,8 +85,8 @@ const Submit: React.FC = () => {
   );
 
   const handleDeleteFile = (index: number) => {
-    if (values.files.length === 1) {
-      toast.error('파일은 한 개 이상 있어야 합니다.');
+    if (index === 0) {
+      toast.error('메인 파일은 삭제할 수 없습니다.');
       return;
     }
 
@@ -125,7 +115,13 @@ const Submit: React.FC = () => {
                 <Input
                   label={'파일명'}
                   value={item.filename}
-                  onChange={(e) => setFieldValue(`files[${i}].filename`, e.currentTarget.value)}
+                  onChange={(e) => {
+                    i === 0
+                      ? (() => {
+                          toast.error('메인 파일은 이름을 변경할 수 없습니다.');
+                        })()
+                      : setFieldValue(`files[${i}].filename`, e.currentTarget.value);
+                  }}
                 />
                 <Button color={'red'} type="button" onClick={() => handleDeleteFile(i)}>
                   삭제
@@ -144,7 +140,11 @@ const Submit: React.FC = () => {
                     })
                   )
                 }
-                placeholder={`#include <stdio.h>\n\nint main() {\n  printf("Hello World!");\n}`}
+                placeholder={
+                  i === 0
+                    ? `메인 파일입니다. 여기에 main 함수를 적어 주세요.\n\n#include <stdio.h>\n\nint main() {\n  printf("Hello World!");\n}`
+                    : `#include <stdio.h>\n\nint main() {\n  printf("Hello World!");\n}`
+                }
               />
             </Tab.Pane>
           );
@@ -155,7 +155,25 @@ const Submit: React.FC = () => {
   const handleLanguageChange = (_: SyntheticEvent, data: unknown) => {
     const changeLanguage = () => {
       resetForm();
-      setFieldValue('language', (data as { value: ISubmit['language'] }).value);
+      const selectedLanguage = (data as { value: ISubmit['language'] }).value;
+      setFieldValue('language', selectedLanguage);
+      const defaultFiles: ISubmit['files'] = (() => {
+        switch (selectedLanguage) {
+          case 'java':
+            return [{ filename: 'Main.java', code: '' }];
+          case 'python':
+            return [{ filename: 'main.py', code: '' }];
+          case 'javascript':
+            return [{ filename: 'index.js', code: '' }];
+          case 'typescript':
+            return [{ filename: 'index.ts', code: '' }];
+          case 'kotlin':
+            return [{ filename: 'main.kt', code: '' }];
+          case null:
+            return [];
+        }
+      })();
+      setFieldValue('files', defaultFiles);
     };
     if (values.language) {
       const confirmed = window.confirm('언어가 변경되면 저장한 값들이 초기화됩니다. 정말 변경하시겠습니까?');
@@ -190,14 +208,6 @@ const Submit: React.FC = () => {
 
       {values.language !== null && (
         <>
-          <br />
-          <Select
-            className={styles.radioWrapper}
-            options={values.files.map((item, i) => ({ key: i, value: i, text: item.filename }))}
-            placeholder={'Main 파일을 선택하세요'}
-            onChange={(_, data) => setMainFileIndex(data.value as number)}
-          />
-
           <Tab
             activeIndex={selectedTab}
             onTabChange={handleTabChange}

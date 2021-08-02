@@ -25,6 +25,11 @@ const Sidebar: React.FC = () => {
   return (
     <div className="additional">
       <div className="sidebar">
+        <Link to={'/problem'}>[필독] 문제 개요</Link>
+        <br />
+        <br />
+        <br />
+        <br />
         <Link to={'/problem/0/'}>test problem</Link>
         <br />
         <Link to={'/problem/1/'}>Problem 1</Link>
