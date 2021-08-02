@@ -7,6 +7,7 @@ import { Loader } from 'semantic-ui-react';
 import { requester } from './apis/requester';
 import Footer from './component/Footer';
 import { useAuthContext } from './context/authContext';
+import ProblemPage from './pages/problem';
 import Main from './pages/problem/[probNum]';
 import Submit from './pages/problem/[probNum]/submit';
 import Signin from './pages/signin/Signin';
@@ -47,6 +48,7 @@ const App: React.FC = () => {
         <Switch>
           <Route path="/signin" exact component={Signin} />
           <Route path="/signup" exact component={Signup} />
+          <Route path="/problem" exact component={ProblemPage} />
           <Route path="/problem/:prob_num" exact component={Main} />
           <Route path="/problem/:prob_num/submit" exact component={Submit} />
           <Redirect from="/" to="/signin" />
