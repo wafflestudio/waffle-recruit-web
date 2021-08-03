@@ -3,7 +3,7 @@ import React, { SyntheticEvent, useEffect, useState } from 'react';
 import { AxiosError, AxiosResponse } from 'axios';
 import { useFormik } from 'formik';
 import produce from 'immer';
-import { useMutation } from 'react-query';
+import { useIsMutating, useMutation } from 'react-query';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, Form, Input, Select, Tab, TextArea } from 'semantic-ui-react';
@@ -24,6 +24,10 @@ const Submit: React.FC = () => {
   const history = useHistory();
   const [selectedTab, setSelectedTab] = useState<number>(0);
 
+  const isSubmitting = !!useIsMutating({
+    mutationKey: 'submit',
+  });
+
   const {
     params: { prob_num },
   } = useRouteMatch<{ prob_num: string }>();
@@ -37,6 +41,10 @@ const Submit: React.FC = () => {
       if (values.language === null) {
         // CANNOT REACH HERE
         toast.error('언어를 선택해 주세요.');
+        return;
+      }
+      if (isSubmitting) {
+        toast.error('채점중입니다.');
         return;
       }
       submitAnswerMutation.mutate(values);
@@ -54,10 +62,11 @@ const Submit: React.FC = () => {
 
   const submitAnswerMutation = useMutation<
     AxiosResponse<never>,
-    AxiosError<{ remain: number } | { error: string, detail?: string }>,
+    AxiosError<{ remain: number } | { error: string; detail?: string }>,
     ISubmit,
     unknown
   >(
+    'submit',
     (values) => {
       return requester.post(`/check/prob/${prob_num}/`, values);
     },
