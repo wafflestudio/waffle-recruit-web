@@ -93,9 +93,10 @@ def problem(request, prob_num):
         file_path = f"codes/{credential}/{prob_num}/"
 
         try:
-            os.makedirs(file_path)
+            os.rmdir(file_path)
         except Exception:
             pass
+        os.makedirs(file_path)
 
         for file in files:
             local_file = open(file_path + file['filename'], 'w')

@@ -8,7 +8,7 @@ import subprocess
 
 
 # @app.task
-def solve(language, file_path,  prob_num):
+def solve(language, file_path, prob_num):
     if int(prob_num) in range(0, 4):
         solutions = os.listdir(f"solve/problem{prob_num}/solutions")
         testcases = os.listdir(f"solve/problem{prob_num}/testcases")
@@ -52,6 +52,9 @@ def solve(language, file_path,  prob_num):
         except subprocess.TimeoutExpired:
             proc.kill()
             raise Exception("timeout")
+        except Exception:
+            proc.kill()
+            raise Exception("runtime error")
 
         test = test_case.read()
         solution = solution_file.read()
