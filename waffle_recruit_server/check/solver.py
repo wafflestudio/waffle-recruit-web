@@ -17,15 +17,18 @@ def solve(language, file_path,  prob_num):
     else:
         raise Exception("problem number error")
 
-    try:
-        if language == "java":
-            compile_proc = subprocess.Popen(f"javac {file_path}*.java -d {file_path}", shell=True)
-            compile_proc.wait()
-        elif language == "kotlin":
-            compile_proc = subprocess.Popen(f"kotlinc {file_path}*.kt -include-runtime -d {file_path}main.jar", shell=True)
-            compile_proc.wait()
-    except Exception:
-        raise Exception("Compile Error")
+    if language == "java":
+        compile_proc = subprocess.Popen(f"javac {file_path}*.java -d {file_path}", shell=True)
+        compile_proc.wait()
+        outs, errs = compile_proc.communicate()
+        if errs:
+            raise Exception("compile error")
+    elif language == "kotlin":
+        compile_proc = subprocess.Popen(f"kotlinc {file_path}*.kt -include-runtime -d {file_path}main.jar", shell=True)
+        compile_proc.wait()
+        outs, errs = compile_proc.communicate()
+        if errs:
+            raise Exception("compile error")
 
     for test_case_filename, solution_filename in zip(testcases,solutions):
         test_case = open(f"solve/problem{prob_num}/testcases/{test_case_filename}", "r")
@@ -50,9 +53,10 @@ def solve(language, file_path,  prob_num):
             proc.kill()
             raise Exception("timeout")
 
+        test = test_case.read()
         solution = solution_file.read()
         test_case.close()
         solution_file.close()
         if outs.decode() != solution:
-            raise Exception("Wrong answer")
+            raise Exception("Wrong answer : resulted {a} in {b}".format(a=outs, b=test))
     return True
