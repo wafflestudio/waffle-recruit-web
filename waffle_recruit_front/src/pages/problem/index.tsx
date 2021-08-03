@@ -35,9 +35,11 @@ const content = `
 (Problem 3에 한해, Java나 Python의 경우 스켈레톤 코드가 제공됩니다.)
 
 **중요** 채점에 사용되는 언어 버전은 다음과 같습니다.
-- Java: openjdk 11
-- Python: 3.8
-- nodeJS: 16 (ES6 지원)
+- Java: openjdk v11
+- Python: v3.6.9
+- nodeJS: v16.6.0 (ES6 지원)
+- typescript: ts-node v10.1.0 (tsc version 4.3.5)
+- kotlin: kotlin-jvm 1.5.21 (JRE 11.0.1+9-Ubuntu0-ubuntu2.18.04)
 
 그럼 건투를 빌어요!
 
