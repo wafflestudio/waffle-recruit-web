@@ -47,8 +47,7 @@ const ProblemPage: React.FC = () => {
   return (
     <div>
       <Sidebar />
-      {/*<Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>*/}
-      <Button onClick={() => toast.info('8월 5일 자정 오픈 예정입니다.')}>제출하기</Button>
+      <Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>
       <br />
       <br />
       <div className={styles.ReviewContainer}>
