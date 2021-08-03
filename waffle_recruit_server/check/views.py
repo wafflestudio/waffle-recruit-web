@@ -110,9 +110,9 @@ def problem(request, prob_num):
         try:
             solve(language, file_path, prob_num)
         except RuntimeError as e:
-            return JsonResponse({"error": "Runtime error", "detail": str(e)})
+            return JsonResponse({"error": "Runtime error", "detail": str(e)}, status=400)
         except CompileError as e:
-            return JsonResponse({"error": "Compile error", "detail": str(e)})
+            return JsonResponse({"error": "Compile error", "detail": str(e)}, status=400)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
 
