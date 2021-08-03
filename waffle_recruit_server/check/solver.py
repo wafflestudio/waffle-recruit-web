@@ -18,13 +18,13 @@ def solve(language, file_path,  prob_num):
         raise Exception("problem number error")
 
     if language == "java":
-        compile_proc = subprocess.Popen(f"javac {file_path}*.java -d {file_path}", shell=True)
+        compile_proc = subprocess.Popen(f"javac {file_path}*.java -d {file_path}", shell=True, stderr=subprocess.PIPE)
         compile_proc.wait()
         outs, errs = compile_proc.communicate()
         if errs:
             raise Exception("compile error")
     elif language == "kotlin":
-        compile_proc = subprocess.Popen(f"kotlinc {file_path}*.kt -include-runtime -d {file_path}main.jar", shell=True)
+        compile_proc = subprocess.Popen(f"kotlinc {file_path}*.kt -include-runtime -d {file_path}main.jar", shell=True, stderr=subprocess.PIPE)
         compile_proc.wait()
         outs, errs = compile_proc.communicate()
         if errs:
