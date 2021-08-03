@@ -1,6 +1,6 @@
 import React, { SyntheticEvent, useEffect, useState } from 'react';
 
-import { AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import { useFormik } from 'formik';
 import produce from 'immer';
 import { useMutation } from 'react-query';
@@ -54,7 +54,7 @@ const Submit: React.FC = () => {
 
   const submitAnswerMutation = useMutation<
     AxiosResponse<never>,
-    AxiosResponse<{ remain: number } | { error: string }>,
+    AxiosError<{ remain: number } | { error: string, detail?: string }>,
     ISubmit,
     unknown
   >(
@@ -71,10 +71,11 @@ const Submit: React.FC = () => {
         history.push(`/problem/${prob_num}`);
       },
       onError: (res) => {
-        if (res.status === 400 && 'error' in res.data) {
-          toast.error('오답입니다!');
-        } else if (res.status === 402 && 'remain' in res.data) {
-          const remain = res.data.remain;
+        if (res.response?.data && 'error' in res.response.data) {
+          toast.error(res.response?.data.error);
+          history.push('/problem/0');
+        } else if (res.response?.data && 'remain' in res.response.data) {
+          const remain = res.response?.data.remain;
           toast.info(remain + ' 초 뒤에 제출할 수 있습니다.');
         } else {
           toast.error('알 수 없는 오류가 발생했습니다. 오류가 지속되면 recruit@wafflestudio.com 으로 문의 부탁드립니다.');
