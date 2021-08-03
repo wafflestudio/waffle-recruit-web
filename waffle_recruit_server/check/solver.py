@@ -6,6 +6,13 @@ import subprocess
 
 # app = Celery('tasks', broker='pyamqp://')
 
+class RuntimeError(Exception):
+    pass
+
+
+class CompileError(Exception):
+    pass
+
 
 # @app.task
 def solve(language, file_path, prob_num):
@@ -22,7 +29,7 @@ def solve(language, file_path, prob_num):
         compile_proc.wait()
         outs, errs = compile_proc.communicate()
         if errs:
-            raise Exception("compile error")
+            raise CompileError(errs.decode())
     elif language == "kotlin":
         compile_proc = subprocess.Popen(f"kotlinc {file_path}*.kt -include-runtime -d {file_path}main.jar", shell=True, stderr=subprocess.PIPE)
         compile_proc.wait()
@@ -49,12 +56,14 @@ def solve(language, file_path, prob_num):
             raise Exception("language error")
         try:
             outs, errs = proc.communicate(timeout=1)
+            if errs:
+                raise RuntimeError(errs.decode())
         except subprocess.TimeoutExpired:
             proc.kill()
             raise Exception("timeout")
         except Exception:
             proc.kill()
-            raise Exception("runtime error")
+            raise Exception("Server error")
 
         test = test_case.read()
         solution = solution_file.read()

@@ -13,7 +13,7 @@ from datetime import timedelta
 
 from check.generate_input import problem1, problem2
 from check.models import Profile, Solver
-from check.solver import solve
+from check.solver import solve, CompileError, RuntimeError
 from waffle_recruit_server import settings
 
 problems = [problem1, problem2]
@@ -85,8 +85,8 @@ def problem(request, prob_num):
         time_now = now()
         # block too many request per time
         if last_visit is None or last_visit + timedelta(seconds=10) < time_now:
-            Profile.objects.filter(pk=request.user.pk).update(
-                last_visit=time_now)
+            profile.last_visit = time_now
+            profile.save()
         else:
             time_remain = 10 - int((time_now - last_visit).total_seconds())
             return JsonResponse({"remain": time_remain}, status=402)
@@ -109,8 +109,11 @@ def problem(request, prob_num):
 
         try:
             solve(language, file_path, prob_num)
+        except RuntimeError as e:
+            return JsonResponse({"error": "Runtime error", "detail": str(e)})
+        except CompileError as e:
+            return JsonResponse({"error": "Compile error", "detail": str(e)})
         except Exception as e:
-            print(e)
             return JsonResponse({"error": str(e)}, status=400)
 
         if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
