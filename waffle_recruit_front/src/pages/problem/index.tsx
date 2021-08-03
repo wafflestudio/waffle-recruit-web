@@ -34,6 +34,11 @@ const content = `
 사용 가능한 언어는 Java, Python, Kotlin, Javascript, Typescript 로 제한됩니다.
 (Problem 3에 한해, Java나 Python의 경우 스켈레톤 코드가 제공됩니다.)
 
+**중요** 채점에 사용되는 언어 버전은 다음과 같습니다.
+- Java: openjdk 11
+- Python: 3.8
+- nodeJS: 16 (ES6 지원)
+
 그럼 건투를 빌어요!
 
 > 제출 후에는 자기소개서와 깃허브 아이디를 recruit@wafflestudio.com 으로 반드시 보내주셔야 지원이 완료됩니다. <
