@@ -2,6 +2,7 @@ import hashlib
 import json
 import os
 import boto3
+import shutil
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -93,10 +94,13 @@ def problem(request, prob_num):
         file_path = f"codes/{credential}/{prob_num}/"
 
         try:
-            os.rmdir(file_path)
+            shutil.rmtree(file_path)
         except Exception:
             pass
-        os.makedirs(file_path)
+        try:
+            os.makedirs(file_path)
+        except Exception:
+            pass
 
         for file in files:
             local_file = open(file_path + file['filename'], 'w')
