@@ -22,6 +22,7 @@
 - sample response
   - emtpy response with status code 204, if solver is pending. 
   - `{"error": "Exception()"}`, with status code 500 (unexpected celery error)
+  - `{"error": "No submission exists"}`, with status code 404 (no submission)
   - `{"error": "Wrong answer : resulted b'' in "}`, with status code 400 (submitted code error)
     - 기존과 동일한 형식
   - empty response with status code 200, if first solved
