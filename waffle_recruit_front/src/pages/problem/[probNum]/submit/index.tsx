@@ -6,7 +6,7 @@ import produce from 'immer';
 import { useIsMutating, useMutation } from 'react-query';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Button, Form, Input, Select, Tab, TextArea } from 'semantic-ui-react';
+import { Button, Dimmer, Form, Input, Loader, Select, Tab, TextArea } from 'semantic-ui-react';
 
 import { requester } from '../../../../apis/requester';
 
@@ -206,31 +206,41 @@ const Submit: React.FC = () => {
   };
 
   return (
-    <Form className={styles.form} onSubmit={handleSubmit}>
-      <h2 className={styles.titleTrailing}>제출란</h2>
+    <>
+      <Form className={styles.form} onSubmit={handleSubmit}>
+        <h2 className={styles.titleTrailing}>제출란</h2>
 
-      <Select
-        className={styles.radioWrapper}
-        options={['java', 'python', 'typescript', 'javascript', 'kotlin'].map((item) => ({ key: item, value: item, text: item }))}
-        placeholder={'언어를 선택하세요'}
-        onChange={handleLanguageChange}
-      />
+        <Select
+          className={styles.radioWrapper}
+          options={['java', 'python', 'typescript', 'javascript', 'kotlin'].map((item) => ({
+            key: item,
+            value: item,
+            text: item,
+          }))}
+          placeholder={'언어를 선택하세요'}
+          onChange={handleLanguageChange}
+        />
 
-      {values.language !== null && (
-        <>
-          <Tab
-            activeIndex={selectedTab}
-            onTabChange={handleTabChange}
-            menu={{ fluid: true, vertical: true, tabular: true }}
-            panes={panes}
-          />
+        {values.language !== null && (
+          <>
+            <Tab
+              activeIndex={selectedTab}
+              onTabChange={handleTabChange}
+              menu={{ fluid: true, vertical: true, tabular: true }}
+              panes={panes}
+            />
 
-          <Button className={styles.titleTrailingClickable} type={'submit'}>
-            제출
-          </Button>
-        </>
-      )}
-    </Form>
+            <Button className={styles.titleTrailingClickable} type={'submit'}>
+              제출
+            </Button>
+          </>
+        )}
+      </Form>
+
+      <Dimmer active={isSubmitting}>
+        <Loader />
+      </Dimmer>
+    </>
   );
 };
 

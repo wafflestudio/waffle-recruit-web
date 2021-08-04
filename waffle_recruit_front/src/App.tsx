@@ -68,7 +68,7 @@ const App: React.FC = () => {
       <Footer />
       <ToastContainer
         position="bottom-right"
-        autoClose={5000}
+        autoClose={false}
         hideProgressBar
         newestOnTop={false}
         closeOnClick
@@ -78,7 +78,7 @@ const App: React.FC = () => {
         pauseOnHover
       />
       <Modal style={{ position: 'fixed', left: 100, right: 100 }} open={isOpenModal} onClose={() => setOpenModal(false)}>
-        <Header icon="archive" content="와플스튜디오 루키 리크루팅 코딩 테스트 채점 사과문" />
+        <Header icon="archive" content="와플스튜디오 루키 리크루팅 코딩 테스트 채점 사과문 (8/4 20시 38분 업데이트)" />
         <Modal.Content scrolling>
           <ReactMarkdown
             source={`\`\`\`
