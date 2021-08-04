@@ -69,6 +69,6 @@ def solve(language, file_path, prob_num):
         solution = solution_file.read()
         test_case.close()
         solution_file.close()
-        if outs.decode().rstrip() != solution.rstrip():
+        if outs.decode().rstrip('\n') != solution.rstrip('\n'):
             raise Exception("Wrong answer : resulted {a} in {b}".format(a=outs, b=test))
     return True
