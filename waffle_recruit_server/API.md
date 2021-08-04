@@ -13,7 +13,7 @@
 - sample response
   - ```{"error": "invalid filename: `..` is not allowed"}``` with status code 400
   - `{"remain": 5}` with status code 402
-  - `{"task_id": "5d64c62f-a75e-44c5-bfb0-bef4a193e3c1"}` with status code 202
+  - empty response with status code 202
 - 기존에 처리중이던 task는 취소되고 이번 요청이 새로 발생.
 
 ### GET /check/prob/<prob_num>/result/
