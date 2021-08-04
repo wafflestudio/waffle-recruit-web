@@ -11,7 +11,7 @@ from django.utils.timezone import now
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt, get_token
 from datetime import timedelta
 
-from check.models import Profile, Solver
+from check.models import Profile, Solver, Submission
 from check.tasks import run_solver
 from waffle_recruit_server import settings
 from celery.result import AsyncResult
@@ -70,13 +70,51 @@ def problem(request, prob_num):
     elif request.method == 'GET':
         solved = Solver.objects.filter(
             user=request.user, problem_num=prob_num).exists()
-        result = {'solved': solved}
+        try:
+            task_id = Submission.objects.filter(user=request.user, prob_num=prob_num).get().task_id
+            task = AsyncResult(task_id)
+            if task.ready():
+                result = task.result
+                if isinstance(result, Exception):
+                    return JsonResponse({'error': repr(result)}, status=500)
+                else:
+                    solved, original_prob_num, error = result
+                    if original_prob_num != prob_num:
+                        return JsonResponse({'error': 'invalid problem number'}, status=500)
+                    if not solved:
+                        if 'detail' in error:
+                            message = f"{error.get('error')}: {error.get('detail')}"
+                        else:
+                            message = error.get('error')
+                        task_result = {
+                            'status': 'wrong',
+                            'message': message,
+                        }
+                    else:
+                        solved = True
+                        if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
+                            # First solve of problem
+                            Solver(problem_num=prob_num, user=request.user).save()
+                            task_result = {
+                                'status': 'correct',
+                                'message': 'correct',
+                            }
+                        else:
+                            # Already solved problem
+                            task_result = {
+                                'status': 'correct',
+                                'message': 'already correct',
+                            }
+            else:
+                task_result = {
+                    'status': 'pending',
+                    'message': 'pending',
+                }
+        except Submission.DoesNotExist:
+            task_result = None
+        return JsonResponse({'solved': solved, 'task': task_result}, status=200)
 
-        return JsonResponse(result, status=200)
     elif request.method == 'POST':
-        req_data = json.loads(request.body.decode())
-        files = req_data['files']
-        language = req_data['language']
         profile = Profile.objects.get(user=request.user)
         last_visit = profile.last_visit
         credential = profile.credential
@@ -89,6 +127,12 @@ def problem(request, prob_num):
             time_remain = 10 - int((time_now - last_visit).total_seconds())
             return JsonResponse({"remain": time_remain}, status=402)
 
+        try:
+            original_task = Submission.objects.filter(user=request.user, prob_num=prob_num).get()
+            AsyncResult(original_task.task_id).revoke()
+        except Submission.DoesNotExist:
+            original_task = Submission(user=request.user, prob_num=prob_num)
+        # save files
         file_path = f"codes/{credential}/{prob_num}/"
 
         try:
@@ -99,7 +143,9 @@ def problem(request, prob_num):
             os.makedirs(file_path)
         except Exception:
             pass
-
+        req_data = json.loads(request.body.decode())
+        files = req_data['files']
+        language = req_data['language']
         for file in files:
             if '..' in file['filename']:
                 return JsonResponse({"error": "invalid filename: `..` is not allowed"}, status=400)
@@ -107,38 +153,13 @@ def problem(request, prob_num):
             local_file.write(file['code'])
             local_file.close()
 
-        task: AsyncResult = run_solver.delay(language, file_path, prob_num)
-        return JsonResponse({'task_id': task.id}, status=202)
+        task: AsyncResult = run_solver.delay(language, file_path, prob_num=prob_num)
+        original_task.task_id = task.id
+        original_task.save()
+        return HttpResponse(status=202)
 
     else:
         return HttpResponseNotAllowed(['POST', 'GET'])
-
-
-def problem_task_status(request, prob_num, task_id):
-    if not request.user.is_authenticated:
-        return HttpResponse(status=401)
-    elif request.method == 'GET':
-        task = AsyncResult(task_id)
-        if task.ready():
-            result = task.result
-            if isinstance(result, Exception):
-                return JsonResponse({'error': repr(result)}, status=500)
-            else:
-                solved, error = result
-                if not solved:
-                    return JsonResponse(error, status=400)
-
-                if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
-                    # First solve of problem
-                    Solver(problem_num=prob_num, user=request.user).save()
-                    return HttpResponse(status=200)
-                else:
-                    # Already solved problem
-                    return HttpResponse(status=202)
-        else:
-            return HttpResponse(status=204)
-    else:
-        return HttpResponseNotAllowed(['GET'])
 
 
 def prob_solvers(request, prob_num):
