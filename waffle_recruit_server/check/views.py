@@ -14,6 +14,7 @@ from datetime import timedelta
 from check.models import Profile, Solver
 from check.tasks import run_solver
 from waffle_recruit_server import settings
+from celery.result import AsyncResult
 
 
 def signup(request):
@@ -106,21 +107,38 @@ def problem(request, prob_num):
             local_file.write(file['code'])
             local_file.close()
 
-        task = run_solver.delay(language, file_path, prob_num)
-        solved, error = task.get(timeout=10)
-        if not solved:
-            return JsonResponse(error, status=400)
-
-        if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
-            # First solve of problem
-            Solver(problem_num=prob_num, user=request.user).save()
-            return HttpResponse(status=200)
-        else:
-            # Already solved problem
-            return HttpResponse(status=202)
+        task: AsyncResult = run_solver.delay(language, file_path, prob_num)
+        return JsonResponse({'task_id': task.id}, status=202)
 
     else:
         return HttpResponseNotAllowed(['POST', 'GET'])
+
+
+def problem_task_status(request, prob_num, task_id):
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+    elif request.method == 'GET':
+        task = AsyncResult(task_id)
+        if task.ready():
+            result = task.result
+            if isinstance(result, Exception):
+                return JsonResponse({'error': repr(result)}, status=500)
+            else:
+                solved, error = result
+                if not solved:
+                    return JsonResponse(error, status=400)
+
+                if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
+                    # First solve of problem
+                    Solver(problem_num=prob_num, user=request.user).save()
+                    return HttpResponse(status=200)
+                else:
+                    # Already solved problem
+                    return HttpResponse(status=202)
+        else:
+            return HttpResponse(status=204)
+    else:
+        return HttpResponseNotAllowed(['GET'])
 
 
 def prob_solvers(request, prob_num):
