@@ -2,10 +2,6 @@ import os
 import subprocess
 
 
-# from celery import Celery
-
-# app = Celery('tasks', broker='pyamqp://')
-
 class RuntimeError(Exception):
     pass
 
@@ -14,7 +10,6 @@ class CompileError(Exception):
     pass
 
 
-# @app.task
 def solve(language, file_path, prob_num):
     if int(prob_num) in range(0, 4):
         solutions = os.listdir(f"solve/problem{prob_num}/solutions")
@@ -31,13 +26,14 @@ def solve(language, file_path, prob_num):
         if errs:
             raise CompileError(errs.decode())
     elif language == "kotlin":
-        compile_proc = subprocess.Popen(f"kotlinc {file_path}*.kt -include-runtime -d {file_path}main.jar", shell=True, stderr=subprocess.PIPE)
+        compile_proc = subprocess.Popen(f"kotlinc {file_path}*.kt -include-runtime -d {file_path}main.jar", shell=True,
+                                        stderr=subprocess.PIPE)
         compile_proc.wait()
         outs, errs = compile_proc.communicate()
         if errs:
             raise Exception("compile error")
 
-    for test_case_filename, solution_filename in zip(testcases,solutions):
+    for test_case_filename, solution_filename in zip(testcases, solutions):
         test_case = open(f"solve/problem{prob_num}/testcases/{test_case_filename}", "r")
         solution_file = open(f"solve/problem{prob_num}/solutions/{solution_filename}", "r")
 

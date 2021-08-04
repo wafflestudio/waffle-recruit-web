@@ -11,12 +11,9 @@ from django.utils.timezone import now
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt, get_token
 from datetime import timedelta
 
-from check.generate_input import problem1, problem2
 from check.models import Profile, Solver
-from check.solver import solve, CompileError, RuntimeError
+from check.tasks import run_solver
 from waffle_recruit_server import settings
-
-problems = [problem1, problem2]
 
 
 def signup(request):
@@ -103,18 +100,16 @@ def problem(request, prob_num):
             pass
 
         for file in files:
+            if '..' in file['filename']:
+                return JsonResponse({"error": "invalid filename: `..` is not allowed"}, status=400)
             local_file = open(file_path + file['filename'], 'w')
             local_file.write(file['code'])
             local_file.close()
 
-        try:
-            solve(language, file_path, prob_num)
-        except RuntimeError as e:
-            return JsonResponse({"error": "Runtime error", "detail": str(e)}, status=400)
-        except CompileError as e:
-            return JsonResponse({"error": "Compile error", "detail": str(e)}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
+        task = run_solver.delay(language, file_path, prob_num)
+        solved, error = task.get(timeout=10)
+        if not solved:
+            return JsonResponse(error, status=400)
 
         if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
             # First solve of problem
@@ -164,5 +159,3 @@ def token(request):
         return JsonResponse({"token": request.META["CSRF_COOKIE"]}, status=200)
     else:
         return HttpResponseNotAllowed(['GET'])
-
-# Create your views here.
