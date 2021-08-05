@@ -78,11 +78,13 @@ const App: React.FC = () => {
         pauseOnHover
       />
       <Modal style={{ position: 'fixed', left: 100, right: 100 }} open={isOpenModal} onClose={() => setOpenModal(false)}>
-        <Header icon="archive" content="와플스튜디오 루키 리크루팅 코딩 테스트 채점 사과문 (8/6 00시 08분 업데이트)" />
+        <Header icon="archive" content="와플스튜디오 루키 리크루팅 코딩 테스트 공지사항 (8/6 00시 08분 업데이트)" />
         <Modal.Content scrolling>
           <ReactMarkdown
             source={`\`\`\`
 안녕하세요, 와플스튜디오 운영팀입니다.
+
+몇 가지 공지사항 전달드립니다.
 
 1. 문제 3번 테스트케이스 오류
 
@@ -93,7 +95,7 @@ const App: React.FC = () => {
     
 2. 문제 2번 스켈레톤 ( 파이썬 ) 오류
 
-  - student.py 의 출력 형식에, 학년과 이름의 순서가 바뀌어 있는 오류가 있었습니다. 해당 스켈레톤은 현재 수정되었습니다.
+  - student.py 의 출력 형식에, 학년과 이름의 순서가 바뀌어 있는 오류가 있었습니다. 해당 스켈레톤은 현재는 수정되었습니다.
   
 3. 서버 점검
   
