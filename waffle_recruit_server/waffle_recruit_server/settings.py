@@ -120,6 +120,7 @@ CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'https://recruit.wafflestudio.com',
     'http://recruit.wafflestudio.com',
+    'http://localhost:3000',
 )
 CORS_ALLOW_CREDENTIALS = True
 
@@ -127,3 +128,6 @@ CORS_ALLOW_CREDENTIALS = True
 AWS_REGION = 'ap-northeast-2'
 AWS_S3_HOST = 'waffle-recruit-web.s3.%s.amazonaws.com' % AWS_REGION
 AWS_STORAGE_BUCKET_NAME = 'waffle-recruit-web'
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BROKER", "redis://localhost:6379/0")

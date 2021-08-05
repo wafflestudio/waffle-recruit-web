@@ -1,0 +1,1 @@
+celery -A waffle_recruit_server worker -l info -c 1

@@ -71,12 +71,8 @@ const Submit: React.FC = () => {
       return requester.post(`/check/prob/${prob_num}/`, values);
     },
     {
-      onSuccess: (res) => {
-        if (res.status === 200) {
-          toast.success('정답입니다!');
-        } else if (res.status === 202) {
-          toast.info('이미 해결된 문제입니다.');
-        }
+      onSuccess: () => {
+        toast.info('채점이 시작되었습니다.');
         history.push(`/problem/${prob_num}`);
       },
       onError: (res) => {

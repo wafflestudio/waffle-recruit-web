@@ -8,7 +8,7 @@ import ReactMarkdown from 'react-markdown';
 import { useQuery } from 'react-query';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Button } from 'semantic-ui-react';
+import { Button, Icon, Loader, Popup } from 'semantic-ui-react';
 
 import Sidebar from '../../../component/Sidebar';
 
@@ -23,8 +23,23 @@ const ProblemPage: React.FC = () => {
     params: { prob_num },
   } = useRouteMatch<{ prob_num: string }>();
 
-  const isSolvedQuery = useQuery<{ solved: boolean }>(`/check/prob/${prob_num}/`);
-  const isSolved = isSolvedQuery.data?.solved;
+  const isSolvedQuery = useQuery<{
+    solved: boolean;
+    task:
+      | {
+          status: 'correct';
+          message: 'correct' | 'already_correct';
+        }
+      | {
+          status: 'pending';
+          message: 'pending';
+        }
+      | {
+          status: 'wrong';
+          message: 'string';
+        };
+  }>(`/check/prob/${prob_num}/`);
+
   const solvedCountQuery = useQuery<{ number: number }>(`/check/solvers/${prob_num}/`);
   const solvedCount = solvedCountQuery.data ? solvedCountQuery.data.number : '-';
 
@@ -51,13 +66,33 @@ const ProblemPage: React.FC = () => {
       <br />
       <br />
       <div className={styles.ReviewContainer}>
-        <div style={{ display: 'flex', height: 20, alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', height: 20, alignItems: 'center', gap: 8, position: 'relative' }}>
           <ReactMarkdown source={`# ${title}`} renderers={{ text: emojiSupport }} />
-          {isSolved ? (
-            <span className="ui green label mini tag">해결 완료</span>
-          ) : (
-            <span className="ui red label mini tag">미해결</span>
-          )}
+          {isSolvedQuery.data?.task &&
+            {
+              correct: (
+                <Popup trigger={<Icon name={'check circle'} color={'green'} />}>
+                  <Popup.Header>마지막 제출 채점 결과</Popup.Header>
+                  <Popup.Content>정답입니다!</Popup.Content>
+                </Popup>
+              ),
+              pending: (
+                <Popup
+                  content={'제출하신 코드를 채점중입니다. 결과를 보려면 새로고침해 주세요.'}
+                  trigger={<Loader inline active />}
+                />
+              ),
+              wrong: (
+                <Popup trigger={<Icon name={'exclamation circle'} color={'red'} />}>
+                  <Popup.Header>마지막 제출 채점 결과</Popup.Header>
+                  <Popup.Content>
+                    오답입니다:
+                    <br />
+                    {isSolvedQuery.data.task.message}
+                  </Popup.Content>
+                </Popup>
+              ),
+            }[isSolvedQuery.data?.task.status]}
         </div>
         <ReactMarkdown source={markdownInputStr} />
         {prob_num === '3' && (
