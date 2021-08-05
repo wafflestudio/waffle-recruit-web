@@ -70,8 +70,9 @@ def problem(request, prob_num):
     if not request.user.is_authenticated:
         return HttpResponse(status=401)
     elif request.method == 'GET':
-        solved = Solver.objects.filter(
+        already_solved = Solver.objects.filter(
             user=request.user, problem_num=prob_num).exists()
+        solved = already_solved
         try:
             task_id = Submission.objects.filter(user=request.user, prob_num=prob_num).get().task_id
             task = AsyncResult(task_id)
@@ -93,8 +94,7 @@ def problem(request, prob_num):
                             'message': message,
                         }
                     else:
-                        solved = True
-                        if not Solver.objects.filter(problem_num=prob_num, user=request.user).exists():
+                        if not already_solved:
                             # First solve of problem
                             Solver(problem_num=prob_num, user=request.user).save()
                             task_result = {
@@ -114,7 +114,7 @@ def problem(request, prob_num):
                 }
         except Submission.DoesNotExist:
             task_result = None
-        return JsonResponse({'solved': solved, 'task': task_result}, status=200)
+        return JsonResponse({'solved': already_solved or solved, 'task': task_result}, status=200)
 
     elif request.method == 'POST':
         profile = Profile.objects.get(user=request.user)
