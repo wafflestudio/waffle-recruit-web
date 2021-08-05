@@ -1,0 +1,21 @@
+add -a 3 vxzxl 3 ifucv 1 rjmzd 1 ucsrj 1 ashtz
+list -g 1
+list -g 1
+list -g 2
+add 1 jnaor
+delete 3 yrtfb
+list
+delete 1 dwjnt
+delete 2 qivqk
+list -g 0
+list -g 0
+add 3 uhlpn
+add 3 dldxt
+list -r
+add -a 2 ljsoh 2 dddfw 1 riuzz 1 pjocp 2 nbewz
+list -g 1
+list -g 0
+list -g 2
+add 1 kvwkm
+list
+q

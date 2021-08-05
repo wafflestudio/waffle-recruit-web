@@ -1,0 +1,21 @@
+add 2 fwtmo
+add 1 eysgo
+list -o name
+pin 2 djmlv
+add 1 sznuj
+list
+list
+add -a 2 qcywo 1 sznuj 2 evudz 2 ebgbg 2 eggev
+unpin 3 wyjer
+add 1 emrch
+list
+add 2 zfehe
+list -o added
+add 3 pftuw
+add 1 hclkq
+add 2 zqogn
+add -a 2 nqboq 1 avxjn 2 oould 3 sebuz 2 aoiss
+add 2 njgir
+list
+list
+q

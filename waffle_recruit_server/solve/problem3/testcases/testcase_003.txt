@@ -1,0 +1,21 @@
+add -a 3 iooew 2 gcgrq 2 ksswh 2 qltro 2 wlkjz
+add -a 1 nikhl 3 vyzdi 1 etzxh 3 ggbua 2 ujquj
+list
+add 2 himus
+add 2 himus
+add 1 nvxas
+add -a 3 jxzsh 1 qtvrg 3 cbdvw 3 lnjdo 3 qqnwv
+list -r
+pin 3 xwhno
+list -r
+delete 3 yubpl
+add 1 jfzde
+add -a 3 james 2 james 3 umucp 1 pbthu 1 ktofq
+delete 2 kyoiw
+add -a 1 bsykh 1 dscgg 3 tiwow 2 fsgzg 3 dfgzi
+delete 1 james
+pin 3 jwqjb
+add 1 james
+pin 2 james
+list -n james
+q

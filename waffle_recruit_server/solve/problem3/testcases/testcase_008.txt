@@ -1,0 +1,21 @@
+add 1 qkymb
+add -a 1 ezxyf 2 lscer 2 ioxaz 1 jspzi 3 mnuun
+add 2 xejzt
+delete 2 uepgz
+pin 3 mnuun
+add -a 3 uzolt 3 fgvfl 3 tjuve 2 hjjss 3 wziro
+add 1 fipyx
+add 3 kumpb
+list -o name
+list
+add 3 byamk
+add 3 byamk
+list
+add 1 tbbog
+list -g 2
+add 1 qeuly
+add -a 2 yjfyz 2 gdonp 3 vwjmv 1 qeuly 2 zxdgu
+list
+unpin 3 mnuun
+list -g 1
+q
