@@ -22,3 +22,9 @@ class Solver(models.Model):
 
     def __str__(self):
         return str(self.user.username)
+
+
+class Submission(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    prob_num = models.PositiveSmallIntegerField()
+    task_id = models.CharField(max_length=36)

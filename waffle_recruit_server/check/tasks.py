@@ -7,10 +7,10 @@ from .solver import RuntimeError, CompileError
 def run_solver(language, file_path, prob_num):
     try:
         solve(language, file_path, prob_num)
-        return True, {}
+        return True, prob_num, {}
     except RuntimeError as e:
-        return False, {"error": "Runtime error", "detail": str(e)}
+        return False, prob_num, {"error": "Runtime error", "detail": str(e)}
     except CompileError as e:
-        return False, {"error": "Compile error", "detail": str(e)}
+        return False, prob_num, {"error": "Compile error", "detail": str(e)}
     except Exception as e:
-        return False, {"error": str(e)}
+        return False, prob_num, {"error": str(e)}
