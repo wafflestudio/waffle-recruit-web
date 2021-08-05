@@ -1,16 +1,55 @@
 import React from 'react';
 
+import { useQuery } from 'react-query';
 import { Link, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Loader } from 'semantic-ui-react';
 
 import { requester } from '../apis/requester';
 import { useAuthContext } from '../context/authContext';
 
 import './Sidebar.css';
 
+type IProbStatusResponse =
+  | {
+      status: 'correct';
+      message: 'correct' | 'already_correct';
+    }
+  | {
+      status: 'pending';
+      message: 'pending';
+    }
+  | {
+      status: 'wrong';
+      message: 'string';
+    };
+
 const Sidebar: React.FC = () => {
   const history = useHistory();
   const { user, clearUser } = useAuthContext();
+
+  const isSolvedQuery0 = useQuery<{
+    solved: boolean;
+    task: IProbStatusResponse;
+  }>(`/check/prob/0/`);
+  const isSolvedQuery1 = useQuery<{
+    solved: boolean;
+    task: IProbStatusResponse;
+  }>(`/check/prob/1/`);
+  const isSolvedQuery2 = useQuery<{
+    solved: boolean;
+    task: IProbStatusResponse;
+  }>(`/check/prob/2/`);
+  const isSolvedQuery3 = useQuery<{
+    solved: boolean;
+    task: IProbStatusResponse;
+  }>(`/check/prob/3/`);
+  const isSolvedList: (boolean | undefined)[] = [
+    isSolvedQuery0.data?.solved,
+    isSolvedQuery1.data?.solved,
+    isSolvedQuery2.data?.solved,
+    isSolvedQuery3.data?.solved,
+  ];
 
   const onClickSignOut = async () => {
     try {
@@ -22,6 +61,16 @@ const Sidebar: React.FC = () => {
     }
   };
 
+  const renderSuccessLabel = (isSolved: boolean | undefined) => {
+    return isSolved === true ? (
+      <span className="ui green label mini tag">해결 완료</span>
+    ) : isSolved === false ? (
+      <span className="ui red label mini tag">미해결</span>
+    ) : (
+      <Loader active />
+    );
+  };
+
   return (
     <div className="additional">
       <div className="sidebar">
@@ -30,13 +79,16 @@ const Sidebar: React.FC = () => {
         <br />
         <br />
         <br />
-        <Link to={'/problem/0/'}>test problem</Link>
+        <Link to={'/problem/0/'}>test problem {renderSuccessLabel(isSolvedList[0])}</Link>
         <br />
-        <Link to={'/problem/1/'}>Problem 1</Link>
         <br />
-        <Link to={'/problem/2/'}>Problem 2</Link>
+        <Link to={'/problem/1/'}>Problem 1 {renderSuccessLabel(isSolvedList[1])}</Link>
         <br />
-        <Link to={'/problem/3/'}>Problem 3</Link>
+        <br />
+        <Link to={'/problem/2/'}>Problem 2 {renderSuccessLabel(isSolvedList[2])}</Link>
+        <br />
+        <br />
+        <Link to={'/problem/3/'}>Problem 3 {renderSuccessLabel(isSolvedList[3])}</Link>
         <br />
         <br />
         <br />

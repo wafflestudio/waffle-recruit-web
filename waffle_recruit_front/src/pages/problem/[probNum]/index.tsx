@@ -23,8 +23,25 @@ const ProblemPage: React.FC = () => {
     params: { prob_num },
   } = useRouteMatch<{ prob_num: string }>();
 
-  const isSolvedQuery = useQuery<{ solved: boolean }>(`/check/prob/${prob_num}/`);
-  const isSolved = isSolvedQuery.data?.solved;
+  const isSolvedQuery = useQuery<{
+    solved: boolean;
+    task:
+      | {
+          status: 'correct';
+          message: 'correct' | 'already_correct';
+        }
+      | {
+          status: 'pending';
+          message: 'pending';
+        }
+      | {
+          status: 'wrong';
+          message: 'string';
+        };
+  }>(`/check/prob/${prob_num}/`);
+  const task = isSolvedQuery.data?.task;
+
+  console.log(task);
   const solvedCountQuery = useQuery<{ number: number }>(`/check/solvers/${prob_num}/`);
   const solvedCount = solvedCountQuery.data ? solvedCountQuery.data.number : '-';
 
@@ -53,11 +70,6 @@ const ProblemPage: React.FC = () => {
       <div className={styles.ReviewContainer}>
         <div style={{ display: 'flex', height: 20, alignItems: 'center', gap: 8 }}>
           <ReactMarkdown source={`# ${title}`} renderers={{ text: emojiSupport }} />
-          {isSolved ? (
-            <span className="ui green label mini tag">해결 완료</span>
-          ) : (
-            <span className="ui red label mini tag">미해결</span>
-          )}
         </div>
         <ReactMarkdown source={markdownInputStr} />
         {prob_num === '3' && (
