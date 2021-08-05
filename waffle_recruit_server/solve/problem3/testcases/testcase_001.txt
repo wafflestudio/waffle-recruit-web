@@ -1,0 +1,21 @@
+list -r
+add -a 2 zcuqv 1 xxgfn 2 wcpqp 3 ajrug 2 kqanr
+add -a 2 tibpl 1 hccan 3 rccci 2 hfpsb 3 qbbqt
+list -o added
+list -o name
+list -g 1
+list
+add 2 dgtfd
+list
+list -o name
+add -a 1 kwwxg 1 xubjy 2 sxqkd 3 vuvfk 2 bpjpj
+add 2 dhsho
+add -a 2 uuyqe 2 yjjno 3 pfmmy 1 tkndv 3 xhhcd
+add -a 1 rrgyj 2 wxmem 3 gvzjd 3 qjbtg 1 lqylk
+delete 1 uwjzd
+list -r
+pin 3 pfmmy
+add 1 gprsk
+list -o added
+list -o added
+q

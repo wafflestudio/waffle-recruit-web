@@ -1,0 +1,21 @@
+list -g 2
+add -a 1 npaas 1 yswpp 2 qmhbs 2 hqjld 1 fxajp
+list -g 1
+pin 1 npaas
+list -r
+add 2 boroq
+list
+unpin 3 fppev
+list -o name
+pin 1 yswpp
+list -r
+pin 3 gbefc
+delete 1 sjuhk
+add 2 aufvx
+pin 2 hqjld
+pin 2 hqjld
+list
+unpin 2 hqjld
+add -a 3 yvbsy 2 rwyfy 1 qbign 2 cdnwx 1 fosjd
+list
+q

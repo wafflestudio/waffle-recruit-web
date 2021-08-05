@@ -1,0 +1,21 @@
+list
+add 3 pifpk
+add 3 zbxly
+delete 2 rwjnz
+list
+add 1 kvegg
+list -g 2
+add -a 1 iwupu 3 udysd 3 aglqe 3 lhkzh 3 gokmn
+delete 3 dndak
+pin 2 enojs
+add 3 ojlhz
+add -a 2 msyik 1 mjpxq 3 kzwee 1 pnwna 3 opwei
+list -g 1
+list -r
+add 2 scsbq
+list -o grade
+list -g 2
+unpin 2 zdver
+list
+pin 3 syrkv
+q

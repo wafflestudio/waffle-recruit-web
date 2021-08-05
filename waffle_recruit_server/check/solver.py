@@ -65,10 +65,9 @@ def solve(language, file_path, prob_num):
             proc.kill()
             raise Exception("Server error")
 
-        test = test_case.read()
         solution = solution_file.read()
         test_case.close()
         solution_file.close()
         if outs.decode() != solution:
-            raise Exception("Wrong answer : resulted {a} in {b}".format(a=outs, b=test))
+            raise Exception("Wrong answer : your result was {}".format(outs))
     return True

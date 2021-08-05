@@ -1,0 +1,21 @@
+add -a 1 obwnv 2 iokpl 1 hooqd 3 thbpd 2 soqwr
+add -a 2 lotvy 1 mghbj 1 jwmcq 3 xfzvn 1 xawgypin 2 tnlfz
+pin 2 iokpl
+unpin 2 iokpl
+unpin 1 hooqd
+list -r
+add 2 tuzri
+add -a 2 koatr 2 uizxl 1 daxuc 3 nlnsi 1 wmera
+add -a 2 dmxwy 1 wlcwz 1 slxfq 2 kcbgp 2 jmeal
+add 1 icjeb
+add -a 3 abpmc 3 pizfc 1 qqxxk 2 djtdv 1 ccier
+list
+add 2 timkl
+delete 3 pizfc
+add -a 1 clvlt 3 sqgjf 1 cmdrd 1 qffwa 2 utfdr
+add 2 cixbq
+add 2 dgtdm
+delete 3 qlteu
+add -a 1 togtd 3 ludlz 1 dciss 1 ubukk 3 zktpl
+list
+q

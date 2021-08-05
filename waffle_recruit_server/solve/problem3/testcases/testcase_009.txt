@@ -1,0 +1,21 @@
+list -o grade
+add 1 lelwi
+unpin 3 mrpnm
+add -a 3 cukoj 3 xfrig 2 taalh 2 bimin 3 mjdjj
+add 2 qrdwy
+list -r
+list
+list
+add -a 1 pdyys 2 pczfi 1 qvfgi 1 mopqj 1 blsjc
+pin 1 jvfup
+add -a 3 ckwyp 1 mbedw 1 oohgg 1 jwqhg 1 mdfil
+list -r
+list
+add 1 dstyi
+add 3 pbipr
+list -o added
+list -o name
+delete 3 jlvvm
+list -g 1
+add -a 1 vnmrh 1 rkjri 3 uzgxn 2 idbzg 2 wlquh
+q
