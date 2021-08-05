@@ -20,13 +20,20 @@ def solve(language, file_path, prob_num):
         raise Exception("problem number error")
 
     if language == "java":
-        compile_proc = subprocess.Popen(f"javac {file_path}*.java -d {file_path}", shell=True, stderr=subprocess.PIPE)
+        compile_proc = subprocess.Popen(f"javac {file_path}*.java -d {file_path} -nowarn", shell=True, stderr=subprocess.PIPE)
         compile_proc.wait()
         outs, errs = compile_proc.communicate()
         if errs:
             raise CompileError(errs.decode())
     elif language == "kotlin":
-        compile_proc = subprocess.Popen(f"kotlinc {file_path}*.kt -include-runtime -d {file_path}main.jar", shell=True,
+        compile_proc = subprocess.Popen(f"kotlinc {file_path}*.kt -include-runtime -d {file_path}main.jar -nowarn", shell=True,
+                                        stderr=subprocess.PIPE)
+        compile_proc.wait()
+        outs, errs = compile_proc.communicate()
+        if errs:
+            raise Exception(f"compile error: {errs.decode()}")
+    elif language == "typescript":
+        compile_proc = subprocess.Popen(f"tsc {file_path}*.ts", shell=True,
                                         stderr=subprocess.PIPE)
         compile_proc.wait()
         outs, errs = compile_proc.communicate()
@@ -48,9 +55,9 @@ def solve(language, file_path, prob_num):
         elif language == "kotlin":
             proc = subprocess.Popen(["java", "-jar", file_path + "main.jar"], **kwargs)
         elif language == "javascript":
-            proc = subprocess.Popen(["babel-node", file_path], **kwargs)
+            proc = subprocess.Popen(["node", file_path], **kwargs)
         elif language == "typescript":
-            proc = subprocess.Popen(["ts-node", file_path], **kwargs)
+            proc = subprocess.Popen(["node", file_path], **kwargs)
         else:
             raise Exception("language error")
         try:
