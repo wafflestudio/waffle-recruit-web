@@ -64,7 +64,6 @@ def solve(language, file_path, prob_num):
         if errs:
             raise RuntimeError(errs.decode())
 
-        test = test_case.read()
         solution = solution_file.read()
         test_case.close()
         solution_file.close()
