@@ -31,40 +31,43 @@ def solve(language, file_path, prob_num):
         compile_proc.wait()
         outs, errs = compile_proc.communicate()
         if errs:
-            raise Exception("compile error")
+            raise Exception(f"compile error: {errs.decode()}")
 
     for test_case_filename, solution_filename in zip(testcases, solutions):
         test_case = open(f"solve/problem{prob_num}/testcases/{test_case_filename}", "r")
         solution_file = open(f"solve/problem{prob_num}/solutions/{solution_filename}", "r")
-
+        kwargs = {
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "stdin": test_case,
+        }
         if language == "python":
-            proc = subprocess.Popen(["python3", file_path + 'main.py'], stdout=subprocess.PIPE, stdin=test_case)
+            proc = subprocess.Popen(["python3", file_path + 'main.py'], **kwargs)
         elif language == "java":
-            proc = subprocess.Popen(["java", "-cp", file_path, "Main"], stdout=subprocess.PIPE, stdin=test_case)
+            proc = subprocess.Popen(["java", "-cp", file_path, "Main"], **kwargs)
         elif language == "kotlin":
-            proc = subprocess.Popen(["java", "-jar", file_path + "main.jar"], stdout=subprocess.PIPE,
-                                    stdin=test_case)
+            proc = subprocess.Popen(["java", "-jar", file_path + "main.jar"], **kwargs)
         elif language == "javascript":
-            proc = subprocess.Popen(["babel-node", file_path], stdout=subprocess.PIPE, stdin=test_case)
+            proc = subprocess.Popen(["babel-node", file_path], **kwargs)
         elif language == "typescript":
-            proc = subprocess.Popen(["ts-node", file_path], stdout=subprocess.PIPE, stdin=test_case)
+            proc = subprocess.Popen(["ts-node", file_path], **kwargs)
         else:
             raise Exception("language error")
         try:
-            outs, errs = proc.communicate(timeout=1)
-            if errs:
-                raise RuntimeError(errs.decode())
+            outs, errs = proc.communicate(timeout=1.1)
         except subprocess.TimeoutExpired:
             proc.kill()
             raise Exception("timeout")
-        except Exception:
+        except Exception as e:
             proc.kill()
             raise Exception("Server error")
+        if errs:
+            raise RuntimeError(errs.decode())
 
         test = test_case.read()
         solution = solution_file.read()
         test_case.close()
         solution_file.close()
         if outs.decode().rstrip('\n') != solution.rstrip('\n'):
-            raise Exception("Wrong answer : resulted {a} in {b}".format(a=outs, b=test))
+            raise Exception("Wrong answer : your output was '{a}'".format(a=outs.decode()))
     return True
