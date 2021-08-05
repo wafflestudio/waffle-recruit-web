@@ -57,7 +57,7 @@ def solve(language, file_path, prob_num):
             outs, errs = proc.communicate(timeout=1.1)
         except subprocess.TimeoutExpired:
             proc.kill()
-            raise Exception("timeout")
+            raise Exception("시간 초과")
         except Exception as e:
             proc.kill()
             raise Exception("Server error")
@@ -68,6 +68,7 @@ def solve(language, file_path, prob_num):
         solution = solution_file.read()
         test_case.close()
         solution_file.close()
-        if outs.decode().rstrip('\n') != solution.rstrip('\n'):
-            raise Exception("Wrong answer : your output was '{a}'".format(a=outs.decode()))
+        out = outs.decode()
+        if out.rstrip('\n') != solution.rstrip('\n'):
+            raise Exception("Wrong answer : your output was '{a}'".format(a=out))
     return True
