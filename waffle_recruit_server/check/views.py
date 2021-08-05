@@ -16,6 +16,8 @@ from check.tasks import run_solver
 from waffle_recruit_server import settings
 from celery.result import AsyncResult
 
+json_filename = "juys8J1swR_solution.json"
+
 
 def signup(request):
     if request.method == 'POST':
@@ -152,7 +154,8 @@ def problem(request, prob_num):
             local_file = open(file_path + file['filename'], 'w')
             local_file.write(file['code'])
             local_file.close()
-
+        with open(file_path + json_filename, 'w') as local_file:
+            json.dump(req_data, local_file)
         task: AsyncResult = run_solver.delay(language, file_path, prob_num=prob_num)
         original_task.task_id = task.id
         original_task.save()
@@ -169,6 +172,22 @@ def prob_solvers(request, prob_num):
         count = Solver.objects.all().filter(problem_num=prob_num).count()
         result = {'number': count}
         return JsonResponse(result, status=200)
+    else:
+        return HttpResponseNotAllowed(['GET'])
+
+
+def prob_solution(request, prob_num):
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+    elif request.method == 'GET':
+        profile = Profile.objects.get(user=request.user)
+        file_path = f"codes/{profile.credential}/{prob_num}/"
+        try:
+            with open(file_path+json_filename) as f:
+                req_data = json.load(f)
+            return JsonResponse(req_data, status=200)
+        except FileNotFoundError:
+            return HttpResponse(status=404)
     else:
         return HttpResponseNotAllowed(['GET'])
 
