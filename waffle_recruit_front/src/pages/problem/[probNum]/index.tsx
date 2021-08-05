@@ -85,7 +85,11 @@ const ProblemPage: React.FC = () => {
               wrong: (
                 <Popup trigger={<Icon name={'exclamation circle'} color={'red'} />}>
                   <Popup.Header>마지막 제출 채점 결과</Popup.Header>
-                  <Popup.Content>오답입니다.</Popup.Content>
+                  <Popup.Content>
+                    오답입니다:
+                    <br />
+                    {isSolvedQuery.data.task.message}
+                  </Popup.Content>
                 </Popup>
               ),
             }[isSolvedQuery.data?.task.status]}
