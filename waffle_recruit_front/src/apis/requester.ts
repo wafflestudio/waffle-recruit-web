@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // TODO .env.production
-const isProduction = false;
+const isProduction = true;
 
 export const requester = axios.create({
   baseURL: isProduction ? 'https://recruit-api.wafflestudio.com' : 'http://localhost:8000',
