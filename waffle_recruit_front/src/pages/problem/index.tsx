@@ -38,7 +38,7 @@ const content = `
 - Java: openjdk v11
 - Python: v3.6.9
 - nodeJS: v16.6.0 (ES6 지원)
-- typescript: ts-node v10.1.0 (tsc version 4.3.5)
+- typescript: nodeJS v16.6.0 (tsc version 4.3.5)
 - kotlin: kotlin-jvm 1.5.21 (JRE 11.0.1+9-Ubuntu0-ubuntu2.18.04)
 
 그럼 건투를 빌어요!
