@@ -131,7 +131,9 @@ def problem(request, prob_num):
 
         try:
             original_task = Submission.objects.filter(user=request.user, prob_num=prob_num).get()
-            AsyncResult(original_task.task_id).revoke()
+            _task = AsyncResult(original_task.task_id)
+            _task.revoke()
+            _task.forget()
         except Submission.DoesNotExist:
             original_task = Submission(user=request.user, prob_num=prob_num)
         # save files

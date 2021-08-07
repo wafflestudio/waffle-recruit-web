@@ -11,6 +11,7 @@ class CompileError(Exception):
 
 
 def solve(language, file_path, prob_num):
+    print("file path: " + file_path)
     if int(prob_num) in range(0, 4):
         solutions = os.listdir(f"solve/problem{prob_num}/solutions")
         testcases = os.listdir(f"solve/problem{prob_num}/testcases")
@@ -76,5 +77,6 @@ def solve(language, file_path, prob_num):
         solution_file.close()
         out = outs.decode()
         if out.rstrip('\n') != solution.rstrip('\n'):
-            raise Exception("Wrong answer : your output was '{a}'".format(a=out))
+            print("out: ", out)
+            raise Exception(f"Wrong answer : your output: {repr(out)}")
     return True
