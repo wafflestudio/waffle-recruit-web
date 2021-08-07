@@ -31,24 +31,24 @@ const App: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    requester.get<{ user?: string; token: string }>('/check/token/').then((res) => {
-      setTokenChecked(true);
-      setCsrf(res.data.token);
-      requester.defaults.headers['X-CSRFToken'] = res.data.token;
-      if (!res.data.user && isAuthNeeded) {
-        clearUser();
-        history.replace('/signin');
-      } else if (res.data.user) {
-        setUser(res.data.user);
-        if (!isAuthNeeded) {
-          history.replace('main');
-        }
-      }
-    });
-  }, [pathname]);
-
-  if (!isTokenChecked) return <Loader active />;
+  // useEffect(() => {
+  //   requester.get<{ user?: string; token: string }>('/check/token/').then((res) => {
+  //     setTokenChecked(true);
+  //     setCsrf(res.data.token);
+  //     requester.defaults.headers['X-CSRFToken'] = res.data.token;
+  //     if (!res.data.user && isAuthNeeded) {
+  //       clearUser();
+  //       history.replace('/signin');
+  //     } else if (res.data.user) {
+  //       setUser(res.data.user);
+  //       if (!isAuthNeeded) {
+  //         history.replace('main');
+  //       }
+  //     }
+  //   });
+  // }, [pathname]);
+  //
+  // if (!isTokenChecked) return <Loader active />;
 
   return (
     <>
