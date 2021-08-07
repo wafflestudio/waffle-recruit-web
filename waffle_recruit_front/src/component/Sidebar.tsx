@@ -113,6 +113,13 @@ const Sidebar: React.FC = () => {
         <br />
         <br />
         <br />
+        <br />
+        <LinkItem to={'mailto://recruit@wafflestudio.com'} target={'_blank'}>
+          문의하기
+        </LinkItem>
+        <br />
+        <br />
+        <br />
 
         <p style={{ width: 150, wordBreak: 'break-all', color: '#804020' }}>Signed as {user}</p>
 
