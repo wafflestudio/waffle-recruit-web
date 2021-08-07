@@ -6,7 +6,8 @@ import produce from 'immer';
 import { useIsMutating, useMutation } from 'react-query';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Button, Dimmer, Form, Input, Loader, Select, Tab, TextArea } from 'semantic-ui-react';
+import { Button, Confirm, Form, Input, Popup, Select, Tab, TextArea } from 'semantic-ui-react';
+import styled from 'styled-components';
 
 import { requester } from '../../../../apis/requester';
 
@@ -20,9 +21,16 @@ interface ISubmit {
   }[];
 }
 
+const MyConfirm = styled(Confirm)`
+  top: auto !important;
+  left: auto !important;
+  height: auto !important;
+`;
+
 const Submit: React.FC = () => {
   const history = useHistory();
   const [selectedTab, setSelectedTab] = useState<number>(0);
+  const [isRecentChangeConfirmOpen, setRecentChangeConfirmOpen] = useState<boolean>(false);
 
   const isSubmitting = !!useIsMutating({
     mutationKey: 'submit',
@@ -47,6 +55,8 @@ const Submit: React.FC = () => {
         toast.error('채점중입니다.');
         return;
       }
+
+      localStorage.setItem('recentSubmit', JSON.stringify(values));
       submitAnswerMutation.mutate(values);
     },
   });
@@ -128,6 +138,7 @@ const Submit: React.FC = () => {
                         })()
                       : setFieldValue(`files[${i}].filename`, e.currentTarget.value);
                   }}
+                  placeholder={'새 파일'}
                 />
                 <Button color={'red'} type="button" onClick={() => handleDeleteFile(i)}>
                   삭제
@@ -181,31 +192,45 @@ const Submit: React.FC = () => {
       })();
       setFieldValue('files', defaultFiles);
     };
-    if (values.language) {
-      const confirmed = window.confirm('언어가 변경되면 저장한 값들이 초기화됩니다. 정말 변경하시겠습니까?');
-      if (confirmed) {
-        changeLanguage();
-      }
-    } else {
-      changeLanguage();
-    }
+
+    changeLanguage();
   };
 
   const handleTabChange = (_: SyntheticEvent, data: unknown) => {
     const targetIndex = (data as { activeIndex: number } & unknown).activeIndex;
     if (targetIndex === values.files.length) {
       // 새 탭 추가
-      setFieldValue('files', values.files.concat({ filename: '새 파일', code: '' }));
+      setFieldValue('files', values.files.concat({ filename: '', code: '' }));
     }
 
     setSelectedTab(targetIndex);
+  };
+
+  const reloadRecentSubmit = () => {
+    const recentData = localStorage.getItem('recentSubmit');
+    if (!recentData) {
+      toast.error('최근에 이 브라우저에서 제출한 기록이 없습니다.');
+      return;
+    }
+
+    const recentValues = JSON.parse(recentData) as ISubmit;
+    setFieldValue('files', recentValues.files);
+    setFieldValue('language', recentValues.language);
   };
 
   return (
     <>
       <Form className={styles.form} onSubmit={handleSubmit}>
         <h2 className={styles.titleTrailing}>제출란</h2>
-
+        <Popup
+          trigger={
+            <Button basic tiny type={'button'} onClick={() => setRecentChangeConfirmOpen(true)}>
+              마지막 제출 불러오기
+            </Button>
+          }
+        >
+          <Popup.Content>이 브라우저에서 진행한 마지막 제출을 불러옵니다.</Popup.Content>
+        </Popup>
         <Select
           className={styles.radioWrapper}
           options={['java', 'python', 'typescript', 'javascript', 'kotlin'].map((item) => ({
@@ -232,10 +257,15 @@ const Submit: React.FC = () => {
           </>
         )}
       </Form>
-
-      <Dimmer active={isSubmitting}>
-        <Loader />
-      </Dimmer>
+      <MyConfirm
+        open={isRecentChangeConfirmOpen}
+        onConfirm={() => {
+          reloadRecentSubmit();
+          setRecentChangeConfirmOpen(false);
+        }}
+        onCancel={() => setRecentChangeConfirmOpen(false)}
+        content={'마지막에 제출한 파일들을 불러옵니다.'}
+      />
     </>
   );
 };
