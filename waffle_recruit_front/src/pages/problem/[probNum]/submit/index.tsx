@@ -101,11 +101,6 @@ const Submit: React.FC = () => {
   );
 
   const handleDeleteFile = (index: number) => {
-    if (index === 0) {
-      toast.error('메인 파일은 삭제할 수 없습니다.');
-      return;
-    }
-
     setFieldValue(
       'files',
       values.files.filter((_, i) => i !== index)
@@ -131,18 +126,15 @@ const Submit: React.FC = () => {
                 <Input
                   label={'파일명'}
                   value={item.filename}
-                  onChange={(e) => {
-                    i === 0
-                      ? (() => {
-                          toast.error('메인 파일은 이름을 변경할 수 없습니다.');
-                        })()
-                      : setFieldValue(`files[${i}].filename`, e.currentTarget.value);
-                  }}
+                  readOnly={i === 0}
+                  onChange={(e) => setFieldValue(`files[${i}].filename`, e.currentTarget.value)}
                   placeholder={'새 파일'}
                 />
-                <Button color={'red'} type="button" onClick={() => handleDeleteFile(i)}>
-                  삭제
-                </Button>
+                {i !== 0 && (
+                  <Button color={'red'} type="button" onClick={() => handleDeleteFile(i)}>
+                    삭제
+                  </Button>
+                )}
               </div>
               <TextArea
                 className={styles.code}
