@@ -74,7 +74,7 @@ const Sidebar: React.FC = () => {
   return (
     <div className="additional">
       <div className="sidebar">
-        <Link to={'/problem'}>[필독] 문제 개요</Link>
+        <Link to={'/main/'}>[필독] 문제 개요</Link>
         <br />
         <br />
         <br />

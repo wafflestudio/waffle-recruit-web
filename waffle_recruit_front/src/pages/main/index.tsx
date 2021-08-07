@@ -6,8 +6,7 @@ import emoji from 'emoji-dictionary';
 import ReactMarkdown from 'react-markdown';
 
 import Sidebar from '../../component/Sidebar';
-
-import styles from './[probNum]/Problem.module.css';
+import styles from '../problem/[probNum]/Problem.module.css';
 
 import '../containers.css';
 

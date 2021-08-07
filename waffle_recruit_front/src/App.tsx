@@ -8,7 +8,7 @@ import { Button, Header, Loader, Modal } from 'semantic-ui-react';
 import { requester } from './apis/requester';
 import Footer from './component/Footer';
 import { useAuthContext } from './context/authContext';
-import ProblemPage from './pages/problem';
+import ProblemPage from './pages/main';
 import Main from './pages/problem/[probNum]';
 import Submit from './pages/problem/[probNum]/submit';
 import Signin from './pages/signin/Signin';
@@ -25,7 +25,7 @@ const App: React.FC = () => {
 
   const { pathname } = useLocation();
 
-  const isAuthNeeded = pathname.includes('problem');
+  const isAuthNeeded = pathname.includes('problem') || pathname.includes('main');
 
   useEffect(() => {
     const isDisableModal = sessionStorage.getItem('disableModal3');
@@ -34,24 +34,24 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   requester.get<{ user?: string; token: string }>('/check/token/').then((res) => {
-  //     setTokenChecked(true);
-  //     setCsrf(res.data.token);
-  //     requester.defaults.headers['X-CSRFToken'] = res.data.token;
-  //     if (!res.data.user && isAuthNeeded) {
-  //       clearUser();
-  //       history.replace('/signin');
-  //     } else if (res.data.user) {
-  //       setUser(res.data.user);
-  //       if (!isAuthNeeded) {
-  //         history.replace('/problem/0');
-  //       }
-  //     }
-  //   });
-  // }, [pathname]);
-  //
-  // if (!isTokenChecked) return <Loader />;
+  useEffect(() => {
+    requester.get<{ user?: string; token: string }>('/check/token/').then((res) => {
+      setTokenChecked(true);
+      setCsrf(res.data.token);
+      requester.defaults.headers['X-CSRFToken'] = res.data.token;
+      if (!res.data.user && isAuthNeeded) {
+        clearUser();
+        history.replace('/signin');
+      } else if (res.data.user) {
+        setUser(res.data.user);
+        if (!isAuthNeeded) {
+          history.replace('main');
+        }
+      }
+    });
+  }, [pathname]);
+
+  if (!isTokenChecked) return <Loader active />;
 
   return (
     <>
@@ -59,7 +59,7 @@ const App: React.FC = () => {
         <Switch>
           <Route path="/signin" exact component={Signin} />
           <Route path="/signup" exact component={Signup} />
-          <Route path="/problem" exact component={ProblemPage} />
+          <Route path="/main" exact component={ProblemPage} />
           <Route path="/problem/:prob_num" exact component={Main} />
           <Route path="/problem/:prob_num/submit" exact component={Submit} />
           <Redirect from="/" to="/signin" />
