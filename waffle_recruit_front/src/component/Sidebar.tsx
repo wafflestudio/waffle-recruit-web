@@ -3,7 +3,8 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import { Link, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Loader } from 'semantic-ui-react';
+import { Image, Loader } from 'semantic-ui-react';
+import styled from 'styled-components';
 
 import { requester } from '../apis/requester';
 import { useAuthContext } from '../context/authContext';
@@ -23,6 +24,20 @@ type IProbStatusResponse =
       status: 'wrong';
       message: 'string';
     };
+
+const LinkItem = styled(Link)`
+  font-size: 20px;
+  font-weight: bold;
+  color: rgb(202, 150, 106);
+  height: 40px;
+  line-height: 40px;
+  transition: font-size 0.1s, color 0.3s;
+
+  &:hover {
+    color: rgb(95, 62, 32);
+    font-size: 21px;
+  }
+`;
 
 const Sidebar: React.FC = () => {
   const history = useHistory();
@@ -74,32 +89,36 @@ const Sidebar: React.FC = () => {
   return (
     <div className="additional">
       <div className="sidebar">
-        <Link to={'/problem'}>[필독] 문제 개요</Link>
+        <Image src="/logo.png" size="small" className="center" />
+        {/* FIXME 건주님 허락 받으면 이걸로 변경 <Image src="/pupuri.png" size="small" className="center" /> */}
+        <br />
+        <br />
+        <LinkItem to={'/main/'}>[필독] 문제 개요</LinkItem>
         <br />
         <br />
         <br />
         <br />
-        <Link to={'/problem/0/'}>test problem {renderSuccessLabel(isSolvedList[0])}</Link>
+        <LinkItem to={'/problem/0/'}>test problem {renderSuccessLabel(isSolvedList[0])}</LinkItem>
         <br />
         <br />
-        <Link to={'/problem/1/'}>Problem 1 {renderSuccessLabel(isSolvedList[1])}</Link>
+        <LinkItem to={'/problem/1/'}>Problem 1 {renderSuccessLabel(isSolvedList[1])}</LinkItem>
         <br />
         <br />
-        <Link to={'/problem/2/'}>Problem 2 {renderSuccessLabel(isSolvedList[2])}</Link>
+        <LinkItem to={'/problem/2/'}>Problem 2 {renderSuccessLabel(isSolvedList[2])}</LinkItem>
         <br />
         <br />
-        <Link to={'/problem/3/'}>Problem 3 {renderSuccessLabel(isSolvedList[3])}</Link>
+        <LinkItem to={'/problem/3/'}>Problem 3 {renderSuccessLabel(isSolvedList[3])}</LinkItem>
         <br />
         <br />
         <br />
         <br />
         <br />
 
-        <p style={{ width: 150, wordBreak: 'break-all' }}>Signed as {user}</p>
+        <p style={{ width: 150, wordBreak: 'break-all', color: '#804020' }}>Signed as {user}</p>
 
-        <Link to={'/'} onClick={onClickSignOut}>
+        <LinkItem to={'/'} onClick={onClickSignOut}>
           Logout
-        </Link>
+        </LinkItem>
       </div>
     </div>
   );

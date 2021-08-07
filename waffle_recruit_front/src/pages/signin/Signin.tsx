@@ -33,7 +33,7 @@ const Signin: React.FC = () => {
       .post<{ user: string }>('/check/signin/', user)
       .then((res) => {
         setUser(res.data.user);
-        history.replace('/problem/');
+        history.replace('/main');
       })
       .catch(() => {
         toast.error('가입되지 않은 유저거나 아이디/비밀번호가 틀렸습니다.');

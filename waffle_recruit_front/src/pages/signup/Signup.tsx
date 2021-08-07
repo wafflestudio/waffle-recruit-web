@@ -46,7 +46,7 @@ const Signup: React.FC = () => {
     {
       onSuccess: (res) => {
         setUser(res.data.user);
-        history.replace('/problem/');
+        history.replace('/main');
       },
       onError: () => {
         // TODO 체크 필요
