@@ -221,8 +221,14 @@ $ 3 | aaaac
 $ 2 | aaaab
 $ 3 | aaaac
 $ 1 | aaaaa
+> add -a 1 aaaab 1 aaaac
+> list -g 1
+$ 1 | aaaaa
+$ 1 | aaaab
+$ 1 | aaaac
 > unpin 1 aaaaa
-> unpin 1 aaaab
+> unpin 1 aaaaa
+> unpin 1 zxcvb
 $ Error 200
 \`\`\`
 

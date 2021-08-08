@@ -87,8 +87,7 @@ const Sidebar: React.FC = () => {
   return (
     <div className="additional">
       <div className="sidebar">
-        <Image src="/logo.png" size="small" className="center" />
-        {/* FIXME 건주님 허락 받으면 이걸로 변경 <Image src="/pupuri.png" size="small" className="center" /> */}
+        <Image src="/pupuri.png" size="small" className="center" />
         <br />
         <br />
         <LinkItem to={'/main/'}>[필독] 문제 개요</LinkItem>
