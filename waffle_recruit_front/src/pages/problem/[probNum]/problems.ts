@@ -228,7 +228,7 @@ $ 1 | aaaab
 $ 1 | aaaac
 > unpin 1 aaaaa
 > unpin 1 aaaaa
-> unpin 1 aaaab
+> unpin 1 zxcvb
 $ Error 200
 \`\`\`
 
