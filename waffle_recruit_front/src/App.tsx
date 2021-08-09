@@ -114,7 +114,7 @@ const App: React.FC = () => {
           <Button
             color="red"
             onClick={() => {
-              setCookie('isPopupDisabled', true, { expires: DateTime.local().plus({ hour: 24 }).toJSDate() });
+              setCookie('isPopupDisabled', true, { expires: DateTime.local().plus({ hour: 24 }).toJSDate(), path: '/' });
               setOpenModal(false);
             }}
           >
