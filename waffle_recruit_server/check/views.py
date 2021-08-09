@@ -17,6 +17,8 @@ from waffle_recruit_server import settings
 from celery.result import AsyncResult
 
 json_filename = "juys8J1swR_solution.json"
+response_json_filename = "juys8J1swR_response.json"
+saved_indicator = "SAVED_IN_FILE"
 
 
 def signup(request):
@@ -74,44 +76,56 @@ def problem(request, prob_num):
             user=request.user, problem_num=prob_num).exists()
         solved = already_solved
         try:
-            task_id = Submission.objects.filter(user=request.user, prob_num=prob_num).get().task_id
-            task = AsyncResult(task_id)
-            if task.ready():
-                result = task.result
-                if isinstance(result, Exception):
-                    return JsonResponse({'error': repr(result)}, status=500)
-                else:
-                    solved, original_prob_num, error = result
-                    if original_prob_num != prob_num:
-                        return JsonResponse({'error': 'invalid problem number'}, status=500)
-                    if not solved:
-                        if 'detail' in error:
-                            message = f"{error.get('error')}: {error.get('detail')}"
-                        else:
-                            message = error.get('error')
-                        task_result = {
-                            'status': 'wrong',
-                            'message': message,
-                        }
-                    else:
-                        if not already_solved:
-                            # First solve of problem
-                            Solver(problem_num=prob_num, user=request.user).save()
-                            task_result = {
-                                'status': 'correct',
-                                'message': 'correct',
-                            }
-                        else:
-                            # Already solved problem
-                            task_result = {
-                                'status': 'correct',
-                                'message': 'already correct',
-                            }
+            submission = Submission.objects.filter(user=request.user, prob_num=prob_num).get()
+            task_id = submission.task_id
+            if task_id == saved_indicator:
+                with open(
+                        f"codes/{Profile.objects.get(user=request.user).credential}/{prob_num}/{response_json_filename}") as f:
+                    task_result = json.load(f)
             else:
-                task_result = {
-                    'status': 'pending',
-                    'message': 'pending',
-                }
+                task = AsyncResult(task_id)
+                if task.ready():
+                    result = task.result
+                    if isinstance(result, Exception):
+                        return JsonResponse({'error': repr(result)}, status=500)
+                    else:
+                        solved, original_prob_num, error = result
+                        if original_prob_num != prob_num:
+                            return JsonResponse({'error': 'invalid problem number'}, status=500)
+                        if not solved:
+                            if 'detail' in error:
+                                message = f"{error.get('error')}: {error.get('detail')}"
+                            else:
+                                message = error.get('error')
+                            task_result = {
+                                'status': 'wrong',
+                                'message': message,
+                            }
+                        else:
+                            if not already_solved:
+                                # First solve of problem
+                                Solver(problem_num=prob_num, user=request.user).save()
+                                task_result = {
+                                    'status': 'correct',
+                                    'message': 'correct',
+                                }
+                            else:
+                                # Already solved problem
+                                task_result = {
+                                    'status': 'correct',
+                                    'message': 'already correct',
+                                }
+                        with open(
+                                f"codes/{Profile.objects.get(user=request.user).credential}/{prob_num}/{response_json_filename}", "w") as f:
+                            json.dump(task_result, f)
+                        submission.task_id = saved_indicator
+                        submission.save()
+                        task.forget()
+                else:
+                    task_result = {
+                        'status': 'pending',
+                        'message': 'pending',
+                    }
         except Submission.DoesNotExist:
             task_result = None
         return JsonResponse({'solved': already_solved or solved, 'task': task_result}, status=200)
@@ -185,7 +199,7 @@ def prob_solution(request, prob_num):
         profile = Profile.objects.get(user=request.user)
         file_path = f"codes/{profile.credential}/{prob_num}/"
         try:
-            with open(file_path+json_filename) as f:
+            with open(file_path + json_filename) as f:
                 req_data = json.load(f)
             return JsonResponse(req_data, status=200)
         except FileNotFoundError:
