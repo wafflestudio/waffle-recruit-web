@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import { DateTime } from 'luxon';
+import { useCookies } from 'react-cookie';
 import ReactMarkdown from 'react-markdown';
 import { Switch, useHistory, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -19,16 +21,15 @@ const App: React.FC = () => {
   const [isTokenChecked, setTokenChecked] = useState<boolean>(false);
   const { setUser, clearUser, setCsrf } = useAuthContext();
   const history = useHistory();
-
+  const [cookies, setCookie] = useCookies();
   const { pathname } = useLocation();
 
   const isAuthNeeded = pathname.includes('problem') || pathname.includes('main');
 
   useEffect(() => {
-    const isDisableModal = sessionStorage.getItem('disableModal3');
-    if (!isDisableModal) {
-      setOpenModal(true);
-    }
+    const { isPopupDisabled } = cookies;
+    if (isPopupDisabled) setOpenModal(false);
+    else setOpenModal(true);
   }, []);
 
   useEffect(() => {
@@ -68,34 +69,35 @@ const App: React.FC = () => {
         pauseOnHover
       />
       <Modal style={{ position: 'fixed', left: 100, right: 100 }} open={isOpenModal} onClose={() => setOpenModal(false)}>
-        <Header icon="archive" content="와플스튜디오 루키 리크루팅 코딩 테스트 공지사항 (8/6 00시 08분 업데이트)" />
+        <Header icon="archive" content="루키 세미나 날짜 공지" />
         <Modal.Content scrolling>
           <ReactMarkdown
             source={`\`\`\`
-안녕하세요, 와플스튜디오 운영팀입니다.
+안녕하세요, 와플스튜디오 운영팀입니다. rookies 세미나 날짜 및 시간이 결정되어 공지드립니다.
 
-몇 가지 공지사항 전달드립니다.
+- OT    :  8월 22일(일) 오후 2시
+- 세미나 0:  8월 28일(토) ~  8월 29일(일)
+- 세미나 1:  9월  4일(토) ~  9월  5일(일)
+- 세미나 2:  9월 11일(토) ~  9월 12일(일)
+- 세미나 3:  9월 25일(토) ~  9월 26일(일)
+- 세미나 4: 10월  9일(토) ~ 10월 10일(일)
+- 세미나 5: 11월  6일(토) ~ 11월  7일(일)
 
-1. 문제 3번 테스트케이스 오류
+세미나별 시간은 다음과 같습니다. 각 세미나는 1시간 ~ 1시간 30분 가량 소요됩니다.
 
-  - 문제 3번의 테스트 케이스 중 list -g의 필터 조건에 0이 들어간 경우가 있었습니다.
-    이 때문에 정답 코드임에도 불구하고 오랜 시간 동안 왜 안 되는지 고민하며 시간을 뺏기고 스트레스를 받으셨을 것으로 생각됩니다.
-    이전 2번 문제에 이어 테스트케이스의 문제가 또다시 발생한 점 진심으로 사과드립니다.
-    어떠한 문제가 발생하였거나 문제로 의심된다고 생각되시는 경우, recruit@wafflestudio.com 으로 제보해 주시면 최대한 빠르게 대응해 드리겠습니다.
-    
-2. 문제 2번 스켈레톤 ( 파이썬 ) 오류
+- 백엔드 (장고): 토요일 오전 10시
+- 안드로이드: 토요일 오전 11시 30분
+- 백엔드 (스프링): 토요일 오후 3시
+- 프론트: 토요일 오후 4시 30분
+- iOS: 일요일 오후 1시
 
-  - student.py 의 출력 형식에, 학년과 이름의 순서가 바뀌어 있는 오류가 있었습니다. 해당 스켈레톤은 현재는 수정되었습니다.
-  
-3. 서버 점검
-  
-  - 작일 22시 50분부터 23시 50분까지 채점 속도 향상을 위한 서버 점검이 있었습니다.
-  - 점검 결과 채점 속도가 눈에 띄게 향상되었습니다.
-  - 또한 채점 ui가 일부 변경되었습니다.
-      - 좌측 사이드바 문제 번호에 해결 라벨이 붙어 있으면 해당 문제를 한 번이라도 해결하신 것입니다.
-      - 문제 페이지에서, 문제 이름 옆에 있는 아이콘은 해당 문제에 가장 최근에 제출하신 코드의 채점 결과입니다.
+8월 22일 OT는 루키 세미나 진행을 위해 필히 참석해 주셔야 합니다.
+어떤 세미나를 들으실지는 선택하실 수 있으며, 그 부분은 OT에서 공지드릴 예정입니다.
 
-문제가 발생한 부분에 대해 다시 한 번 사과드립니다.
+모든 세션은 코로나가 현 상황을 유지한다면 온라인으로 진행되지만, 경과에 따라 오프라인으로 전환될 수 있습니다.
+세미나 0은 각 세미나마다 있을 수도, 없을 수도 있습니다. 추후 공지될 예정입니다.
+
+*세미나별 상세 시간은 낮은 확률로 변동될 수 있습니다.*
 
 와플스튜디오 운영팀 드림
 \`\`\``}
@@ -105,11 +107,11 @@ const App: React.FC = () => {
           <Button
             color="red"
             onClick={() => {
-              sessionStorage.setItem('disableModal3', 'true');
+              setCookie('isPopupDisabled', true, { expires: DateTime.local().plus({ hour: 24 }).toJSDate() });
               setOpenModal(false);
             }}
           >
-            다시 보지 않기
+            24시간 동안 보지 않기
           </Button>
           <Button color="green" onClick={() => setOpenModal(false)}>
             닫기
