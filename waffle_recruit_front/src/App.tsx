@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { DateTime } from 'luxon';
 import { useCookies } from 'react-cookie';
+import ReactGA from 'react-ga';
 import ReactMarkdown from 'react-markdown';
 import { Switch, useHistory, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -16,13 +17,15 @@ import UnauthorizedRouter from './pages/UnauthorizedRouter';
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
+ReactGA.initialize('UA-204463168-1');
+
 const App: React.FC = () => {
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [isTokenChecked, setTokenChecked] = useState<boolean>(false);
   const { setUser, clearUser, setCsrf } = useAuthContext();
   const history = useHistory();
   const [cookies, setCookie] = useCookies();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
 
   const isAuthNeeded = pathname.includes('problem') || pathname.includes('main');
 
@@ -31,6 +34,10 @@ const App: React.FC = () => {
     if (isPopupDisabled) setOpenModal(false);
     else setOpenModal(true);
   }, []);
+
+  useEffect(() => {
+    ReactGA.pageview(search + pathname);
+  }, [search, pathname]);
 
   useEffect(() => {
     requester.get<{ user?: string; token: string }>('/check/token/').then((res) => {

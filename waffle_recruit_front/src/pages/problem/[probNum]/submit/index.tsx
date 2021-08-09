@@ -198,16 +198,15 @@ const Submit: React.FC = () => {
     setSelectedTab(targetIndex);
   };
 
-  const reloadRecentSubmit = () => {
-    const recentData = localStorage.getItem('recentSubmit');
-    if (!recentData) {
-      toast.error('최근에 이 브라우저에서 제출한 기록이 없습니다.');
+  const reloadRecentSubmit = async () => {
+    try {
+      const recentCode = await requester.get<ISubmit>(`/check/prob/${prob_num}/solution/`);
+      await setFieldValue('files', recentCode.data.files);
+      await setFieldValue('language', recentCode.data.language);
+    } catch (err) {
+      toast.error('최근에 이 문제를 제출한 기록이 없습니다.');
       return;
     }
-
-    const recentValues = JSON.parse(recentData) as ISubmit;
-    setFieldValue('files', recentValues.files);
-    setFieldValue('language', recentValues.language);
   };
 
   return (
@@ -221,7 +220,7 @@ const Submit: React.FC = () => {
             </Button>
           }
         >
-          <Popup.Content>이 브라우저에서 진행한 마지막 제출을 불러옵니다.</Popup.Content>
+          <Popup.Content>이 문제에 마지막으로 제출한 코드를 불러옵니다.</Popup.Content>
         </Popup>
         <Select
           className={styles.radioWrapper}

@@ -226,6 +226,10 @@ $ 1 | aaaaa
 $ 1 | aaaaa
 $ 1 | aaaab
 $ 1 | aaaac
+> list -g 1 -r -o name
+$ 1 | aaaac
+$ 1 | aaaab
+$ 1 | aaaaa
 > unpin 1 aaaaa
 > unpin 1 aaaaa
 > unpin 1 zxcvb
