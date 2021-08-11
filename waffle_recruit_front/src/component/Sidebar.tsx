@@ -39,6 +39,20 @@ const LinkItem = styled(Link)`
   }
 `;
 
+const AItem = styled.a`
+  font-size: 20px;
+  font-weight: bold;
+  color: rgb(202, 150, 106);
+  height: 40px;
+  line-height: 40px;
+  transition: font-size 0.1s, color 0.3s;
+
+  &:hover {
+    color: rgb(95, 62, 32);
+    font-size: 21px;
+  }
+`;
+
 const Sidebar: React.FC = () => {
   const history = useHistory();
   const { user, clearUser } = useAuthContext();
@@ -111,9 +125,9 @@ const Sidebar: React.FC = () => {
         <br />
         <br />
         <br />
-        <LinkItem to={'mailto://recruit@wafflestudio.com'} target={'_blank'}>
+        <AItem href={'mailto:recruit@wafflestudio.com'} target={'_blank'}>
           문의하기
-        </LinkItem>
+        </AItem>
         <br />
         <br />
         <br />
