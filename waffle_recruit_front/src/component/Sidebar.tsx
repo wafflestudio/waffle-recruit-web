@@ -125,7 +125,7 @@ const Sidebar: React.FC = () => {
         <br />
         <br />
         <br />
-        <AItem href={'mailto://recruit@wafflestudio.com'} target={'_blank'}>
+        <AItem href={'mailto:recruit@wafflestudio.com'} target={'_blank'}>
           문의하기
         </AItem>
         <br />
