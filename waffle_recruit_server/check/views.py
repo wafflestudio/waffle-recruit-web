@@ -19,7 +19,7 @@ from celery.result import AsyncResult
 json_filename = "juys8J1swR_solution.json"
 response_json_filename = "juys8J1swR_response.json"
 saved_indicator = "SAVED_IN_FILE"
-submission_due = datetime.fromtimestamp(1629039601, timezone.utc)  # 8/16 00:01 KST (UTC+9)
+submission_due = datetime.fromtimestamp(1629039630, timezone.utc)  # 8/16 00:00:30 KST (UTC+9)
 
 
 def signup(request):
