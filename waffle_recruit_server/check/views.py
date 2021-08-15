@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseNotAllowed, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.utils.timezone import now
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt, get_token
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 
 from check.models import Profile, Solver, Submission
 from check.tasks import run_solver
@@ -19,6 +19,7 @@ from celery.result import AsyncResult
 json_filename = "juys8J1swR_solution.json"
 response_json_filename = "juys8J1swR_response.json"
 saved_indicator = "SAVED_IN_FILE"
+submission_due = datetime.fromtimestamp(1629039630, timezone.utc)  # 8/16 00:00:30 KST (UTC+9)
 
 
 def signup(request):
@@ -135,6 +136,8 @@ def problem(request, prob_num):
         last_visit = profile.last_visit
         credential = profile.credential
         time_now = now()
+        if time_now >= submission_due:
+            return JsonResponse({"error": "지원이 마감되어 제출이 불가합니다."}, status=400)
         # block too many request per time
         if last_visit is None or last_visit + timedelta(seconds=10) < time_now:
             profile.last_visit = time_now
