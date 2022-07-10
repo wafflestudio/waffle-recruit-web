@@ -28,16 +28,14 @@ const Signin: React.FC = () => {
     onLoginUser(user);
   };
 
-  const onLoginUser = (user: User) => {
-    requester
-      .post<{ user: string }>('/check/signin/', user)
-      .then((res) => {
-        setUser(res.data.user);
-        history.replace('/main');
-      })
-      .catch(() => {
-        toast.error('가입되지 않은 유저거나 아이디/비밀번호가 틀렸습니다.');
-      });
+  const onLoginUser = async (user: User) => {
+    try {
+      const res = await requester.post<{ user: string }>('/check/signin/', user);
+      setUser(res.data.user);
+      history.replace('/main');
+    } catch (err) {
+      toast.error('가입되지 않은 유저거나 아이디/비밀번호가 틀렸습니다.');
+    }
   };
 
   return (
