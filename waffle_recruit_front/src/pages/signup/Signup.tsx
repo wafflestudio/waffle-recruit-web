@@ -21,7 +21,7 @@ interface ISignupForm {
   grade: number | null;
 }
 
-const Signup: React.FC = () => {
+const Signup = () => {
   const history = useHistory();
 
   const { setUser } = useAuthContext();
