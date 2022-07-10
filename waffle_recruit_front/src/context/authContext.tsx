@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, PropsWithChildren, useContext, useState } from 'react';
 
 interface AuthContext {
   user: string | null;
@@ -9,26 +9,31 @@ interface AuthContext {
   setCsrf: (e: string) => void;
 }
 
-const Context = createContext<AuthContext | undefined>(undefined);
+const Context = createContext<AuthContext>({
+  user: null,
+  csrf: null,
+  setUser: () => null,
+  clearUser: () => null,
+  setCsrf: () => null,
+});
 
-export const AuthContextProvider: React.FC = ({ children }) => {
+export const AuthContextProvider = ({ children }: PropsWithChildren<unknown>) => {
   const [user, setUser] = useState<string | null>(null);
   const [csrf, setCsrf] = useState<string | null>(null);
 
-  const value = useMemo<AuthContext>(
-    () => ({
-      user,
-      csrf,
-      setUser,
-      setCsrf,
-      clearUser: () => setUser(null),
-    }),
-    [user, setUser]
+  return (
+    <Context.Provider
+      value={{
+        user,
+        csrf,
+        setUser,
+        setCsrf,
+        clearUser: () => setUser(null),
+      }}
+    >
+      {children}
+    </Context.Provider>
   );
-
-  return <Context.Provider value={value}>{children}</Context.Provider>;
 };
 
-export const useAuthContext = (): AuthContext => {
-  return useContext(Context) as AuthContext;
-};
+export const useAuthContext = () => useContext(Context);
