@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { AxiosError, AxiosResponse } from 'axios';
 import { useFormik } from 'formik';
 import toNumber from 'lodash/toNumber';
 import Form from 'react-bootstrap/Form';
@@ -34,20 +33,16 @@ const Signup = () => {
       major: '',
       grade: null,
     },
-    onSubmit: (values) => {
-      signUpMutation.mutate({ user: values });
+    onSubmit: async (values) => {
+      const res = await signUpMutation.mutateAsync({ user: values });
+      setUser(res.data.user);
+      history.replace('/main');
     },
   });
 
-  const signUpMutation = useMutation<AxiosResponse<{ user: string }>, AxiosError, { user: ISignupForm }, unknown>(
-    ({ user }: { user: ISignupForm }) => {
-      return requester.post('/check/signup/', user);
-    },
+  const signUpMutation = useMutation(
+    ({ user }: { user: ISignupForm }) => requester.post<{ user: string }>('/check/signup/', user),
     {
-      onSuccess: (res) => {
-        setUser(res.data.user);
-        history.replace('/main');
-      },
       onError: () => {
         // TODO 체크 필요
         toast.error('중복된 아이디입니다.');
