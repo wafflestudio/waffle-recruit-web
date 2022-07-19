@@ -16,4 +16,4 @@ def run_solver(language, file_path, prob_num):
     except CompileError as e:
         return False, prob_num, {"error": "Compile error", "detail": str(e).replace(root_path, "").replace(file_path, "submission/")}
     except Exception as e:
-        return False, prob_num, {"error": str(e).replace(root_path, "").replace(file_path, "submission/")}
+        return False, prob_num, {"error": "Wrong solution", "detail": str(e).replace(root_path, "").replace(file_path, "submission/")}
