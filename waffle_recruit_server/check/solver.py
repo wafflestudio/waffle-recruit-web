@@ -26,6 +26,9 @@ def solve(language, file_path, prob_num):
         outs, errs = compile_proc.communicate()
         if errs:
             raise CompileError(errs.decode())
+
+
+    
     elif language == "kotlin":
         compile_proc = subprocess.Popen(f"kotlinc {file_path}*.kt -include-runtime -d {file_path}main.jar -nowarn", shell=True,
                                         stderr=subprocess.PIPE)
@@ -33,13 +36,24 @@ def solve(language, file_path, prob_num):
         outs, errs = compile_proc.communicate()
         if errs:
             raise Exception(f"compile error: {errs.decode()}")
+
+
+    # [TODO] add c++
+    # (daeyong) 임시방편으로 ts를 cpp로 바꿔서 실행중
     elif language == "typescript":
-        compile_proc = subprocess.Popen(f"tsc {file_path}*.ts", shell=True,
-                                        stderr=subprocess.PIPE)
+        compile_proc = subprocess.Popen(f"gcc {file_path}*.cpp -o {file_path}main.out -lstdc++", shell=True, stderr=subprocess.PIPE)
         compile_proc.wait()
         outs, errs = compile_proc.communicate()
         if errs:
             raise Exception(f"compile error: {errs.decode()}")
+
+    # elif language == "typescript":
+    #     compile_proc = subprocess.Popen(f"tsc {file_path}*.ts", shell=True,
+    #                                     stderr=subprocess.PIPE)
+    #     compile_proc.wait()
+    #     outs, errs = compile_proc.communicate()
+    #     if errs:
+    #         raise Exception(f"compile error: {errs.decode()}")
 
     for test_case_filename, solution_filename in zip(testcases, solutions):
         test_case = open(f"solve/problem{prob_num}/testcases/{test_case_filename}", "r")
@@ -49,6 +63,7 @@ def solve(language, file_path, prob_num):
             "stderr": subprocess.PIPE,
             "stdin": test_case,
         }
+        print(file_path)
         if language == "python":
             proc = subprocess.Popen(["python3", file_path + 'main.py'], **kwargs)
         elif language == "java":
@@ -57,8 +72,12 @@ def solve(language, file_path, prob_num):
             proc = subprocess.Popen(["java", "-jar", file_path + "main.jar"], **kwargs)
         elif language == "javascript":
             proc = subprocess.Popen(["node", file_path], **kwargs)
+        # [TODO] add c++
+        # (daeyong) 임시방편으로 ts를 cpp로 바꿔서 실행중
         elif language == "typescript":
-            proc = subprocess.Popen(["node", file_path], **kwargs)
+            proc = subprocess.Popen([file_path + "main.out"], **kwargs)
+        # elif language == "typescript":
+        #     proc = subprocess.Popen(["node", file_path], **kwargs)
         else:
             raise Exception("language error")
         try:
@@ -77,6 +96,7 @@ def solve(language, file_path, prob_num):
         solution_file.close()
         out = outs.decode()
         if out.rstrip('\n') != solution.rstrip('\n'):
-            print("out: ", out)
-            raise Exception(f"Wrong answer : your output: {repr(out)}")
+            raise Exception(out)
+            #print("out: ", out)
+            #raise Exception(f"Wrong answer : your output: {repr(out)}")
     return True

@@ -11,7 +11,7 @@ from django.utils.timezone import now
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt, get_token
 from datetime import timedelta, datetime, timezone
 
-from check.models import Profile, Solver, Submission
+from check.models import Profile, Solver, Submission, Result
 from check.tasks import run_solver
 from waffle_recruit_server import settings
 from celery.result import AsyncResult
@@ -65,9 +65,7 @@ def signout(request):
     else:
         return HttpResponseNotAllowed(['GET'])
 
-
 # check implemented
-
 
 def problem(request, prob_num):
     if not request.user.is_authenticated:
@@ -136,8 +134,9 @@ def problem(request, prob_num):
         last_visit = profile.last_visit
         credential = profile.credential
         time_now = now()
-        if time_now >= submission_due:
-            return JsonResponse({"error": "지원이 마감되어 제출이 불가합니다."}, status=400)
+        # block submission due
+        # if time_now >= submission_due:
+        #     return JsonResponse({"error": "지원이 마감되어 제출이 불가합니다."}, status=400)
         # block too many request per time
         if last_visit is None or last_visit + timedelta(seconds=10) < time_now:
             profile.last_visit = time_now
@@ -170,7 +169,12 @@ def problem(request, prob_num):
         for file in files:
             if '..' in file['filename']:
                 return JsonResponse({"error": "invalid filename: `..` is not allowed"}, status=400)
-            local_file = open(file_path + file['filename'], 'w')
+            
+            # [TODO] Replace typescript with cpp
+            # (daeyong) 임시방편으로 ts파일을 main.cpp로 강제변환중.
+            test_filename = file['filename'].replace("index.ts", "main.cpp") 
+            local_file = open(file_path + test_filename, 'w')
+            #local_file = open(file_path + file['filename'], 'w')
             local_file.write(file['code'])
             local_file.close()
         with open(file_path + json_filename, 'w') as local_file:
@@ -178,6 +182,13 @@ def problem(request, prob_num):
         task: AsyncResult = run_solver.delay(language, file_path, prob_num=prob_num)
         original_task.task_id = task.id
         original_task.save()
+        # [TODO] log to sqlite - 틀린 경우에만 기록하도록.
+        if (task.get()[0] == False):
+            # time_now = now() 
+            wrong_result = (str(task.get()[2]['error']) + "/" + str(task.get()[2]['detail'])).replace("Wrong answer : your output:", "")
+            # Result.objects.create(user=request.user,prob_num = prob_num,time=time_now ,result = wrong_result)
+            Result.objects.create(user=request.user,prob_num = prob_num,result = wrong_result)
+
         return HttpResponse(status=202)
 
     else:
