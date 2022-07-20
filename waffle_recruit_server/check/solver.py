@@ -10,6 +10,10 @@ class CompileError(Exception):
     pass
 
 
+class TimeoutError(Exception):
+    pass
+
+
 def solve(language, file_path, prob_num):
     print("file path: " + file_path)
     if int(prob_num) in range(0, 4):
@@ -84,7 +88,7 @@ def solve(language, file_path, prob_num):
             outs, errs = proc.communicate(timeout=1.1)
         except subprocess.TimeoutExpired:
             proc.kill()
-            raise Exception("시간 초과")
+            raise TimeoutError("Timeout error")
         except Exception as e:
             proc.kill()
             raise Exception("Server error")
