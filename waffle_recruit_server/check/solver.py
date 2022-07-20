@@ -1,5 +1,6 @@
 import os
 import subprocess
+from uuid import uuid4
 
 
 class RuntimeError(Exception):
@@ -13,8 +14,8 @@ class CompileError(Exception):
 def solve(language, file_path, prob_num):
     print("file path: " + file_path)
     if int(prob_num) in range(0, 4):
-        solutions = os.listdir(f"solve/problem{prob_num}/solutions")
-        testcases = os.listdir(f"solve/problem{prob_num}/testcases")
+        solutions = os.listdir(f"problem{prob_num}/solutions")
+        testcases = os.listdir(f"problem{prob_num}/testcases")
         solutions.sort()
         testcases.sort()
     else:
@@ -42,15 +43,15 @@ def solve(language, file_path, prob_num):
             raise Exception(f"compile error: {errs.decode()}")
 
     for test_case_filename, solution_filename in zip(testcases, solutions):
-        test_case = open(f"solve/problem{prob_num}/testcases/{test_case_filename}", "r")
-        solution_file = open(f"solve/problem{prob_num}/solutions/{solution_filename}", "r")
+        test_case = open(f"problem{prob_num}/testcases/{test_case_filename}", "r")
+        solution_file = open(f"problem{prob_num}/solutions/{solution_filename}", "r")
         kwargs = {
             "stdout": subprocess.PIPE,
             "stderr": subprocess.PIPE,
-            "stdin": test_case,
+            # "stdin": test_case,
         }
         if language == "python":
-            proc = subprocess.Popen(["python3", file_path + 'main.py'], **kwargs)
+            proc = subprocess.Popen(["sh", "python_test.sh", "test", file_path, ], **kwargs)
         elif language == "java":
             proc = subprocess.Popen(["java", "-cp", file_path, "Main"], **kwargs)
         elif language == "kotlin":
@@ -76,7 +77,8 @@ def solve(language, file_path, prob_num):
         test_case.close()
         solution_file.close()
         out = outs.decode()
-        if out.rstrip('\n') != solution.rstrip('\n'):
-            print("out: ", out)
-            raise Exception(f"Wrong answer : your output: {repr(out)}")
+        print(outs)
+        # if out.rstrip('\n') != solution.rstrip('\n'):
+        #     print("out: ", out)
+        #     raise Exception(f"Wrong answer : your output: {repr(out)}")
     return True
