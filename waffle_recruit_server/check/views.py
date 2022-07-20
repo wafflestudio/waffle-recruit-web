@@ -92,10 +92,12 @@ def problem(request, prob_num):
                         if original_prob_num != prob_num:
                             return JsonResponse({'error': 'invalid problem number'}, status=500)
                         if not solved:
-                            if 'detail' in error:
-                                message = f"{error.get('error')}: {error.get('detail')}"
-                            else:
-                                message = error.get('error')
+                            message = error.get('error')
+                            # [TODO] do not send output! 에러 종류만 보내기
+                            # if 'detail' in error:
+                            #     message = f"{error.get('error')}: {error.get('detail')}"
+                            # else:
+                            #     message = error.get('error')
                             task_result = {
                                 'status': 'wrong',
                                 'message': message,
@@ -177,6 +179,7 @@ def problem(request, prob_num):
             #local_file = open(file_path + file['filename'], 'w')
             local_file.write(file['code'])
             local_file.close()
+
         with open(file_path + json_filename, 'w') as local_file:
             json.dump(req_data, local_file)
         task: AsyncResult = run_solver.delay(language, file_path, prob_num=prob_num)
@@ -184,13 +187,11 @@ def problem(request, prob_num):
         original_task.save()
         # [TODO] log to sqlite - 틀린 경우에만 기록하도록.
         if (task.get()[0] == False):
-            # time_now = now() 
-            wrong_result = (str(task.get()[2]['error']) + "/" + str(task.get()[2]['detail'])).replace("Wrong answer : your output:", "")
-            # Result.objects.create(user=request.user,prob_num = prob_num,time=time_now ,result = wrong_result)
+            wrong_result = str(task.get()[2]['detail'])
+            if len(wrong_result)>=50:
+                wrong_result = wrong_result[:50]
             Result.objects.create(user=request.user,prob_num = prob_num,result = wrong_result)
-
         return HttpResponse(status=202)
-
     else:
         return HttpResponseNotAllowed(['POST', 'GET'])
 
