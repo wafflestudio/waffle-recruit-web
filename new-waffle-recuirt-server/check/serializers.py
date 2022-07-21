@@ -25,13 +25,9 @@ LANGUAGE_CHOICES = (
     ('kotlin', 'kotlin'),
 )
 
-class SubmissionService(serializers.ModelSerializer):
-    # req_data = serializers.JSONField(required=True)
-
-    class Meta:
-        model = Submission
-        fields = ('user', 'prob_num', 'task_id', 'submit_at')
-        read_only_fields = ('user', 'task_id', 'submit_at')
+class SubmissionService(serializers.Serializer):
+    req_data = serializers.JSONField(required=True)
+    prob_num = serializers.IntegerField(required=True)
 
     def validate(self, data):
         user = self.context['request'].user
@@ -47,8 +43,9 @@ class SubmissionService(serializers.ModelSerializer):
             if last_submit.submit_at + timedelta(seconds=10) > datetime.now():
                 time_remain = timedelta(seconds=10) - (datetime.now() - last_submit.submit_at)
                 raise AuthenticationFailed({
-                    "remain": time_remain.total_seconds()
+                    "remain": int(time_remain.total_seconds())
                 })
+        self.context['last_submit'] = last_submit
         return data
     
     def execute(self):
@@ -57,14 +54,11 @@ class SubmissionService(serializers.ModelSerializer):
         prob_num = validated_data['prob_num']
         req_data = validated_data['req_data']
         credential = user.credential
-
-        try:
-            original_task = Submission.objects.filter(user=user, prob_num=prob_num).get()
-            _task = AsyncResult(original_task.task_id)
+        last_submit = self.context.get('last_submit', None)
+        if last_submit is not None:
+            _task = AsyncResult(last_submit.task_id)
             _task.revoke()
             _task.forget()
-        except Submission.DoesNotExist:
-            original_task = Submission(user=user, prob_num=prob_num)
         file_path = f"codes/{credential}/{prob_num}/"
         
         try:
@@ -92,8 +86,7 @@ class SubmissionService(serializers.ModelSerializer):
         with open(file_path + json_filename, 'w') as local_file:
             json.dump(req_data, local_file)
         task: AsyncResult = run_solver.delay(language, file_path, prob_num=prob_num)
-        original_task.task_id = task.id
-        original_task.save()
+        Submission.objects.create(user=user, task_id=task.id, prob_num=prob_num)
         # [TODO] log to sqlite - 틀린 경우에만 기록하도록.
         if (task.get()[0] == False):
             # time_now = now() 
