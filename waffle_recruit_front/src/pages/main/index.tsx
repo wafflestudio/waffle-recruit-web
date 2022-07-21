@@ -34,7 +34,7 @@ export const ReviewContainer = styled.div`
 `;
 
 const ProblemPage = () => {
-  const
+  const {
     params: { prob_num },
   } = useRouteMatch<{ prob_num: string }>();
   const history = useHistory();
