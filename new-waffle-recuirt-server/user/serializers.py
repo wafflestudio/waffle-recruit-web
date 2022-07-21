@@ -53,16 +53,14 @@ class SignupService(serializers.ModelSerializer):
         return user_data, jwt_token_of(user)
     
 
-class SigninService(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ("email", "password")
-        extra_kwargs = {"password": {"write_only": True}}
+class SigninService(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)
     
     def validate(self, data):
+        print(11)
         username= data.get("username", None)
         password = data.get("password", None)
-        print(111)
         user = authenticate(username=username, password=password)
 
         if user is None:
