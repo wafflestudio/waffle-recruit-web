@@ -11,10 +11,10 @@ import { toast } from 'react-toastify';
 import { Button, Icon, Loader, Popup } from 'semantic-ui-react';
 
 import Sidebar from '../../../component/Sidebar';
-import { MainpageWrapper, ReviewContainer } from '../../main';
+import { MainPageWrapper, ReviewContainer } from '../../main';
 
 import styles from './Problem.module.css';
-import { problems } from './problems';
+import { problemStrings } from './problemStrings';
 
 import '../../containers.css';
 
@@ -54,18 +54,19 @@ const ProblemPage: React.FC = () => {
 
   const emojiSupport = (text: any) => text.value.replace(/:\w+:/gi, (name: any) => emoji.getUnicode(name));
 
-  const problem = problems[toNumber(prob_num)];
+  const problem = problemStrings[toNumber(prob_num)];
   if (!problem) return null;
   const { title, content } = problem;
   const markdownInputStr = '> ````\n' + content + '\n````\n';
   const markdownSolverStatus = '#### *지금까지 총 ' + solvedCount + '명이 성공했습니다 :fire:*\n';
 
   return (
-    <MainpageWrapper>
+    <MainPageWrapper>
       <Sidebar />
       <ReviewContainer>
         <div style={{ display: 'flex', height: 20, alignItems: 'center', gap: 8, position: 'relative' }}>
           <ReactMarkdown source={`# ${title}`} renderers={{ text: emojiSupport }} />
+
           {isSolvedQuery.data?.task &&
             {
               correct: (
@@ -107,7 +108,7 @@ const ProblemPage: React.FC = () => {
         <ReactMarkdown source={markdownSolverStatus} renderers={{ text: emojiSupport }} />
         <Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>
       </ReviewContainer>
-    </MainpageWrapper>
+    </MainPageWrapper>
   );
 };
 

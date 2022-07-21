@@ -12,7 +12,7 @@ const AuthorizedRouter: React.FC = () => {
   return (
     <>
       <Route path="/main" exact component={ProblemPage} />
-      <Route path="/problem/:prob_num" exact component={Main} />
+      <Route path="/problem/:prob_num" exact component={ProblemPage} />
       <Route path="/problem/:prob_num/submit" exact component={Submit} />
       <Redirect to="/main" />
     </>
