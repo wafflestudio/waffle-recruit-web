@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import { Button, Confirm, Form, Input, Popup, Select, Tab, TextArea } from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import { requester } from '../../../../apis/requester';
+import { requester } from '../../apis/requester';
 
 import styles from './Submit.module.css';
 
@@ -64,7 +64,7 @@ const Submit: React.FC = () => {
   useEffect(() => {
     if (!['0', '1', '2', '3'].includes(prob_num)) {
       toast.error('올바르지 않은 url입니다.');
-      history.push('/problem/0');
+      history.push('/problems/0');
       return;
     }
     resetForm();
@@ -88,13 +88,13 @@ const Submit: React.FC = () => {
       onError: (res) => {
         if (res.response?.data && 'error' in res.response.data) {
           toast.error(res.response?.data.error);
-          history.push('/problem/0');
+          history.push('/problems/0');
         } else if (res.response?.data && 'remain' in res.response.data) {
           const remain = res.response?.data.remain;
           toast.info(remain + ' 초 뒤에 제출할 수 있습니다.');
         } else {
           toast.error('알 수 없는 오류가 발생했습니다. 오류가 지속되면 recruit@wafflestudio.com 으로 문의 부탁드립니다.');
-          history.push('/problem/0');
+          history.push('/problems/0');
         }
       },
     }

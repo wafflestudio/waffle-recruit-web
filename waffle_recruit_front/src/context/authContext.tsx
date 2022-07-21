@@ -5,6 +5,8 @@ interface AuthContext {
   setUser: (e: string) => void;
   clearUser: () => void;
 
+  jwt: string | null;
+  setJwt: (e: string) => void;
   csrf: string | null;
   setCsrf: (e: string) => void;
 }
@@ -12,6 +14,8 @@ interface AuthContext {
 const Context = createContext<AuthContext>({
   user: null,
   csrf: null,
+  jwt: null,
+  setJwt: () => null,
   setUser: () => null,
   clearUser: () => null,
   setCsrf: () => null,
@@ -20,12 +24,15 @@ const Context = createContext<AuthContext>({
 export const AuthContextProvider = ({ children }: PropsWithChildren<unknown>) => {
   const [user, setUser] = useState<string | null>(null);
   const [csrf, setCsrf] = useState<string | null>(null);
+  const [jwt, setJwt] = useState<string | null>(null);
 
   return (
     <Context.Provider
       value={{
         user,
         csrf,
+        jwt,
+        setJwt,
         setUser,
         setCsrf,
         clearUser: () => setUser(null),
