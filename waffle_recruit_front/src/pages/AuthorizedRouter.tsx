@@ -7,6 +7,8 @@ import Main from './problem/[probNum]';
 import Submit from './problem/[probNum]/submit';
 
 const AuthorizedRouter: React.FC = () => {
+  //check token logic
+
   return (
     <>
       <Route path="/main" exact component={ProblemPage} />

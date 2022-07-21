@@ -5,9 +5,6 @@
 
 .ReviewContainer {
     font-family: 'NanumSquare', sans-serif;
-    padding-left: 10%;
-    padding-right: 10%;
-    margin: 10px 10px 10px 200px;
     white-space: pre-wrap;
     word-wrap: break-word;
     text-align: left;

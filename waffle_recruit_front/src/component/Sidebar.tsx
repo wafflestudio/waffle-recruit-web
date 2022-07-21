@@ -9,8 +9,6 @@ import styled from 'styled-components';
 import { requester } from '../apis/requester';
 import { useAuthContext } from '../context/authContext';
 
-import './Sidebar.css';
-
 type IProbStatusResponse =
   | {
       status: 'correct';
@@ -25,6 +23,15 @@ type IProbStatusResponse =
       message: 'string';
     };
 
+const SidebarWrapper = styled.nav`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  padding: 20px;
+  align-content: center;
+`;
+
 const LinkItem = styled(Link)`
   font-size: 20px;
   font-weight: bold;
@@ -32,7 +39,7 @@ const LinkItem = styled(Link)`
   height: 40px;
   line-height: 40px;
   transition: font-size 0.1s, color 0.3s;
-
+  margin-bottom: 50px;
   &:hover {
     color: rgb(95, 62, 32);
     font-size: 21px;
@@ -46,7 +53,7 @@ const AItem = styled.a`
   height: 40px;
   line-height: 40px;
   transition: font-size 0.1s, color 0.3s;
-
+  margin-bottom: 50px;
   &:hover {
     color: rgb(95, 62, 32);
     font-size: 21px;
@@ -99,46 +106,29 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="additional">
-      <div className="sidebar">
-        <Image src="/pupuri.png" size="small" className="center" />
-        <br />
-        <br />
-        <LinkItem to={'/main/'}>[필독] 문제 개요</LinkItem>
-        <br />
-        <br />
-        <br />
-        <br />
-        <LinkItem to={'/problem/0/'}>test problem {renderSuccessLabel(isSolvedList[0])}</LinkItem>
-        <br />
-        <br />
-        <LinkItem to={'/problem/1/'}>Problem 1 {renderSuccessLabel(isSolvedList[1])}</LinkItem>
-        <br />
-        <br />
-        <LinkItem to={'/problem/2/'}>Problem 2 {renderSuccessLabel(isSolvedList[2])}</LinkItem>
-        <br />
-        <br />
-        <LinkItem to={'/problem/3/'}>Problem 3 {renderSuccessLabel(isSolvedList[3])}</LinkItem>
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <AItem href={'mailto:recruit@wafflestudio.com'} target={'_blank'}>
-          문의하기
-        </AItem>
-        <br />
-        <br />
-        <br />
+    <SidebarWrapper>
+      <Image src="/pupuri.png" size="small" className="center" />
 
-        <p style={{ width: 150, wordBreak: 'break-all', color: '#804020' }}>Signed as {user}</p>
+      <LinkItem to={'/main/'}>[필독] 문제 개요</LinkItem>
 
-        <LinkItem to={'/'} onClick={onClickSignOut}>
-          Logout
-        </LinkItem>
-      </div>
-    </div>
+      <LinkItem to={'/problem/0/'}>test problem {renderSuccessLabel(isSolvedList[0])}</LinkItem>
+
+      <LinkItem to={'/problem/1/'}>Problem 1 {renderSuccessLabel(isSolvedList[1])}</LinkItem>
+
+      <LinkItem to={'/problem/2/'}>Problem 2 {renderSuccessLabel(isSolvedList[2])}</LinkItem>
+
+      <LinkItem to={'/problem/3/'}>Problem 3 {renderSuccessLabel(isSolvedList[3])}</LinkItem>
+
+      <AItem href={'mailto:recruit@wafflestudio.com'} target={'_blank'}>
+        문의하기
+      </AItem>
+
+      <p style={{ width: 150, wordBreak: 'break-all', color: '#804020' }}>Signed as {user}</p>
+
+      <LinkItem to={'/'} onClick={onClickSignOut}>
+        Logout
+      </LinkItem>
+    </SidebarWrapper>
   );
 };
 

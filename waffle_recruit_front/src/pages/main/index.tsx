@@ -4,22 +4,36 @@ import React from 'react';
 // @ts-ignore
 import emoji from 'emoji-dictionary';
 import ReactMarkdown from 'react-markdown';
+import styled from 'styled-components';
 
 import Sidebar from '../../component/Sidebar';
 import styles from '../problem/[probNum]/Problem.module.css';
 
-import '../containers.css';
+export const MainpageWrapper = styled.article`
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 80vh;
+`;
+
+export const ReviewContainer = styled.div`
+  margin-top: 150px;
+  font-family: 'NanumSquare', sans-serif;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  text-align: left;
+  line-height: 1.5;
+  font-size: 16px;
+`;
 
 const ProblemPage: React.FC = () => {
   return (
-    <div>
+    <MainpageWrapper>
       <Sidebar />
-      <br />
-      <br />
-      <div className={styles.ReviewContainer}>
+      <ReviewContainer>
         <ReactMarkdown source={`\`\`\`${content}\`\`\``} />
-      </div>
-    </div>
+      </ReviewContainer>
+    </MainpageWrapper>
   );
 };
 
@@ -30,7 +44,7 @@ const content = `
 
 루키 지원을 위해, 이 사이트에서 제공되는 세 개의 문제 (Problem 1, 2, 3) 를 풀어 제출해 주세요.
 
-사용 가능한 언어는 Java, Python, Kotlin, Javascript, Typescript 로 제한됩니다.
+사용 가능한 언어는 Java, Python, C++, Javascript 로 제한됩니다.
 (Problem 3에 한해, Java나 Python의 경우 스켈레톤 코드가 제공됩니다.)
 
 **중요** 채점에 사용되는 언어 버전은 다음과 같습니다.

@@ -3,9 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ReactGA from 'react-ga';
 import { Switch, useHistory, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { Button, Header, Loader, Modal } from 'semantic-ui-react';
 
-import { requester } from './apis/requester';
 import Footer from './component/Footer';
 import MainModal from './component/Modal/MainModal';
 import { useAuthContext } from './context/authContext';
@@ -18,9 +16,6 @@ import 'react-toastify/dist/ReactToastify.css';
 ReactGA.initialize('UA-204463168-1');
 
 const App = () => {
-  const [isTokenChecked, setTokenChecked] = useState<boolean>(false);
-  const { setUser, clearUser, setCsrf } = useAuthContext();
-  const history = useHistory();
   const { pathname, search } = useLocation();
 
   const isAuthNeeded = pathname.includes('problem') || pathname.includes('main');
@@ -29,6 +24,7 @@ const App = () => {
     ReactGA.pageview(search + pathname);
   }, [search, pathname]);
 
+  /*리팩토링*/
   /* useEffect(() => {
     requester.get<{ user?: string; token: string }>('/check/token/').then((res) => {
       setTokenChecked(true);
@@ -65,7 +61,9 @@ const App = () => {
         draggable
         pauseOnHover
       />
-      <MainModal />
+      {
+        //<MainModal />
+      }
     </>
   );
 };

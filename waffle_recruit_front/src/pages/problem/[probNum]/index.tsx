@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { Button, Icon, Loader, Popup } from 'semantic-ui-react';
 
 import Sidebar from '../../../component/Sidebar';
+import { MainpageWrapper, ReviewContainer } from '../../main';
 
 import styles from './Problem.module.css';
 import { problems } from './problems';
@@ -60,12 +61,9 @@ const ProblemPage: React.FC = () => {
   const markdownSolverStatus = '#### *지금까지 총 ' + solvedCount + '명이 성공했습니다 :fire:*\n';
 
   return (
-    <div>
+    <MainpageWrapper>
       <Sidebar />
-      <Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>
-      <br />
-      <br />
-      <div className={styles.ReviewContainer}>
+      <ReviewContainer>
         <div style={{ display: 'flex', height: 20, alignItems: 'center', gap: 8, position: 'relative' }}>
           <ReactMarkdown source={`# ${title}`} renderers={{ text: emojiSupport }} />
           {isSolvedQuery.data?.task &&
@@ -107,8 +105,9 @@ const ProblemPage: React.FC = () => {
           </>
         )}
         <ReactMarkdown source={markdownSolverStatus} renderers={{ text: emojiSupport }} />
-      </div>
-    </div>
+        <Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>
+      </ReviewContainer>
+    </MainpageWrapper>
   );
 };
 
