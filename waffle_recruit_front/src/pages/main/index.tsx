@@ -9,7 +9,8 @@ import { Button } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import Sidebar from '../../component/Sidebar';
-import { main, problemStrings } from '../problem/[probNum]/problemStrings';
+
+import { main, problemStrings } from './problems/problemStrings';
 
 const emojiSupport = (text: any) => text.value.replace(/:\w+:/gi, (name: any) => emoji.getUnicode(name));
 
@@ -36,7 +37,7 @@ export const ReviewContainer = styled.div`
 const ProblemPage = () => {
   const {
     params: { prob_num },
-  } = useRouteMatch<{ prob_num: string }>();
+  } = useRouteMatch<{ prob_num: string | undefined }>();
   const history = useHistory();
 
   const { title, content }: { title: string; content: string } = prob_num ? problemStrings[Number(prob_num)] : main;

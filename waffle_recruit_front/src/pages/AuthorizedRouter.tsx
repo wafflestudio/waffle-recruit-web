@@ -3,8 +3,7 @@ import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
 import ProblemPage from './main';
-import Main from './problem/[probNum]';
-import Submit from './problem/[probNum]/submit';
+import Submit from './submit';
 
 const AuthorizedRouter: React.FC = () => {
   //check token logic

@@ -1,16 +1,22 @@
 import React from 'react';
 
 import { Image } from 'semantic-ui-react';
+import styled from 'styled-components';
 
-import './Footer.css';
+const FooterWrapper = styled.footer`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+`;
 
-const Footer: React.FC = () => {
+const Footer = () => {
   return (
-    <div className="center, footbox">
+    <FooterWrapper>
       <a href="https://github.com/wafflestudio/waffle_recruit" target="_blank">
         <Image src="/logo.png" size="small" className="center" />
       </a>
-    </div>
+    </FooterWrapper>
   );
 };
 
