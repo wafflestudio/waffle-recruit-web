@@ -4,13 +4,13 @@ import React from 'react';
 // @ts-ignore
 import emoji from 'emoji-dictionary';
 import ReactMarkdown from 'react-markdown';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import {useHistory, useLocation, useRouteMatch} from 'react-router-dom';
 import { Button } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import Sidebar from '../../component/Sidebar';
 
-import { main, problemStrings } from './problems/problemStrings';
+import { main, problemStrings, coverletter } from './problems/problemStrings';
 
 const emojiSupport = (text: any) => text.value.replace(/:\w+:/gi, (name: any) => emoji.getUnicode(name));
 
@@ -39,8 +39,8 @@ const ProblemPage = () => {
     params: { prob_num },
   } = useRouteMatch<{ prob_num: string | undefined }>();
   const history = useHistory();
-
-  const { title, content }: { title: string; content: string } = prob_num ? problemStrings[Number(prob_num)] : main;
+  const { pathname } = useLocation();
+  const { title, content }: { title: string; content: string } = prob_num ? problemStrings[Number(prob_num)] : pathname.includes("main") ? main : coverletter;
 
   return (
     <MainPageWrapper>
@@ -49,6 +49,9 @@ const ProblemPage = () => {
         <ReactMarkdown source={`# ${title}`} renderers={{ text: emojiSupport }} />
         <ReactMarkdown source={content} />
         {prob_num && <Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>}
+          {pathname.includes("coverletter") && <iframe
+              src="https://docs.google.com/forms/d/e/1FAIpQLSdUQMy4umFnz0lEOfqZm2D0SBRh_uUam-dLRsIwEmvpoQn_EQ/viewform?embedded=true"
+              width="900" height="100%" frameBorder="0" marginHeight={0} marginWidth={0}>로드 중…</iframe>}
       </ReviewContainer>
     </MainPageWrapper>
   );

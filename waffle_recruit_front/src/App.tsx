@@ -18,7 +18,7 @@ ReactGA.initialize('UA-204463168-1');
 const App = () => {
   const { pathname, search } = useLocation();
 
-  const isAuthNeeded = pathname.includes('problem') || pathname.includes('main');
+  const isAuthNeeded = pathname.includes('problem') || pathname.includes('main') || pathname.includes('coverletter');
 
   useEffect(() => {
     ReactGA.pageview(search + pathname);
@@ -62,7 +62,7 @@ const App = () => {
         pauseOnHover
       />
       {
-        //<MainModal />
+        <MainModal />
       }
     </>
   );
