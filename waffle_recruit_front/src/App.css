@@ -1,6 +1,7 @@
 .App {
   position: relative;
   text-align: center;
+  font-family: 'NanumSquare', sans-serif;
 }
 
 .App-logo {

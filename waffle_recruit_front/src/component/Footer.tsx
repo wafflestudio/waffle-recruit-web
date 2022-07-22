@@ -8,6 +8,9 @@ const FooterWrapper = styled.footer`
   display: flex;
   justify-content: center;
   padding: 30px;
+  background-color: white;
+  height: 140px;
+  border-top: 1px rgba(220, 220, 220, 1) solid;
 `;
 
 const Footer = () => {
