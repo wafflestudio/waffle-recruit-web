@@ -58,7 +58,6 @@ class SigninService(serializers.Serializer):
     password = serializers.CharField(required=True)
     
     def validate(self, data):
-        print(11)
         username= data.get("username", None)
         password = data.get("password", None)
         user = authenticate(username=username, password=password)

@@ -7,8 +7,8 @@ User = get_user_model()
 
 class Solver(models.Model):
     class Meta:
-        unique_together = (('user', 'problem_num'),)
-    problem_num = models.IntegerField()
+        unique_together = (('user', 'prob_num'),)
+    prob_num = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     solved_at = models.DateTimeField(auto_now_add=True)
     
@@ -23,6 +23,7 @@ class Submission(models.Model):
     submit_at = models.DateTimeField(auto_now_add=True)
 
 
+#[XXX] 이거 Refactoring한 Submission이랑 좀 겹치는 것 같은데, user, prob_num 지우고 Submission을 참조하거나 합치는 거 어떨까요?
 #[TODO] Model for db logging - 틀린 경우 유저, 문항, 제출시간, 결과물을 저장할 예정
 class Result(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
