@@ -290,3 +290,11 @@ export const main = {
 ;
 `,
 };
+
+export const coverletter = {
+  title: '자소서 제출',
+  content:
+  `와플 루키 지원을 위한 자소서 제출 입력페이지입니다.
+  
+  `
+}

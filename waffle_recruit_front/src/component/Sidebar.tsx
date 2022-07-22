@@ -118,7 +118,9 @@ const Sidebar: React.FC = () => {
       <LinkItem to={'/problem/2/'}>Problem 2 {renderSuccessLabel(isSolvedList[2])}</LinkItem>
 
       <LinkItem to={'/problem/3/'}>Problem 3 {renderSuccessLabel(isSolvedList[3])}</LinkItem>
-
+        
+        <LinkItem to={'/coverletter/'}>자소서 제출</LinkItem>
+        
       <AItem href={'mailto:recruit@wafflestudio.com'} target={'_blank'}>
         문의하기
       </AItem>
