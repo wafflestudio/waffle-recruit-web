@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
-from .models import Solver, Submission, Result
+from .models import Solver, Submission 
 from .tasks import run_solver
 from datetime import datetime, timedelta, timezone
 from celery.result import AsyncResult
@@ -15,7 +15,7 @@ from django.conf import settings
 json_filename = "juys8J1swR_solution.json"
 response_json_filename = "juys8J1swR_response.json"
 saved_indicator = "SAVED_IN_FILE"
-submission_due = datetime.fromtimestamp(1629298830, timezone.utc)  # 8/19 00:00:30 KST (UTC+9)
+SUBMISSION_DUE = datetime.strptime("2022-07-30 00:00:00", "%Y-%m-%d %H:%M:%S")  # 8/19 00:00:30 KST (UTC+9)
 
 LANGUAGE_CHOICES = (
     ('c++', 'c++'),
@@ -25,43 +25,43 @@ LANGUAGE_CHOICES = (
     ('kotlin', 'kotlin'),
 )
 
-class SubmissionService(serializers.ModelSerializer):
+class SubmissionService(serializers.Serializer):
     req_data = serializers.JSONField(required=True)
-
-    class Meta:
-        model = Submission
-        fields = ('user', 'prob_num', 'task_id', 'submit_at')
-        read_only_fields = ('user', 'task_id', 'submit_at')
 
     def validate(self, data):
         user = self.context['request'].user
-        prob_num = data['prob_num']
+        prob_num = self.context['prob_num']
+        print("prob_num: ", prob_num)
+        if prob_num < 1 or prob_num > 10:
+            raise serializers.ValidationError("없는 문제 번호입니다.")
+
         if Solver.objects.filter(user=user, problem_num=prob_num).exists():
-            raise serializers.ValidationError("이미 풀었습니다.")
+            raise serializers.ValidationError("이미 맞춘 문제입니다.")
+
+        if datetime.now() > SUBMISSION_DUE:
+            raise serializers.ValidationError("제출기간이 지났습니다.")
 
         last_submit = Submission.objects.filter(user=user).order_by('-submit_at').first()
         if last_submit is not None:
             if last_submit.submit_at + timedelta(seconds=10) > datetime.now():
                 time_remain = timedelta(seconds=10) - (datetime.now() - last_submit.submit_at)
                 raise AuthenticationFailed({
-                    "remain": time_remain.total_seconds()
+                    "remain": int(time_remain.total_seconds())
                 })
+        self.context['last_submit'] = last_submit
         return data
     
     def execute(self):
         validated_data = self.validated_data
         user = self.context['request'].user
-        prob_num = validated_data['prob_num']
-        req_data = validated_data['req_data']
         credential = user.credential
-
-        try:
-            original_task = Submission.objects.filter(user=user, prob_num=prob_num).get()
-            _task = AsyncResult(original_task.task_id)
+        prob_num = self.context['prob_num']
+        last_submit = self.context.get('last_submit', None)
+        req_data = validated_data['req_data']
+        if last_submit is not None:
+            _task = AsyncResult(last_submit.task_id)
             _task.revoke()
             _task.forget()
-        except Submission.DoesNotExist:
-            original_task = Submission(user=user, prob_num=prob_num)
         file_path = f"codes/{credential}/{prob_num}/"
         
         try:
@@ -89,15 +89,22 @@ class SubmissionService(serializers.ModelSerializer):
         with open(file_path + json_filename, 'w') as local_file:
             json.dump(req_data, local_file)
         task: AsyncResult = run_solver.delay(language, file_path, prob_num=prob_num)
-        original_task.task_id = task.id
-        original_task.save()
-        # [TODO] log to sqlite - 틀린 경우에만 기록하도록.
-        if (task.get()[0] == False):
-            # time_now = now() 
-            wrong_result = (str(task.get()[2]['error']) + "/" + str(task.get()[2]['detail'])).replace("Wrong answer : your output:", "")
-            # Result.objects.create(user=request.user,prob_num = prob_num,time=time_now ,result = wrong_result)
-            Result.objects.create(user=user,prob_num = prob_num,result = wrong_result)
+        Submission.objects.create(user=user, task_id=task.id, prob_num=prob_num)
         return Response("제출이 완료되었습니다.", status=201)
+
+
+class ResultService(serializers.Serializer):
+    def validate(self, data):
+        user = self.context['request'].user
+        prob_num = self.context['prob_num']
+        if not Submission.objects.filter(user=user, prob_num=prob_num).exists():
+            raise serializers.ValidationError("제출하지 않은 문제입니다.")
+        return data
+
+    def execute(self):
+        # [TODO] Result랑 Submission 모델 정리하고 다시 생각
+        # result = Result.objects.filter(user=user, prob_num=prob_num).order_by('-time').first()
+        return Response({"result": "아직 몰라용"}, status=200)
 
 
 class SkeletonService(serializers.Serializer):
@@ -117,3 +124,5 @@ class SkeletonService(serializers.Serializer):
             ExpiresIn=600,
         )
         return Response({"url": url}, status=200)
+
+

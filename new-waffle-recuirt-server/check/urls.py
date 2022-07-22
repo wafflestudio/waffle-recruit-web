@@ -4,6 +4,6 @@ from rest_framework.routers import SimpleRouter
 from .views import SubmissionViewSet
 
 router = SimpleRouter()
-router.register("submit", SubmissionViewSet, basename="submit")
+router.register("check", SubmissionViewSet, basename="check")
 
 urlpatterns = (path("", include(router.urls)),)
