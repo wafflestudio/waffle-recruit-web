@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
-from .models import Solver, Submission, Result
+from .models import Solver, Submission 
 from .tasks import run_solver
 from datetime import datetime, timedelta, timezone
 from celery.result import AsyncResult
@@ -90,12 +90,6 @@ class SubmissionService(serializers.Serializer):
             json.dump(req_data, local_file)
         task: AsyncResult = run_solver.delay(language, file_path, prob_num=prob_num)
         Submission.objects.create(user=user, task_id=task.id, prob_num=prob_num)
-        # [TODO] log to sqlite - 틀린 경우에만 기록하도록.
-        if (task.get()[0] == False):
-            # time_now = now() 
-            wrong_result = (str(task.get()[2]['error']) + "/" + str(task.get()[2]['detail'])).replace("Wrong answer : your output:", "")
-            # Result.objects.create(user=request.user,prob_num = prob_num,time=time_now ,result = wrong_result)
-            Result.objects.create(user=user,prob_num = prob_num,result = wrong_result)
         return Response("제출이 완료되었습니다.", status=201)
 
 
