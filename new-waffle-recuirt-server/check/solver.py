@@ -10,15 +10,11 @@ class CompileError(Exception):
     pass
 
 
-class TimeoutError(Exception):
-    pass
-
-
 def solve(language, file_path, prob_num):
     print("file path: " + file_path)
     if int(prob_num) in range(0, 4):
-        solutions = os.listdir(f"solve/problem{prob_num}/solutions")
-        testcases = os.listdir(f"solve/problem{prob_num}/testcases")
+        solutions = os.listdir(f"problems/{prob_num}/solutions")
+        testcases = os.listdir(f"problems/{prob_num}/testcases")
         solutions.sort()
         testcases.sort()
     else:
@@ -60,8 +56,8 @@ def solve(language, file_path, prob_num):
     #         raise Exception(f"compile error: {errs.decode()}")
 
     for test_case_filename, solution_filename in zip(testcases, solutions):
-        test_case = open(f"solve/problem{prob_num}/testcases/{test_case_filename}", "r")
-        solution_file = open(f"solve/problem{prob_num}/solutions/{solution_filename}", "r")
+        test_case = open(f"problems/{prob_num}/testcases/{test_case_filename}", "r")
+        solution_file = open(f"problems/{prob_num}/solutions/{solution_filename}", "r")
         kwargs = {
             "stdout": subprocess.PIPE,
             "stderr": subprocess.PIPE,
@@ -88,7 +84,7 @@ def solve(language, file_path, prob_num):
             outs, errs = proc.communicate(timeout=1.1)
         except subprocess.TimeoutExpired:
             proc.kill()
-            raise TimeoutError("Timeout error")
+            raise Exception("시간 초과")
         except Exception as e:
             proc.kill()
             raise Exception("Server error")

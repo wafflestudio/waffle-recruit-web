@@ -12,7 +12,7 @@
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
     "connected-react-router": "^6.8.0",
-    "emoji-dictionary": "^1.0.10",
+    "emoji-dictionary": "^1.0.11",
     "eslint": "6.6.0",
     "formik": "^2.2.9",
     "history": "^5.0.0",
