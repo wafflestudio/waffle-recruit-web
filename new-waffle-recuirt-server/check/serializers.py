@@ -35,7 +35,7 @@ class SubmissionService(serializers.Serializer):
         if prob_num < 1 or prob_num > 10:
             raise serializers.ValidationError("없는 문제 번호입니다.")
 
-        if Solver.objects.filter(user=user, problem_num=prob_num).exists():
+        if Solver.objects.filter(user=user, prob_num=prob_num).exists():
             raise serializers.ValidationError("이미 맞춘 문제입니다.")
 
         if datetime.now() > SUBMISSION_DUE:
