@@ -18,14 +18,14 @@ export const MainPageWrapper = styled.article`
   position: relative;
   display: flex;
   width: 100%;
-  min-height: 80vh;
+  min-height: 100vh;
 `;
 
 export const ReviewContainer = styled.div`
   width: calc(100% - 300px);
   box-sizing: border-box;
-  padding: 30px;
-  margin-top: 120px;
+  padding: 80px;
+  margin-top: 80px;
   font-family: 'NanumSquare', sans-serif;
   white-space: pre-wrap;
   word-wrap: break-word;

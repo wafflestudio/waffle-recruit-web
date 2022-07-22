@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
-import './MainModal.css';
 import { DateTime } from 'luxon';
 import { useCookies } from 'react-cookie';
 import ReactMarkdown from 'react-markdown';
 import { Button, Header, Modal } from 'semantic-ui-react';
+import styled from 'styled-components';
+
+const ModalWrapper = styled(Modal)`
+  .MainModal {
+    position: fixed;
+    left: 100px;
+    right: 100px;
+  }
+`;
 
 const MainModal = () => {
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
@@ -17,7 +25,7 @@ const MainModal = () => {
   }, []);
 
   return (
-    <Modal className="MainModal" open={isOpenModal} onClose={() => setOpenModal(false)}>
+    <ModalWrapper open={isOpenModal} onClose={() => setOpenModal(false)}>
       <Header icon="archive" content="루키 모집 D-3 (08/12 22:41 업데이트)" />
       <Modal.Content scrolling>
         <ReactMarkdown
@@ -58,7 +66,7 @@ const MainModal = () => {
           닫기
         </Button>
       </Modal.Actions>
-    </Modal>
+    </ModalWrapper>
   );
 };
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useQuery } from 'react-query';
 import { Link, useHistory } from 'react-router-dom';
@@ -23,34 +23,50 @@ type IProbStatusResponse =
       message: 'string';
     };
 
+const Logo = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 140px;
+`;
+
 const SidebarWrapper = styled.nav`
   position: relative;
   display: flex;
   flex-direction: column;
   width: 300px;
-  padding: 20px;
-  align-content: center;
+  box-shadow: gray 0px 0 5px;
+  background-color: #de8234;
+  //background-color: rgb(122, 70, 34);
 `;
 
 const LinkItem = styled(Link)`
-  font-size: 20px;
-  font-weight: bold;
-  color: rgb(202, 150, 106);
-  height: 40px;
+  font-size: 24px;
+  font-weight: bolder;
+  //color: rgb(202, 150, 106);
+  color: white;
   line-height: 40px;
-  transition: font-size 0.1s, color 0.3s;
-  margin-bottom: 50px;
+  transition: font-size 0.1s, color 0.3s, background-color 0.3s;
+  padding: 20px;
+
   &:hover {
     color: rgb(95, 62, 32);
     font-size: 21px;
+    background-color: white;
+  }
+  &.selected {
+    color: rgb(95, 62, 32);
+    font-size: 21px;
+    background-color: white;
   }
 `;
 
 const AItem = styled.a`
   font-size: 20px;
   font-weight: bold;
-  color: rgb(202, 150, 106);
-  height: 40px;
+  //color: rgb(202, 150, 106);
+  color: white;
+  padding: 20px;
   line-height: 40px;
   transition: font-size 0.1s, color 0.3s;
   margin-bottom: 50px;
@@ -63,6 +79,7 @@ const AItem = styled.a`
 const Sidebar: React.FC = () => {
   const history = useHistory();
   const { user, clearUser } = useAuthContext();
+  const [selected, setSelected] = useState<string>('');
 
   const isSolvedQuery0 = useQuery<{
     solved: boolean;
@@ -97,6 +114,14 @@ const Sidebar: React.FC = () => {
     }
   };
 
+  const isSelected = (targetPath: string) => {
+    return selected === targetPath ? 'selected' : 'not-selected';
+  };
+
+  useEffect(() => {
+    setSelected(history.location.pathname);
+  }, [history.location.pathname]);
+
   const renderSuccessLabel = (isSolved: boolean | undefined) => {
     return isSolved === true ? (
       <span className="ui green label mini tag">해결 완료</span>
@@ -107,25 +132,40 @@ const Sidebar: React.FC = () => {
 
   return (
     <SidebarWrapper>
-      <Image src="/pupuri.png" size="small" className="center" />
+      <Logo>
+        <Image src="/pupuri.png" size="small" className="center" />
+      </Logo>
 
-      <LinkItem to={'/main/'}>[필독] 문제 개요</LinkItem>
+      <LinkItem className={isSelected('/main')} to={'/main/'}>
+        [필독] 문제 개요
+      </LinkItem>
 
-      <LinkItem to={'/problem/0/'}>test problem {renderSuccessLabel(isSolvedList[0])}</LinkItem>
+      <LinkItem className={isSelected('/problem/0/')} to={'/problem/0/'}>
+        test problem {renderSuccessLabel(isSolvedList[0])}
+      </LinkItem>
 
-      <LinkItem to={'/problem/1/'}>Problem 1 {renderSuccessLabel(isSolvedList[1])}</LinkItem>
+      <LinkItem className={isSelected('/problem/1/')} to={'/problem/1/'}>
+        Problem 1 {renderSuccessLabel(isSolvedList[1])}
+      </LinkItem>
 
-      <LinkItem to={'/problem/2/'}>Problem 2 {renderSuccessLabel(isSolvedList[2])}</LinkItem>
+      <LinkItem className={isSelected('/problem/2/')} to={'/problem/2/'}>
+        Problem 2 {renderSuccessLabel(isSolvedList[2])}
+      </LinkItem>
 
-      <LinkItem to={'/problem/3/'}>Problem 3 {renderSuccessLabel(isSolvedList[3])}</LinkItem>
+
+      <LinkItem className={isSelected('/problem/3/')} to={'/problem/3/'}>
+        Problem 3 {renderSuccessLabel(isSolvedList[3])}
+      </LinkItem>
+
         
-        <LinkItem to={'/coverletter/'}>자소서 제출</LinkItem>
+      <LinkItem to={'/coverletter/'}>자소서 제출</LinkItem>
         
+
       <AItem href={'mailto:recruit@wafflestudio.com'} target={'_blank'}>
         문의하기
       </AItem>
 
-      <p style={{ width: 150, wordBreak: 'break-all', color: '#804020' }}>Signed as {user}</p>
+      <p style={{ width: 150, fontSize: '16px', wordBreak: 'break-all', color: 'white' }}>Signed as {user}</p>
 
       <LinkItem to={'/'} onClick={onClickSignOut}>
         Logout
