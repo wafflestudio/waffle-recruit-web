@@ -3,9 +3,9 @@ import axios from 'axios';
 import { loadJWT } from './token';
 
 // TODO .env.production
-const isProduction = false;
+const isProduction = true;
 
-const baseURL = isProduction ? 'https://recruit-api.wafflestudio.com' : 'http://localhost:8000';
+const baseURL = isProduction ? 'https://recruit2022-api.wafflestudio.com' : 'http://localhost:8000';
 
 export const requester = axios.create({
   baseURL: baseURL,
@@ -20,7 +20,7 @@ export const authRequester = axios.create({
 
 authRequester.interceptors.request.use(
   (config) => {
-    config.headers.Authorization = loadJWT();
+    config.headers.Authorization = `Bearer ${loadJWT()}`;
     return config;
   },
   (error) => {

@@ -1,4 +1,4 @@
-const jwtKey = 'jwt' as const;
+const jwtKey = 'access' as const;
 const refreshKey = 'refresh' as const;
 
 export const loadJWT = () => {
@@ -14,4 +14,9 @@ export const saveJWT = (token: string) => {
 };
 export const saveRefresh = (token: string) => {
   return localStorage.setItem(refreshKey, token);
+};
+
+export const saveTokens = ({ access, refresh }: { access: string; refresh: string }) => {
+  saveJWT(access);
+  saveRefresh(refresh);
 };
