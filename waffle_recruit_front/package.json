@@ -42,7 +42,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "deploy": "yarn build && aws s3 sync ./build s3://waffle-recruit-web --profile=woohm404@wafflestudio.com",
+    "deploy": "yarn build && aws s3 sync ./build s3://recruit.wafflestudio.com --profile=designDefined@wafflestudio.com",
+    "invalidate" : "aws cloudfront create-invalidation --profile=designDefined@wafflestudio.com --distribution-id E2VKBS7534GSCM --paths / /index.html /error.html /service-worker.js /manifest.json /favicon.ico",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

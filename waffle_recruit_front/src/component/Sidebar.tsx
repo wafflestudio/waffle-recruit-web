@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { useQuery } from 'react-query';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Image } from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -31,12 +31,15 @@ const Logo = styled.div`
 `;
 
 const SidebarWrapper = styled.nav`
-  position: relative;
+  position: fixed;
   display: flex;
   flex-direction: column;
-  width: 300px;
+  top: 0;
+  width: 240px;
   box-shadow: gray 0px 0 5px;
   background-color: #de8234;
+  z-index: 2;
+  height: 100%;
   //background-color: rgb(122, 70, 34);
 `;
 
@@ -78,6 +81,7 @@ const AItem = styled.a`
 
 const Sidebar: React.FC = () => {
   const history = useHistory();
+  const { pathname } = useLocation();
   const { user, clearUser } = useAuthContext();
   const [selected, setSelected] = useState<string>('');
 
@@ -119,8 +123,8 @@ const Sidebar: React.FC = () => {
   };
 
   useEffect(() => {
-    setSelected(history.location.pathname);
-  }, [history.location.pathname]);
+    setSelected(pathname);
+  }, [pathname]);
 
   const renderSuccessLabel = (isSolved: boolean | undefined) => {
     return isSolved === true ? (
@@ -152,14 +156,13 @@ const Sidebar: React.FC = () => {
         Problem 2 {renderSuccessLabel(isSolvedList[2])}
       </LinkItem>
 
-
       <LinkItem className={isSelected('/problem/3/')} to={'/problem/3/'}>
         Problem 3 {renderSuccessLabel(isSolvedList[3])}
       </LinkItem>
 
-        
-      <LinkItem to={'/coverletter/'}>자소서 제출</LinkItem>
-        
+      <LinkItem className={isSelected('/coverletter/')} to={'/coverletter/'}>
+        자소서 제출
+      </LinkItem>
 
       <AItem href={'mailto:recruit@wafflestudio.com'} target={'_blank'}>
         문의하기

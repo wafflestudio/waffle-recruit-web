@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import emoji from 'emoji-dictionary';
 import ReactMarkdown from 'react-markdown';
-import {useHistory, useLocation, useRouteMatch} from 'react-router-dom';
+import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { Button } from 'semantic-ui-react';
 import styled from 'styled-components';
 
@@ -26,6 +26,7 @@ export const ReviewContainer = styled.div`
   box-sizing: border-box;
   padding: 80px;
   margin-top: 80px;
+  margin-left: 240px;
   font-family: 'NanumSquare', sans-serif;
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -40,7 +41,15 @@ const ProblemPage = () => {
   } = useRouteMatch<{ prob_num: string | undefined }>();
   const history = useHistory();
   const { pathname } = useLocation();
-  const { title, content }: { title: string; content: string } = prob_num ? problemStrings[Number(prob_num)] : pathname.includes("main") ? main : coverletter;
+  const { title, content }: { title: string; content: string } = prob_num
+    ? problemStrings[Number(prob_num)]
+    : pathname.includes('main')
+    ? main
+    : coverletter;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <MainPageWrapper>
@@ -49,9 +58,18 @@ const ProblemPage = () => {
         <ReactMarkdown source={`# ${title}`} renderers={{ text: emojiSupport }} />
         <ReactMarkdown source={content} />
         {prob_num && <Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>}
-          {pathname.includes("coverletter") && <iframe
-              src="https://docs.google.com/forms/d/e/1FAIpQLSdUQMy4umFnz0lEOfqZm2D0SBRh_uUam-dLRsIwEmvpoQn_EQ/viewform?embedded=true"
-              width="900" height="100%" frameBorder="0" marginHeight={0} marginWidth={0}>로드 중…</iframe>}
+        {pathname.includes('coverletter') && (
+          <iframe
+            src="https://docs.google.com/forms/d/e/1FAIpQLSdUQMy4umFnz0lEOfqZm2D0SBRh_uUam-dLRsIwEmvpoQn_EQ/viewform?embedded=true"
+            width="900"
+            height="100%"
+            frameBorder="0"
+            marginHeight={0}
+            marginWidth={0}
+          >
+            로드 중…
+          </iframe>
+        )}
       </ReviewContainer>
     </MainPageWrapper>
   );
