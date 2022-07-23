@@ -41,7 +41,7 @@ const Signup = () => {
   });
 
   const signUpMutation = useMutation(
-    ({ user }: { user: ISignupForm }) => requester.post<{ user: string }>('/check/signup/', user),
+    ({ user }: { user: ISignupForm }) => requester.post<{ user: string }>('/auth/signup/', user),
     {
       onError: () => {
         // TODO 체크 필요

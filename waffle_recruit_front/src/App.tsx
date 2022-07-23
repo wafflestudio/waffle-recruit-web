@@ -61,9 +61,7 @@ const App = () => {
         draggable
         pauseOnHover
       />
-      {
-        <MainModal />
-      }
+      <MainModal />
     </>
   );
 };
