@@ -22,7 +22,7 @@ const queryClient = new QueryClient({
           const response = await requester.get(queryKey[0] as string);
           return response.data;
         } catch (e) {
-          throw new Error(e);
+          //throw new Error(e);
         }
       },
     },

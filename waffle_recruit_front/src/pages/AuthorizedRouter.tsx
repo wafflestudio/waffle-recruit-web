@@ -19,7 +19,7 @@ const AuthorizedRouter: React.FC = () => {
       } else {
         return Promise.reject(res);
       }
-    } catch (e) {
+    } catch (e: any) {
       toast.error(e);
     }
   };
