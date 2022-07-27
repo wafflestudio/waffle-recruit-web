@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, Form } from 'semantic-ui-react';
 
 import { requester } from '../../apis/requester';
 import { useAuthContext } from '../../context/authContext';
 import '../containers.css';
-import { saveTokens } from '../../apis/token';
 
 interface User {
   username: string;
@@ -31,9 +30,8 @@ const Signin: React.FC = () => {
 
   const onLoginUser = async (user: User) => {
     try {
-      const res = await requester.post<{ user: string; token: { access: string; refresh: string } }>('/auth/signin/', user);
-      saveTokens(res.data.token);
-      history.replace('/main');
+      const res = await requester.post('/auth/signin/github/');
+      console.log(res);
     } catch (err) {
       toast.error('가입되지 않은 유저거나 아이디/비밀번호가 틀렸습니다.');
     }
@@ -41,7 +39,11 @@ const Signin: React.FC = () => {
 
   return (
     <div className="login_page">
-      <Form className="login_form" onSubmit={onClickSignInButton}>
+      <a href={`https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}`}>
+        <Button>GitHub 로그인 하기</Button>
+      </a>
+
+      {/* <Form className="login_form" onSubmit={onClickSignInButton}>
         <Form.Input
           icon="user"
           iconPosition="left"
@@ -66,7 +68,7 @@ const Signin: React.FC = () => {
 
         <Button id="login-button" type="submit" content="Login" primary />
         <Button content="Sign up" icon="signup" id="signup-button" onClick={() => history.push('/signup/')} />
-      </Form>
+      </Form> */}
     </div>
   );
 };

@@ -4,11 +4,12 @@ import React, { useEffect } from 'react';
 // @ts-ignore
 import emoji from 'emoji-dictionary';
 import ReactMarkdown from 'react-markdown';
-import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
+import { useHistory, useLocation, useParams, useRouteMatch } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Button } from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import { authRequester } from '../../apis/requester';
+import { authRequester, requester } from '../../apis/requester';
 import Sidebar from '../../component/Sidebar';
 
 import { main, problemStrings, coverletter } from './problems/problemStrings';
@@ -37,10 +38,7 @@ export const ReviewContainer = styled.div`
 `;
 
 const ProblemPage = () => {
-  const {
-    params: { prob_num },
-  } = useRouteMatch<{ prob_num: string | undefined }>();
-  const history = useHistory();
+  const { prob_num }: { prob_num: string | undefined } = useParams();
   const { pathname } = useLocation();
   const { title, content }: { title: string; content: string } = prob_num
     ? problemStrings[Number(prob_num)]

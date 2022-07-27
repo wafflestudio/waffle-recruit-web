@@ -4,6 +4,7 @@ import { Redirect, Route, useHistory } from 'react-router-dom';
 
 import Signin from './signin/Signin';
 import Signup from './signup/Signup';
+import GitHub from './github/GitHub';
 
 const UnauthorizedRouter: React.FC = () => {
   const history = useHistory();
@@ -18,7 +19,7 @@ const UnauthorizedRouter: React.FC = () => {
   return (
     <>
       <Route path="/signin" exact component={Signin} />
-      <Route path="/signup" exact component={Signup} />
+      <Route path="/github" exact component={GitHub} />
       <Redirect to="/signin" />
     </>
   );
