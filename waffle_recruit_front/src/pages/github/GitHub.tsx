@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 
 import { requester } from '../../apis/requester';
 import { useAuthContext } from '../../context/authContext';
+import { saveTokens } from '../../apis/token';
 
 const GitHub = () => {
   const location = useLocation();
@@ -17,8 +18,9 @@ const GitHub = () => {
   async function getGitHubCode() {
     try {
       const res = await requester.get(`/auth/signin/github/callback/?code=${code}`);
-      console.log(res);
-      setUser(res.data.login);
+      console.log(res.data);
+      setUser(res.data[0].username);
+      saveTokens(res.data[1]);
       history.push('/main');
     } catch (err) {
       toast.error('GitHub 로그인에 실패하였습니다.');
