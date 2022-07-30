@@ -4,8 +4,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { requester } from '../../apis/requester';
-import { useAuthContext } from '../../context/authContext';
 import { saveTokens } from '../../apis/token';
+import { useAuthContext } from '../../context/authContext';
 
 const GitHub = () => {
   const location = useLocation();

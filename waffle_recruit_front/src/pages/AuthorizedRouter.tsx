@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { Redirect, Route, useHistory, useLocation } from 'react-router-dom';
+import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { authRequester, requester } from '../apis/requester';
@@ -31,18 +31,20 @@ const AuthorizedRouter: React.FC = () => {
       },
       () => {
         toast.error('로그인이 만료되었습니다.');
-        //    history.push('/signin');
+        history.push('/signin');
       }
     );
   }, [location.pathname]);
 
   return (
     <>
-      <Route path="/main" exact component={ProblemPage} />
-      <Route path="/coverletter" exact component={ProblemPage} />
-      <Route path="/problem/:prob_num" exact component={ProblemPage} />
-      <Route path="/problem/:prob_num/submit" exact component={Submit} />
-      <Redirect to="/main" />
+      <Switch>
+        <Route path="/main" exact component={ProblemPage} />
+        <Route path="/coverletter" exact component={ProblemPage} />
+        <Route path="/problem/:prob_num" exact component={ProblemPage} />
+        <Route path="/problem/:prob_num/submit" exact component={Submit} />
+        <Redirect to="/main" />
+      </Switch>
     </>
   );
 };

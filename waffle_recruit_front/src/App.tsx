@@ -20,9 +20,9 @@ const App = () => {
 
   const isAuthNeeded = pathname.includes('problem') || pathname.includes('main') || pathname.includes('coverletter');
 
-  useEffect(() => {
-    ReactGA.pageview(search + pathname);
-  }, [search, pathname]);
+  //  useEffect(() => {
+  //    ReactGA.pageview(search + pathname);
+  //  }, [search, pathname]);
 
   /*리팩토링*/
   /* useEffect(() => {

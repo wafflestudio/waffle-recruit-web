@@ -9,9 +9,6 @@ const baseURL = isProduction ? 'https://recruit2022-api.wafflestudio.com' : 'htt
 
 export const requester = axios.create({
   baseURL: baseURL,
-  // xsrfCookieName: 'csrftoken',
-  // xsrfHeaderName: 'X-CSRFToken',
-  // withCredentials: true,
 });
 
 export const authRequester = axios.create({

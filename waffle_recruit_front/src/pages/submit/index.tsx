@@ -3,18 +3,19 @@ import React, { SyntheticEvent, useEffect, useState } from 'react';
 import { AxiosError, AxiosResponse } from 'axios';
 import { useFormik } from 'formik';
 import produce from 'immer';
+import { Simulate } from 'react-dom/test-utils';
 import { useIsMutating, useMutation } from 'react-query';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, Confirm, Form, Input, Popup, Select, Tab, TextArea } from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import { requester } from '../../apis/requester';
+import { authRequester, requester } from '../../apis/requester';
 
 import styles from './Submit.module.css';
 
 interface ISubmit {
-  language: 'java' | 'kotlin' | 'javascript' | 'typescript' | 'python' | null;
+  language: 'java' | 'kotlin' | 'javascript' | 'c++' | 'python' | null;
   files: {
     filename: string;
     code: string;
@@ -70,6 +71,20 @@ const Submit: React.FC = () => {
     resetForm();
   }, [prob_num]);
 
+  const submitAnswer = async (e: any) => {
+    try {
+      // const response: any = await authRequester
+      //   .post(`/check/${prob_num}/submit/`, { filename: 'Main.java', req_data: { additionalProps1: '' } })
+      //   .then((res) => {
+      //     toast.info('채점이 시작되었습니다.');
+      //     return Promise.resolve(response.data);
+      //   });
+      console.log(e);
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  };
+
   const submitAnswerMutation = useMutation<
     AxiosResponse<never>,
     AxiosError<{ remain: number } | { error: string; detail?: string }>,
@@ -78,7 +93,7 @@ const Submit: React.FC = () => {
   >(
     'submit',
     (values) => {
-      return requester.post(`/check/prob/${prob_num}/`, values);
+      return requester.post(`/check/${prob_num}/submit/`, values);
     },
     {
       onSuccess: () => {
@@ -174,8 +189,8 @@ const Submit: React.FC = () => {
             return [{ filename: 'main.py', code: '' }];
           case 'javascript':
             return [{ filename: 'index.js', code: '' }];
-          case 'typescript':
-            return [{ filename: 'index.ts', code: '' }];
+          case 'c++':
+            return [{ filename: 'index.cpp', code: '' }];
           case 'kotlin':
             return [{ filename: 'main.kt', code: '' }];
           case null:
@@ -211,7 +226,14 @@ const Submit: React.FC = () => {
 
   return (
     <>
-      <Form className={styles.form} onSubmit={handleSubmit}>
+      <Form
+        className={styles.form}
+        onSubmit={(e, d) => {
+          submitAnswer(d).then((res) => {
+            console.log(res);
+          });
+        }}
+      >
         <h2 className={styles.titleTrailing}>제출란</h2>
         <Popup
           trigger={
@@ -224,7 +246,7 @@ const Submit: React.FC = () => {
         </Popup>
         <Select
           className={styles.radioWrapper}
-          options={['java', 'python', 'typescript', 'javascript', 'kotlin'].map((item) => ({
+          options={['java', 'python', 'c++', 'javascript', 'kotlin'].map((item) => ({
             key: item,
             value: item,
             text: item,

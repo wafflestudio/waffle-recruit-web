@@ -40,6 +40,7 @@ export const ReviewContainer = styled.div`
 const ProblemPage = () => {
   const { prob_num }: { prob_num: string | undefined } = useParams();
   const { pathname } = useLocation();
+  const history = useHistory();
   const { title, content }: { title: string; content: string } = prob_num
     ? problemStrings[Number(prob_num)]
     : pathname.includes('main')
@@ -58,16 +59,16 @@ const ProblemPage = () => {
         <ReactMarkdown source={content} />
         {prob_num && (
           <Button
-            onClick={() =>
-              //history.push(`/problem/${prob_num}/submit`)
-              authRequester.post('/check/0/submit/', { req_data: {} }).then(
+            onClick={
+              () => history.push(`/problem/${prob_num}/submit`)
+              /*              authRequester.post('/check/0/submit/', { req_data: {} }).then(
                 (res) => {
                   console.log(res);
                 },
                 (err) => {
                   console.log(err);
                 }
-              )
+              )*/
             }
           >
             제출하기
