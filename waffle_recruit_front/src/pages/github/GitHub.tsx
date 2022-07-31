@@ -24,7 +24,7 @@ const GitHub = () => {
       history.push('/main');
     } catch (err) {
       toast.error('GitHub 로그인에 실패하였습니다.');
-      history.push('/signin');
+      history.push('/main');
     }
   }
 

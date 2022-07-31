@@ -22,6 +22,15 @@ interface ISubmit {
   }[];
 }
 
+interface FileType {
+  filename: string;
+  code: string;
+}
+interface SubmitType {
+  language: 'java' | 'kotlin' | 'javascript' | 'c++' | 'python' | null;
+  files: FileType[];
+}
+
 const MyConfirm = styled(Confirm)`
   top: auto !important;
   left: auto !important;
@@ -32,7 +41,8 @@ const Submit: React.FC = () => {
   const history = useHistory();
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [isRecentChangeConfirmOpen, setRecentChangeConfirmOpen] = useState<boolean>(false);
-
+  const [files, setFiles] = useState<{ filename: string; code: string }[]>([]);
+  const [language, setLanguage] = useState<string>('');
   const isSubmitting = !!useIsMutating({
     mutationKey: 'submit',
   });
@@ -68,18 +78,14 @@ const Submit: React.FC = () => {
       history.push('/problems/0');
       return;
     }
-    resetForm();
+    setFiles([]);
   }, [prob_num]);
 
   const submitAnswer = async (e: any) => {
     try {
-      // const response: any = await authRequester
-      //   .post(`/check/${prob_num}/submit/`, { filename: 'Main.java', req_data: { additionalProps1: '' } })
-      //   .then((res) => {
-      //     toast.info('채점이 시작되었습니다.');
-      //     return Promise.resolve(response.data);
-      //   });
-      console.log(e);
+      toast.info('채점이 시작되었습니다.');
+      const response: any = await authRequester.post(`/check/${prob_num}/submit/`, { language: language, files: files });
+      return Promise.resolve(response.data);
     } catch (e) {
       return Promise.reject(e);
     }
@@ -126,7 +132,7 @@ const Submit: React.FC = () => {
     }
   };
 
-  const panes: { menuItem: string; render: () => JSX.Element }[] = values.files
+  const panes: { menuItem: string; render: () => JSX.Element }[] = files
     .concat({
       filename: '+ 추가',
       code: '',
@@ -190,7 +196,7 @@ const Submit: React.FC = () => {
           case 'javascript':
             return [{ filename: 'index.js', code: '' }];
           case 'c++':
-            return [{ filename: 'index.cpp', code: '' }];
+            return [{ filename: 'main.cpp', code: '' }];
           case 'kotlin':
             return [{ filename: 'main.kt', code: '' }];
           case null:
@@ -204,20 +210,20 @@ const Submit: React.FC = () => {
   };
 
   const handleTabChange = (_: SyntheticEvent, data: unknown) => {
-    const targetIndex = (data as { activeIndex: number } & unknown).activeIndex;
-    if (targetIndex === values.files.length) {
-      // 새 탭 추가
-      setFieldValue('files', values.files.concat({ filename: '', code: '' }));
-    }
-
-    setSelectedTab(targetIndex);
+    // const targetIndex = (data as { activeIndex: number } & unknown).activeIndex;
+    // if (targetIndex === files.length) {
+    //   // 새 탭 추가
+    //   setFieldValue('files', values.files.concat({ filename: '', code: '' }));
+    // }
+    //
+    // setSelectedTab(targetIndex);
   };
 
   const reloadRecentSubmit = async () => {
     try {
       const recentCode = await requester.get<ISubmit>(`/check/prob/${prob_num}/solution/`);
-      await setFieldValue('files', recentCode.data.files);
-      await setFieldValue('language', recentCode.data.language);
+      await setFiles('files', recentCode.data.files);
+      await setLanguage('language', recentCode.data.language);
     } catch (err) {
       toast.error('최근에 이 문제를 제출한 기록이 없습니다.');
       return;
@@ -255,7 +261,7 @@ const Submit: React.FC = () => {
           onChange={handleLanguageChange}
         />
 
-        {values.language !== null && (
+        {language !== '' && (
           <>
             <Tab
               activeIndex={selectedTab}
