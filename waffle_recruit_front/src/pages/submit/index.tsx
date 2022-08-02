@@ -3,7 +3,6 @@ import React, { SyntheticEvent, useEffect, useState } from 'react';
 import { AxiosError, AxiosResponse } from 'axios';
 import { useFormik } from 'formik';
 import produce from 'immer';
-import { Simulate } from 'react-dom/test-utils';
 import { useIsMutating, useMutation } from 'react-query';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -14,20 +13,17 @@ import { authRequester, requester } from '../../apis/requester';
 
 import styles from './Submit.module.css';
 
-interface ISubmit {
-  language: 'java' | 'kotlin' | 'javascript' | 'c++' | 'python' | null;
-  files: {
-    filename: string;
-    code: string;
-  }[];
-}
+type LanguageType = 'java' | 'kotlin' | 'javascript' | 'c++' | 'python';
+
+const allLanguages: LanguageType[] = ['java', 'kotlin', 'javascript', 'c++', 'python'];
 
 interface FileType {
   filename: string;
   code: string;
 }
+
 interface SubmitType {
-  language: 'java' | 'kotlin' | 'javascript' | 'c++' | 'python' | null;
+  language: LanguageType;
   files: FileType[];
 }
 
@@ -41,36 +37,34 @@ const Submit: React.FC = () => {
   const history = useHistory();
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [isRecentChangeConfirmOpen, setRecentChangeConfirmOpen] = useState<boolean>(false);
-  const [files, setFiles] = useState<{ filename: string; code: string }[]>([]);
+  const [files, setFiles] = useState<FileType[]>([]);
   const [language, setLanguage] = useState<string>('');
-  const isSubmitting = !!useIsMutating({
-    mutationKey: 'submit',
-  });
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const {
     params: { prob_num },
   } = useRouteMatch<{ prob_num: string }>();
 
-  const { values, resetForm, handleSubmit, setFieldValue } = useFormik<ISubmit>({
-    initialValues: {
-      language: null,
-      files: [],
-    },
-    onSubmit: (values) => {
-      if (values.language === null) {
-        // CANNOT REACH HERE
-        toast.error('언어를 선택해 주세요.');
-        return;
-      }
-      if (isSubmitting) {
-        toast.error('채점중입니다.');
-        return;
-      }
-
-      localStorage.setItem('recentSubmit', JSON.stringify(values));
-      submitAnswerMutation.mutate(values);
-    },
-  });
+  // const { values, resetForm, handleSubmit, setFieldValue } = useFormik<ISubmit>({
+  //   initialValues: {
+  //     language: null,
+  //     files: [],
+  //   },
+  //   onSubmit: (values) => {
+  //     if (values.language === null) {
+  //       // CANNOT REACH HERE
+  //       toast.error('언어를 선택해 주세요.');
+  //       return;
+  //     }
+  //     if (isSubmitting) {
+  //       toast.error('채점중입니다.');
+  //       return;
+  //     }
+  //
+  //     localStorage.setItem('recentSubmit', JSON.stringify(values));
+  //     submitAnswerMutation.mutate(values);
+  //   },
+  // });
 
   useEffect(() => {
     if (!['0', '1', '2', '3'].includes(prob_num)) {
@@ -78,56 +72,79 @@ const Submit: React.FC = () => {
       history.push('/problems/0');
       return;
     }
+    setLanguage('');
     setFiles([]);
   }, [prob_num]);
 
-  const submitAnswer = async (e: any) => {
+  const submitAnswer = async (language: string, files: FileType[]) => {
     try {
-      toast.info('채점이 시작되었습니다.');
-      const response: any = await authRequester.post(`/check/${prob_num}/submit/`, { language: language, files: files });
+      setIsSubmitting(true);
+      const response: any = await authRequester.post(`/check/${prob_num}/submit/`, {
+        req_data: {
+          language: language,
+          files: files,
+        },
+      });
+      setTimeout(() => {
+        setIsSubmitting(true);
+      }, 10000);
+      setIsSubmitting(false);
       return Promise.resolve(response.data);
     } catch (e) {
-      return Promise.reject(e);
+      setIsSubmitting(false);
+      return Promise.reject(e.response.data);
     }
   };
 
-  const submitAnswerMutation = useMutation<
-    AxiosResponse<never>,
-    AxiosError<{ remain: number } | { error: string; detail?: string }>,
-    ISubmit,
-    unknown
-  >(
-    'submit',
-    (values) => {
-      return requester.post(`/check/${prob_num}/submit/`, values);
-    },
-    {
-      onSuccess: () => {
-        toast.info('채점이 시작되었습니다.');
-        history.push(`/problem/${prob_num}`);
-      },
-      onError: (res) => {
-        if (res.response?.data && 'error' in res.response.data) {
-          toast.error(res.response?.data.error);
-          history.push('/problems/0');
-        } else if (res.response?.data && 'remain' in res.response.data) {
-          const remain = res.response?.data.remain;
-          toast.info(remain + ' 초 뒤에 제출할 수 있습니다.');
-        } else {
-          toast.error('알 수 없는 오류가 발생했습니다. 오류가 지속되면 recruit@wafflestudio.com 으로 문의 부탁드립니다.');
-          history.push('/problems/0');
-        }
-      },
+  const handleSubmitError = (error: any) => {
+    if (error.hasOwnProperty('non_field_errors')) {
+      toast.error(error.non_field_errors[0]);
     }
-  );
+    if (error.hasOwnProperty('error')) {
+      toast.error(error.error);
+    }
+    if (error.hasOwnProperty('remain')) {
+      toast.error(`처리중입니다. ${error.remain}초 후에 다시 시도하세요`);
+    }
+  };
+
+  //
+  // const submitAnswerMutation = useMutation<
+  //   AxiosResponse<never>,
+  //   AxiosError<{ remain: number } | { error: string; detail?: string }>,
+  //   ISubmit,
+  //   unknown
+  // >(
+  //   'submit',
+  //   (values) => {
+  //     return requester.post(`/check/${prob_num}/submit/`, values);
+  //   },
+  //   {
+  //     onSuccess: () => {
+  //       toast.info('채점이 시작되었습니다.');
+  //       history.push(`/problem/${prob_num}`);
+  //     },
+  //     onError: (res) => {
+  //       if (res.response?.data && 'error' in res.response.data) {
+  //         toast.error(res.response?.data.error);
+  //         history.push('/problems/0');
+  //       } else if (res.response?.data && 'remain' in res.response.data) {
+  //         const remain = res.response?.data.remain;
+  //         toast.info(remain + ' 초 뒤에 제출할 수 있습니다.');
+  //       } else {
+  //         toast.error('알 수 없는 오류가 발생했습니다. 오류가 지속되면 recruit@wafflestudio.com 으로 문의 부탁드립니다.');
+  //         history.push('/problems/0');
+  //       }
+  //     },
+  //   }
+  // );
+
+  const handleFiles = (indexToChange: number, newFile: FileType) =>
+    files.map((item, index) => (index === indexToChange ? newFile : item));
 
   const handleDeleteFile = (index: number) => {
-    setFieldValue(
-      'files',
-      values.files.filter((_, i) => i !== index)
-    );
-
-    if (selectedTab === values.files.length - 1) {
+    setFiles(files.splice(index, 1));
+    if (selectedTab === files.length - 1) {
       setSelectedTab(selectedTab - 1);
     }
   };
@@ -148,7 +165,7 @@ const Submit: React.FC = () => {
                   label={'파일명'}
                   value={item.filename}
                   readOnly={i === 0}
-                  onChange={(e) => setFieldValue(`files[${i}].filename`, e.currentTarget.value)}
+                  onChange={(e) => setFiles(handleFiles(i, { ...files[i], filename: e.currentTarget.value }))}
                   placeholder={'새 파일'}
                 />
                 {i !== 0 && (
@@ -161,15 +178,9 @@ const Submit: React.FC = () => {
                 className={styles.code}
                 key={i}
                 value={item.code}
-                onChange={(e) =>
-                  setFieldValue(
-                    'files',
-                    produce(values.files, (draft) => {
-                      draft[i].code = e.currentTarget.value;
-                      return draft;
-                    })
-                  )
-                }
+                onChange={(e) => {
+                  setFiles(handleFiles(i, { ...files[i], code: e.currentTarget.value }));
+                }}
                 placeholder={
                   i === 0
                     ? `메인 파일입니다. 여기에 main 함수를 적어 주세요.\n\n#include <stdio.h>\n\nint main() {\n  printf("Hello World!");\n}`
@@ -182,62 +193,45 @@ const Submit: React.FC = () => {
       };
     });
 
-  const handleLanguageChange = (_: SyntheticEvent, data: unknown) => {
-    const changeLanguage = () => {
-      resetForm();
-      const selectedLanguage = (data as { value: ISubmit['language'] }).value;
-      setFieldValue('language', selectedLanguage);
-      const defaultFiles: ISubmit['files'] = (() => {
-        switch (selectedLanguage) {
-          case 'java':
-            return [{ filename: 'Main.java', code: '' }];
-          case 'python':
-            return [{ filename: 'main.py', code: '' }];
-          case 'javascript':
-            return [{ filename: 'index.js', code: '' }];
-          case 'c++':
-            return [{ filename: 'main.cpp', code: '' }];
-          case 'kotlin':
-            return [{ filename: 'main.kt', code: '' }];
-          case null:
-            return [];
-        }
-      })();
-      setFieldValue('files', defaultFiles);
-    };
-
-    changeLanguage();
-  };
-
-  const handleTabChange = (_: SyntheticEvent, data: unknown) => {
-    // const targetIndex = (data as { activeIndex: number } & unknown).activeIndex;
-    // if (targetIndex === files.length) {
-    //   // 새 탭 추가
-    //   setFieldValue('files', values.files.concat({ filename: '', code: '' }));
-    // }
-    //
-    // setSelectedTab(targetIndex);
-  };
-
-  const reloadRecentSubmit = async () => {
-    try {
-      const recentCode = await requester.get<ISubmit>(`/check/prob/${prob_num}/solution/`);
-      await setFiles('files', recentCode.data.files);
-      await setLanguage('language', recentCode.data.language);
-    } catch (err) {
-      toast.error('최근에 이 문제를 제출한 기록이 없습니다.');
-      return;
+  const defaultFileByLanguage = (input: LanguageType) => {
+    switch (input) {
+      case 'java':
+        return [{ filename: 'main.java', code: '' }];
+      case 'python':
+        return [{ filename: 'main.py', code: '' }];
+      case 'javascript':
+        return [{ filename: 'index.js', code: '' }];
+      case 'c++':
+        return [{ filename: 'main.cpp', code: '' }];
+      case 'kotlin':
+        return [{ filename: 'main.kt', code: '' }];
+      case null:
+        return [];
     }
+  };
+
+  const changeLanguage = (input: LanguageType) => {
+    setLanguage(input);
+    setFiles(defaultFileByLanguage(input));
   };
 
   return (
     <>
       <Form
-        className={styles.form}
-        onSubmit={(e, d) => {
-          submitAnswer(d).then((res) => {
-            console.log(res);
-          });
+        onSubmit={() => {
+          if (isSubmitting) {
+            toast.error('10초에 한 번만 제출할 수 있습니다');
+          } else {
+            submitAnswer(language, files).then(
+              (res) => {
+                toast.info(res.msg);
+                history.push(`/problem/${prob_num}/`);
+              },
+              (e) => {
+                handleSubmitError(e);
+              }
+            );
+          }
         }}
       >
         <h2 className={styles.titleTrailing}>제출란</h2>
@@ -252,20 +246,33 @@ const Submit: React.FC = () => {
         </Popup>
         <Select
           className={styles.radioWrapper}
-          options={['java', 'python', 'c++', 'javascript', 'kotlin'].map((item) => ({
+          options={allLanguages.map((item) => ({
             key: item,
             value: item,
             text: item,
           }))}
           placeholder={'언어를 선택하세요'}
-          onChange={handleLanguageChange}
+          onChange={(e) => {
+            if (
+              e.currentTarget.textContent === 'java' ||
+              e.currentTarget.textContent === 'kotlin' ||
+              e.currentTarget.textContent === 'javascript' ||
+              e.currentTarget.textContent === 'c++' ||
+              e.currentTarget.textContent === 'python'
+            ) {
+              changeLanguage(e.currentTarget.textContent);
+            }
+          }}
         />
 
         {language !== '' && (
           <>
             <Tab
               activeIndex={selectedTab}
-              onTabChange={handleTabChange}
+              onTabChange={(e) => {
+                console.dir(e.currentTarget.tabIndex);
+                console.dir(e.currentTarget);
+              }}
               menu={{ fluid: true, vertical: true, tabular: true }}
               panes={panes}
             />
@@ -279,7 +286,7 @@ const Submit: React.FC = () => {
       <MyConfirm
         open={isRecentChangeConfirmOpen}
         onConfirm={() => {
-          reloadRecentSubmit();
+          //reloadRecentSubmit();
           setRecentChangeConfirmOpen(false);
         }}
         onCancel={() => setRecentChangeConfirmOpen(false)}
