@@ -38,7 +38,7 @@ const Warnings = styled.div`
   display: flex;
   justify-content: center;
   font-size: 18px;
-  padding: 40px;
+  padding: 20px 40px 40px 40px;
   div {
     border-radius: 5px;
     border: 1px solid rgba(34, 36, 38, 0.15);
@@ -285,6 +285,7 @@ const Submit: React.FC = () => {
             text: item,
           }))}
           placeholder={'언어를 선택하세요'}
+          defaultValue={language}
           onChange={(e) => {
             if (
               e.currentTarget.textContent === 'java' ||
@@ -328,7 +329,7 @@ const Submit: React.FC = () => {
       <MyConfirm
         open={isRecentChangeConfirmOpen}
         onConfirm={() => {
-          //reloadRecentSubmit();
+          getRecentSubmit();
           setRecentChangeConfirmOpen(false);
         }}
         onCancel={() => setRecentChangeConfirmOpen(false)}
