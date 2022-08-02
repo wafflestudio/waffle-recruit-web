@@ -17,20 +17,18 @@ const AuthorizedRouter: React.FC = () => {
       if (res.data.login) {
         return Promise.resolve();
       } else {
-        return Promise.reject(res);
+        return Promise.reject();
       }
     } catch (e: any) {
-      toast.error(e);
+      return Promise.reject();
     }
   };
   //check login
   useEffect(() => {
     checkLogin().then(
+      () => {},
       () => {
-        toast.success('로그인 되었습니다');
-      },
-      () => {
-        toast.error('로그인이 만료되었습니다.');
+        toast.error('로그인이 필요합니다.');
         history.push('/signin');
       }
     );

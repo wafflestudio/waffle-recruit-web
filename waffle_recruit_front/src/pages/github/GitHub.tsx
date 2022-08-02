@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { requester } from '../../apis/requester';
-import { saveTokens } from '../../apis/token';
+import { saveTokens, saveUser } from '../../apis/token';
 import { useAuthContext } from '../../context/authContext';
 
 const GitHub = () => {
@@ -13,18 +13,16 @@ const GitHub = () => {
   const code = new URLSearchParams(location.search).get('code');
   const history = useHistory();
 
-  console.log(code);
-
   async function getGitHubCode() {
     try {
       const res = await requester.get(`/auth/signin/github/callback/?code=${code}`);
-      console.log(res.data);
-      setUser(res.data[0].username);
+      //setUser(res.data[0].username);
+      saveUser(res.data[0].username);
       saveTokens(res.data[1]);
       history.push('/main');
     } catch (err) {
       toast.error('GitHub 로그인에 실패하였습니다.');
-      history.push('/main');
+      history.push('/signin');
     }
   }
 

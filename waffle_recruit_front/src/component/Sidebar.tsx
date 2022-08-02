@@ -7,6 +7,7 @@ import { Image } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import { requester } from '../apis/requester';
+import { loadUser } from '../apis/token';
 import { useAuthContext } from '../context/authContext';
 
 type IProbStatusResponse =
@@ -82,7 +83,7 @@ const AItem = styled.a`
 const Sidebar: React.FC = () => {
   const history = useHistory();
   const { pathname } = useLocation();
-  const { user, clearUser } = useAuthContext();
+  const { user, setUser, clearUser } = useAuthContext();
   const [selected, setSelected] = useState<string>('');
 
   const isSolvedQuery0 = useQuery<{
@@ -125,6 +126,15 @@ const Sidebar: React.FC = () => {
   useEffect(() => {
     setSelected(pathname);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!user) {
+      const savedUsername = loadUser();
+      if (savedUsername) {
+        setUser(savedUsername);
+      }
+    }
+  }, []);
 
   const renderSuccessLabel = (isSolved: boolean | undefined) => {
     return isSolved === true ? (

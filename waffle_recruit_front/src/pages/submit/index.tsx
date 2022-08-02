@@ -106,6 +106,9 @@ const Submit: React.FC = () => {
     if (error.hasOwnProperty('remain')) {
       toast.error(`처리중입니다. ${error.remain}초 후에 다시 시도하세요`);
     }
+    if (error.hasOwnProperty('detail')) {
+      history.push('/signin');
+    }
   };
 
   //

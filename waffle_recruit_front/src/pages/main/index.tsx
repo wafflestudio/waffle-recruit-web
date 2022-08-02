@@ -11,6 +11,7 @@ import styled from 'styled-components';
 
 import { authRequester, requester } from '../../apis/requester';
 import Sidebar from '../../component/Sidebar';
+import { useAuthContext } from '../../context/authContext';
 
 import { main, problemStrings, coverletter } from './problems/problemStrings';
 
@@ -57,23 +58,7 @@ const ProblemPage = () => {
       <ReviewContainer>
         <ReactMarkdown source="" renderers={{ text: emojiSupport }} />
         <ReactMarkdown source="" />
-        {prob_num && (
-          <Button
-            onClick={
-              () => history.push(`/problem/${prob_num}/submit`)
-              /*              authRequester.post('/check/0/submit/', { req_data: {} }).then(
-                (res) => {
-                  console.log(res);
-                },
-                (err) => {
-                  console.log(err);
-                }
-              )*/
-            }
-          >
-            제출하기
-          </Button>
-        )}
+        {prob_num && <Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>}
         {pathname.includes('coverletter') && (
           <iframe
             src="https://docs.google.com/forms/d/e/1FAIpQLSdUQMy4umFnz0lEOfqZm2D0SBRh_uUam-dLRsIwEmvpoQn_EQ/viewform?embedded=true"
