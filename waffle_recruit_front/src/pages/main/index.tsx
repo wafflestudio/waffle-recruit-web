@@ -55,8 +55,8 @@ const ProblemPage = () => {
     <MainPageWrapper>
       <Sidebar />
       <ReviewContainer>
-        <ReactMarkdown source={`# ${title}`} renderers={{ text: emojiSupport }} />
-        <ReactMarkdown source={content} />
+        <ReactMarkdown source="" renderers={{ text: emojiSupport }} />
+        <ReactMarkdown source="" />
         {prob_num && (
           <Button
             onClick={
