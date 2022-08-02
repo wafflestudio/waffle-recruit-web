@@ -6,8 +6,8 @@ import { toast } from 'react-toastify';
 import { Image } from 'semantic-ui-react';
 import styled from 'styled-components';
 
+import { loadUser } from '../apis/localStorages';
 import { requester } from '../apis/requester';
-import { loadUser } from '../apis/token';
 import { useAuthContext } from '../context/authContext';
 
 type IProbStatusResponse =

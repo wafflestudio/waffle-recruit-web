@@ -20,7 +20,7 @@ const AuthorizedRouter: React.FC = () => {
         return Promise.reject();
       }
     } catch (e: any) {
-      return Promise.reject();
+      //return Promise.reject();
     }
   };
   //check login

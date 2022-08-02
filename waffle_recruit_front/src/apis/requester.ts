@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-import { loadJWT, loadRefresh, saveJWT } from './token';
+import { loadJWT, loadRefresh, saveJWT } from './localStorages';
 
 // TODO .env.production
 const isProduction = true;

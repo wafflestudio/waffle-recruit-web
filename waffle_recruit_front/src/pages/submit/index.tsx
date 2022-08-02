@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import { Button, Confirm, Form, Input, Popup, Select, Tab, TextArea } from 'semantic-ui-react';
 import styled from 'styled-components';
 
+import { loadRecentSubmit, saveRecentSubmit } from '../../apis/localStorages';
 import { authRequester, requester } from '../../apis/requester';
 
 import styles from './Submit.module.css';
@@ -31,6 +32,29 @@ const MyConfirm = styled(Confirm)`
   top: auto !important;
   left: auto !important;
   height: auto !important;
+`;
+
+const Warnings = styled.div`
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+  padding: 40px;
+  div {
+    border-radius: 5px;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  ul {
+    width: auto;
+    text-align: left;
+    list-style: none;
+    li {
+      padding-top: 10px;
+    }
+  }
 `;
 
 const Submit: React.FC = () => {
@@ -86,9 +110,8 @@ const Submit: React.FC = () => {
         },
       });
       setTimeout(() => {
-        setIsSubmitting(true);
+        setIsSubmitting(false);
       }, 10000);
-      setIsSubmitting(false);
       return Promise.resolve(response.data);
     } catch (e) {
       setIsSubmitting(false);
@@ -152,49 +175,44 @@ const Submit: React.FC = () => {
     }
   };
 
-  const panes: { menuItem: string; render: () => JSX.Element }[] = files
-    .concat({
-      filename: '+ 추가',
-      code: '',
-    })
-    .map((item, i) => {
-      return {
-        menuItem: item.filename,
-        render: () => {
-          return (
-            <Tab.Pane>
-              <div style={{ marginBottom: 10, display: 'flex', justifyContent: 'space-between' }}>
-                <Input
-                  label={'파일명'}
-                  value={item.filename}
-                  readOnly={i === 0}
-                  onChange={(e) => setFiles(handleFiles(i, { ...files[i], filename: e.currentTarget.value }))}
-                  placeholder={'새 파일'}
-                />
-                {i !== 0 && (
-                  <Button color={'red'} type="button" onClick={() => handleDeleteFile(i)}>
-                    삭제
-                  </Button>
-                )}
-              </div>
-              <TextArea
-                className={styles.code}
-                key={i}
-                value={item.code}
-                onChange={(e) => {
-                  setFiles(handleFiles(i, { ...files[i], code: e.currentTarget.value }));
-                }}
-                placeholder={
-                  i === 0
-                    ? `메인 파일입니다. 여기에 main 함수를 적어 주세요.\n\n#include <stdio.h>\n\nint main() {\n  printf("Hello World!");\n}`
-                    : `#include <stdio.h>\n\nint main() {\n  printf("Hello World!");\n}`
-                }
+  const panes: { menuItem: string; render: () => JSX.Element }[] = files.map((item, i) => {
+    return {
+      menuItem: item.filename,
+      render: () => {
+        return (
+          <Tab.Pane>
+            <div style={{ marginBottom: 10, display: 'flex', justifyContent: 'space-between' }}>
+              <Input
+                label={'파일명'}
+                value={item.filename}
+                readOnly={i === 0}
+                onChange={(e) => setFiles(handleFiles(i, { ...files[i], filename: e.currentTarget.value }))}
+                placeholder={'새 파일'}
               />
-            </Tab.Pane>
-          );
-        },
-      };
-    });
+              {i !== 0 && (
+                <Button color={'red'} type="button" onClick={() => handleDeleteFile(i)}>
+                  삭제
+                </Button>
+              )}
+            </div>
+            <TextArea
+              className={styles.code}
+              key={i}
+              value={item.code}
+              onChange={(e) => {
+                setFiles(handleFiles(i, { ...files[i], code: e.currentTarget.value }));
+              }}
+              placeholder={
+                i === 0
+                  ? `메인 파일입니다. 여기에 main 함수를 적어 주세요.\n\n#include <stdio.h>\n\nint main() {\n  printf("Hello World!");\n}`
+                  : `#include <stdio.h>\n\nint main() {\n  printf("Hello World!");\n}`
+              }
+            />
+          </Tab.Pane>
+        );
+      },
+    };
+  });
 
   const defaultFileByLanguage = (input: LanguageType) => {
     switch (input) {
@@ -218,6 +236,17 @@ const Submit: React.FC = () => {
     setFiles(defaultFileByLanguage(input));
   };
 
+  const getRecentSubmit = () => {
+    const data = loadRecentSubmit(prob_num);
+    if (data) {
+      const recentSubmit = JSON.parse(data) as SubmitType;
+      setLanguage(recentSubmit.language);
+      setFiles(recentSubmit.files);
+    } else {
+      toast.error('최근 제출한 파일이 없습니다');
+    }
+  };
+
   return (
     <>
       <Form
@@ -227,6 +256,7 @@ const Submit: React.FC = () => {
           } else {
             submitAnswer(language, files).then(
               (res) => {
+                saveRecentSubmit(JSON.stringify({ language: language, files: files }), prob_num);
                 toast.info(res.msg);
                 history.push(`/problem/${prob_num}/`);
               },
@@ -237,7 +267,7 @@ const Submit: React.FC = () => {
           }
         }}
       >
-        <h2 className={styles.titleTrailing}>제출란</h2>
+        <h2 className={styles.titleTrailing}>문제{prob_num} 제출란</h2>
         <Popup
           trigger={
             <Button basic tiny type={'button'} onClick={() => setRecentChangeConfirmOpen(true)}>
@@ -283,6 +313,15 @@ const Submit: React.FC = () => {
             <Button className={styles.titleTrailingClickable} type={'submit'}>
               제출
             </Button>
+            <Warnings>
+              <div>
+                <b>주의사항</b>
+              </div>
+              <ul>
+                <li>- 다음 표현은 사용 불가합니다: .exec(</li>
+                <li>- java의 경우 public class Main이 아니라 public class main 으로 시작해야 합니다.</li>
+              </ul>
+            </Warnings>
           </>
         )}
       </Form>

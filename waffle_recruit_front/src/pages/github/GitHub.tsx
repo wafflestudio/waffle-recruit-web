@@ -3,8 +3,8 @@ import React, { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+import { saveTokens, saveUser } from '../../apis/localStorages';
 import { requester } from '../../apis/requester';
-import { saveTokens, saveUser } from '../../apis/token';
 import { useAuthContext } from '../../context/authContext';
 
 const GitHub = () => {
