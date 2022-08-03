@@ -1,28 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
-import { useQuery } from 'react-query';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Image } from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import { loadUser } from '../apis/localStorages';
-import { requester } from '../apis/requester';
+import { loadRefresh, loadUser, saveJWT, saveRefresh } from '../apis/localStorages';
+import { authRequester, requester } from '../apis/requester';
 import { useAuthContext } from '../context/authContext';
-
-type IProbStatusResponse =
-  | {
-      status: 'correct';
-      message: 'correct' | 'already_correct';
-    }
-  | {
-      status: 'pending';
-      message: 'pending';
-    }
-  | {
-      status: 'wrong';
-      message: 'string';
-    };
 
 const Logo = styled.div`
   display: flex;
@@ -41,13 +26,11 @@ const SidebarWrapper = styled.nav`
   background-color: #de8234;
   z-index: 2;
   height: 100%;
-  //background-color: rgb(122, 70, 34);
 `;
 
 const LinkItem = styled(Link)`
   font-size: 24px;
   font-weight: bolder;
-  //color: rgb(202, 150, 106);
   color: white;
   line-height: 40px;
   transition: font-size 0.1s, color 0.3s, background-color 0.3s;
@@ -68,7 +51,6 @@ const LinkItem = styled(Link)`
 const AItem = styled.a`
   font-size: 20px;
   font-weight: bold;
-  //color: rgb(202, 150, 106);
   color: white;
   padding: 20px;
   line-height: 40px;
@@ -86,36 +68,17 @@ const Sidebar: React.FC = () => {
   const { user, setUser, clearUser } = useAuthContext();
   const [selected, setSelected] = useState<string>('');
 
-  const isSolvedQuery0 = useQuery<{
-    solved: boolean;
-    task: IProbStatusResponse;
-  }>(`/check/prob/0/`);
-  const isSolvedQuery1 = useQuery<{
-    solved: boolean;
-    task: IProbStatusResponse;
-  }>(`/check/prob/1/`);
-  const isSolvedQuery2 = useQuery<{
-    solved: boolean;
-    task: IProbStatusResponse;
-  }>(`/check/prob/2/`);
-  const isSolvedQuery3 = useQuery<{
-    solved: boolean;
-    task: IProbStatusResponse;
-  }>(`/check/prob/3/`);
-  const isSolvedList: (boolean | undefined)[] = [
-    isSolvedQuery0.data?.solved,
-    isSolvedQuery1.data?.solved,
-    isSolvedQuery2.data?.solved,
-    isSolvedQuery3.data?.solved,
-  ];
+  const [isSolvedList, setIsSolvedList] = useState<(boolean | undefined)[]>([undefined, undefined, undefined, undefined]);
 
   const onClickSignOut = async () => {
     try {
-      await requester.get('/check/signout/');
+      await authRequester.post('/auth/signout/', { refresh: loadRefresh() });
       clearUser();
-      history.replace('/signin');
+      saveJWT('');
+      saveRefresh('');
+      history.push('/signin');
     } catch (err) {
-      toast.error('로그아웃 실패.');
+      toast.error('로그아웃 실패');
     }
   };
 
@@ -134,6 +97,19 @@ const Sidebar: React.FC = () => {
         setUser(savedUsername);
       }
     }
+  }, []);
+
+  useEffect(() => {
+    [0, 1, 2, 3].forEach(async (probNum, i) => {
+      try {
+        const response = await authRequester(`/check/${probNum}/result/`);
+        setIsSolvedList(
+          isSolvedList.map((item, index) => {
+            return index === probNum ? response.data.result === 1 : item;
+          })
+        );
+      } catch (e) {}
+    });
   }, []);
 
   const renderSuccessLabel = (isSolved: boolean | undefined) => {
@@ -178,7 +154,8 @@ const Sidebar: React.FC = () => {
         문의하기
       </AItem>
 
-      <p style={{ width: 150, fontSize: '16px', wordBreak: 'break-all', color: 'white' }}>Signed as {user}</p>
+      <p style={{ width: 150, fontSize: '16px', wordBreak: 'break-all', color: 'white', textAlign: 'center' }}>Signed as </p>
+      <p style={{ width: 150, fontSize: '16px', wordBreak: 'break-all', color: 'white', textAlign: 'center' }}> {user} </p>
 
       <LinkItem to={'/'} onClick={onClickSignOut}>
         Logout

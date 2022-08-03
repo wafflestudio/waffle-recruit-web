@@ -10,6 +10,7 @@ import { Button } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import { authRequester, requester } from '../../apis/requester';
+import Result from '../../component/Result';
 import Sidebar from '../../component/Sidebar';
 import { useAuthContext } from '../../context/authContext';
 
@@ -58,7 +59,12 @@ const ProblemPage = () => {
       <ReviewContainer>
         <ReactMarkdown source="" renderers={{ text: emojiSupport }} />
         <ReactMarkdown source="" />
-        {prob_num && <Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>}
+        {prob_num && (
+          <>
+            <Result prob_num={prob_num} />
+            <Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>
+          </>
+        )}
         {pathname.includes('coverletter') && (
           <iframe
             src="https://docs.google.com/forms/d/e/1FAIpQLSdUQMy4umFnz0lEOfqZm2D0SBRh_uUam-dLRsIwEmvpoQn_EQ/viewform?embedded=true"

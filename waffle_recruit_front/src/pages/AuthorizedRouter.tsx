@@ -25,13 +25,7 @@ const AuthorizedRouter: React.FC = () => {
   };
   //check login
   useEffect(() => {
-    checkLogin().then(
-      () => {},
-      () => {
-        toast.error('로그인이 필요합니다.');
-        history.push('/signin');
-      }
-    );
+    checkLogin();
   }, [location.pathname]);
 
   return (

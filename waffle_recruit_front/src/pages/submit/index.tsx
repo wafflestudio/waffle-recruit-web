@@ -69,27 +69,6 @@ const Submit: React.FC = () => {
     params: { prob_num },
   } = useRouteMatch<{ prob_num: string }>();
 
-  // const { values, resetForm, handleSubmit, setFieldValue } = useFormik<ISubmit>({
-  //   initialValues: {
-  //     language: null,
-  //     files: [],
-  //   },
-  //   onSubmit: (values) => {
-  //     if (values.language === null) {
-  //       // CANNOT REACH HERE
-  //       toast.error('언어를 선택해 주세요.');
-  //       return;
-  //     }
-  //     if (isSubmitting) {
-  //       toast.error('채점중입니다.');
-  //       return;
-  //     }
-  //
-  //     localStorage.setItem('recentSubmit', JSON.stringify(values));
-  //     submitAnswerMutation.mutate(values);
-  //   },
-  // });
-
   useEffect(() => {
     if (!['0', '1', '2', '3'].includes(prob_num)) {
       toast.error('올바르지 않은 url입니다.');
