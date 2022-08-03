@@ -68,6 +68,38 @@ const AItem = styled.a`
   }
 `;
 
+const Tag = styled.span`
+  font-size: 8px;
+  padding: 3px 5px 3px 5px;
+  border-radius: 5px;
+  color: white;
+`;
+const SolvedTag = styled(Tag)`
+  background-color: #0ea432;
+`;
+const UnsolvedTag = styled(Tag)`
+  background-color: #db2828;
+`;
+const UsernameWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 14px;
+  max-width: 240px;
+  max-height: 80px;
+  overflow: hidden;
+`;
+const UsernameTag = styled.div`
+  padding: 3px 5px 3px 5px;
+  background-color: white;
+  color: rgb(95, 62, 32);
+  border-radius: 10px;
+  wordbreak: 'break-all';
+  margin-top: 5px;
+`;
+
 const Sidebar: React.FC = () => {
   const history = useHistory();
   const { pathname } = useLocation();
@@ -150,11 +182,12 @@ const Sidebar: React.FC = () => {
   };
 
   const renderSuccessLabel = (isSolved: boolean | undefined) => {
-    return isSolved === true ? (
-      <span className="ui green label mini tag">해결 완료</span>
-    ) : isSolved === false ? (
-      <span className="ui red label mini tag">미해결</span>
-    ) : null;
+    return isSolved ? <SolvedTag>해결 완료 </SolvedTag> : <UnsolvedTag>미해결</UnsolvedTag>;
+    //  return isSolved === true ? (
+    //    <span className="ui green label mini tag">해결 완료</span>
+    //  ) : isSolved === false ? (
+    //    <span className="ui red label mini tag">미해결</span>
+    //  ) : null;
   };
 
   return (
@@ -191,8 +224,10 @@ const Sidebar: React.FC = () => {
         문의하기
       </AItem>
 
-      <p style={{ fontSize: '16px', wordBreak: 'break-all', color: 'white', textAlign: 'center' }}>Signed as </p>
-      <p style={{ fontSize: '16px', wordBreak: 'break-all', color: 'white', textAlign: 'center' }}>{username} </p>
+      <UsernameWrapper>
+        <div>Signed as</div>
+        <UsernameTag>username</UsernameTag>
+      </UsernameWrapper>
 
       <LinkItem to={'/'} onClick={onClickSignOut}>
         Logout
