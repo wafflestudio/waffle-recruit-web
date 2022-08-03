@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
 
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Image } from 'semantic-ui-react';
 import styled from 'styled-components';
 
+import { checkResult } from '../apis/checkResult';
+import { getUsername } from '../apis/getAuth';
 import { loadRefresh, loadUser, saveJWT, saveRefresh } from '../apis/localStorages';
 import { authRequester, requester } from '../apis/requester';
 import { useAuthContext } from '../context/authContext';
+import { clearAuth } from '../redux/auth';
+import { clearResult, ResultType, setResults } from '../redux/results';
+import { RootState } from '../redux/store';
 
 const Logo = styled.div`
   display: flex;
@@ -65,15 +71,15 @@ const AItem = styled.a`
 const Sidebar: React.FC = () => {
   const history = useHistory();
   const { pathname } = useLocation();
-  const { user, setUser, clearUser } = useAuthContext();
   const [selected, setSelected] = useState<string>('');
-
-  const [isSolvedList, setIsSolvedList] = useState<(boolean | undefined)[]>([undefined, undefined, undefined, undefined]);
+  const { prob0, prob1, prob2, prob3 } = useSelector((state: RootState) => state.results);
+  const dispatch = useDispatch();
+  const username = getUsername();
 
   const onClickSignOut = async () => {
     try {
       await authRequester.post('/auth/signout/', { refresh: loadRefresh() });
-      clearUser();
+      dispatch(clearAuth());
       saveJWT('');
       saveRefresh('');
       history.push('/signin');
@@ -90,15 +96,39 @@ const Sidebar: React.FC = () => {
     setSelected(pathname);
   }, [pathname]);
 
+  //get result
   useEffect(() => {
-    if (!user) {
-      const savedUsername = loadUser();
-      if (savedUsername) {
-        setUser(savedUsername);
+    checkResult('0').then((res) => {
+      if (res === 'no submit') {
+        dispatch(clearResult('0'));
+      } else {
+        dispatch(setResults({ prob_num: '0', response: res }));
       }
-    }
+    });
+    checkResult('1').then((res) => {
+      if (res === 'no submit') {
+        dispatch(clearResult('1'));
+      } else {
+        dispatch(setResults({ prob_num: '1', response: res }));
+      }
+    });
+    checkResult('2').then((res) => {
+      if (res === 'no submit') {
+        dispatch(clearResult('2'));
+      } else {
+        dispatch(setResults({ prob_num: '2', response: res }));
+      }
+    });
+    checkResult('3').then((res) => {
+      if (res === 'no submit') {
+        dispatch(clearResult('3'));
+      } else {
+        dispatch(setResults({ prob_num: '3', response: res }));
+      }
+    });
   }, []);
 
+  /*
   useEffect(() => {
     [0, 1, 2, 3].forEach(async (probNum, i) => {
       try {
@@ -111,6 +141,13 @@ const Sidebar: React.FC = () => {
       } catch (e) {}
     });
   }, []);
+ */
+  const isSolved = (result: ResultType) => {
+    if (result.isSubmitted && result.content.result) {
+      return true;
+    }
+    return false;
+  };
 
   const renderSuccessLabel = (isSolved: boolean | undefined) => {
     return isSolved === true ? (
@@ -131,19 +168,19 @@ const Sidebar: React.FC = () => {
       </LinkItem>
 
       <LinkItem className={isSelected('/problem/0/')} to={'/problem/0/'}>
-        test problem {renderSuccessLabel(isSolvedList[0])}
+        test problem {renderSuccessLabel(isSolved(prob0))}
       </LinkItem>
 
       <LinkItem className={isSelected('/problem/1/')} to={'/problem/1/'}>
-        Problem 1 {renderSuccessLabel(isSolvedList[1])}
+        Problem 1 {renderSuccessLabel(isSolved(prob1))}
       </LinkItem>
 
       <LinkItem className={isSelected('/problem/2/')} to={'/problem/2/'}>
-        Problem 2 {renderSuccessLabel(isSolvedList[2])}
+        Problem 2 {renderSuccessLabel(isSolved(prob2))}
       </LinkItem>
 
       <LinkItem className={isSelected('/problem/3/')} to={'/problem/3/'}>
-        Problem 3 {renderSuccessLabel(isSolvedList[3])}
+        Problem 3 {renderSuccessLabel(isSolved(prob3))}
       </LinkItem>
 
       <LinkItem className={isSelected('/coverletter/')} to={'/coverletter/'}>
@@ -154,8 +191,8 @@ const Sidebar: React.FC = () => {
         문의하기
       </AItem>
 
-      <p style={{ width: 150, fontSize: '16px', wordBreak: 'break-all', color: 'white', textAlign: 'center' }}>Signed as </p>
-      <p style={{ width: 150, fontSize: '16px', wordBreak: 'break-all', color: 'white', textAlign: 'center' }}> {user} </p>
+      <p style={{ fontSize: '16px', wordBreak: 'break-all', color: 'white', textAlign: 'center' }}>Signed as </p>
+      <p style={{ fontSize: '16px', wordBreak: 'break-all', color: 'white', textAlign: 'center' }}>{username} </p>
 
       <LinkItem to={'/'} onClick={onClickSignOut}>
         Logout

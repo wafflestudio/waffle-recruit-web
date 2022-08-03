@@ -10,7 +10,7 @@ interface ResultParams {
 }
 
 const ResultContainer = styled.div`
-  border: 1px solid gray;
+  background: lightgray;
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 15px;

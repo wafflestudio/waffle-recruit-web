@@ -2,6 +2,10 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+import { setAccess } from '../redux/auth';
+import store from '../redux/store';
+
+import { getAccess, getRefresh } from './getAuth';
 import { loadJWT, loadRefresh, saveJWT } from './localStorages';
 
 // TODO .env.production
@@ -33,7 +37,6 @@ requester.interceptors.response.use(
         return Promise.reject(error);
       }
       if (status === 400) {
-        alert('로그인에 실패했습니다. 초기 화면으로 돌아갑니다.');
         window.location.href = 'https://recruit.wafflestudio.com/signin';
       }
     }
@@ -43,7 +46,7 @@ requester.interceptors.response.use(
 
 authRequester.interceptors.request.use(
   (config) => {
-    config.headers.Authorization = `Bearer ${loadJWT()}`;
+    config.headers.Authorization = `Bearer ${getAccess()}`;
     return config;
   },
   (error) => {
@@ -61,7 +64,8 @@ authRequester.interceptors.response.use(
     } = error;
     if (status === 401) {
       try {
-        const { data } = await requester.post('/auth/refresh/', { refresh: loadRefresh() });
+        const { data } = await requester.post('/auth/refresh/', { refresh: getRefresh() });
+        store.dispatch(setAccess(data.token.access));
         saveJWT(data.token.access);
         return axios(config);
       } catch (e) {
