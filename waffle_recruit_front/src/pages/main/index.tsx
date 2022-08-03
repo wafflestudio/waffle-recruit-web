@@ -4,17 +4,14 @@ import React, { useEffect } from 'react';
 // @ts-ignore
 import emoji from 'emoji-dictionary';
 import ReactMarkdown from 'react-markdown';
-import { useHistory, useLocation, useParams, useRouteMatch } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { Button } from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import { authRequester, requester } from '../../apis/requester';
 import Result from '../../component/Result';
 import Sidebar from '../../component/Sidebar';
-import { useAuthContext } from '../../context/authContext';
 
-import { main, problemStrings, coverletter } from './problems/problemStrings';
+import { main, problemStrings, coverletter } from './problems/previousProblemStrings';
 
 const emojiSupport = (text: any) => text.value.replace(/:\w+:/gi, (name: any) => emoji.getUnicode(name));
 
@@ -57,8 +54,8 @@ const ProblemPage = () => {
     <MainPageWrapper>
       <Sidebar />
       <ReviewContainer>
-        <ReactMarkdown source="" renderers={{ text: emojiSupport }} />
-        <ReactMarkdown source="" />
+        <ReactMarkdown source={title} renderers={{ text: emojiSupport }} />
+        <ReactMarkdown source={content} />
         {prob_num && (
           <>
             <Result prob_num={prob_num} />

@@ -24,12 +24,18 @@ requester.interceptors.response.use(
   },
   (error) => {
     const {
+      config,
       response: { status },
     } = error;
-
-    if (status === 400) {
-      alert('로그인에 실패했습니다. 초기 화면으로 돌아갑니다.');
-      window.location.href = 'https://recruit.wafflestudio.com/signin';
+    if (config.url === '/auth/refresh/') {
+      if (window.location.hostname === 'localhost') {
+        console.log('개발 중입니다. 배포 시에 이 코드를 제거하십시오.');
+        return Promise.reject(error);
+      }
+      if (status === 400) {
+        alert('로그인에 실패했습니다. 초기 화면으로 돌아갑니다.');
+        window.location.href = 'https://recruit.wafflestudio.com/signin';
+      }
     }
     return Promise.reject(error);
   }
