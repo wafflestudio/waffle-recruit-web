@@ -30,13 +30,11 @@ import './index.css';
 // });
 
 ReactDOM.render(
-  <AuthContextProvider>
     <Provider store={store}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </Provider>
-  </AuthContextProvider>,
   document.getElementById('root')
 );
 
