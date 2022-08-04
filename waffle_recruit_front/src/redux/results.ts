@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface ResultType {
   isSubmitted: boolean;
-  content: { result: boolean; last_try: boolean };
+  content: { result: number; last_try: number };
 }
 
 interface ResultsState {
@@ -17,7 +17,7 @@ interface ResultInputType {
   response: { result: number; last_try: number };
 }
 
-const noResult = { isSubmitted: false, content: { result: false, last_try: false } };
+const noResult = { isSubmitted: false, content: { result: 0, last_try: 0 } };
 const initialState = { prob0: noResult, prob1: noResult, prob2: noResult, prob3: noResult } as ResultsState;
 
 const resultsSlice = createSlice({
@@ -31,16 +31,16 @@ const resultsSlice = createSlice({
       } = action.payload;
       switch (prob_num) {
         case '0':
-          state.prob0 = { isSubmitted: true, content: { result: result === 1, last_try: last_try === 1 } };
+          state.prob0 = { isSubmitted: true, content: { result, last_try } };
           break;
         case '1':
-          state.prob1 = { isSubmitted: true, content: { result: result === 1, last_try: last_try === 1 } };
+          state.prob1 = { isSubmitted: true, content: { result, last_try } };
           break;
         case '2':
-          state.prob2 = { isSubmitted: true, content: { result: result === 1, last_try: last_try === 1 } };
+          state.prob2 = { isSubmitted: true, content: { result, last_try } };
           break;
         case '3':
-          state.prob3 = { isSubmitted: true, content: { result: result === 1, last_try: last_try === 1 } };
+          state.prob3 = { isSubmitted: true, content: { result, last_try } };
           break;
         default:
           break;

@@ -33,12 +33,10 @@ requester.interceptors.response.use(
     } = error;
     if (config.url === '/auth/refresh/') {
       if (window.location.hostname === 'localhost') {
-        console.log('개발 중입니다. 배포 시에 이 코드를 제거하십시오.');
+        console.log('개발 중입니다. 최종 배포 시에 이 코드를 제거하십시오.');
         return Promise.reject(error);
       }
-      if (status === 400) {
-        window.location.href = 'https://recruit.wafflestudio.com/signin';
-      }
+      window.location.href = 'https://recruit.wafflestudio.com/signin';
     }
     return Promise.reject(error);
   }
@@ -60,7 +58,7 @@ authRequester.interceptors.response.use(
   async (error) => {
     const {
       config,
-      response: { status, data },
+      response: { status },
     } = error;
     if (status === 401) {
       try {

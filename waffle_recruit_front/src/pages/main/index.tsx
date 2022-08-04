@@ -4,14 +4,18 @@ import React, { useEffect } from 'react';
 // @ts-ignore
 import emoji from 'emoji-dictionary';
 import ReactMarkdown from 'react-markdown';
+import { useSelector } from 'react-redux';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Button } from 'semantic-ui-react';
 import styled from 'styled-components';
 
+import { getResult } from '../../apis/checkResult';
 import Result from '../../component/Result';
 import Sidebar from '../../component/Sidebar';
+import { RootState } from '../../redux/store';
 
-import { main, problemStrings, coverletter } from './problems/previousProblemStrings';
+import { main, problemStrings, coverletter } from './problems/problemStrings';
 
 const emojiSupport = (text: any) => text.value.replace(/:\w+:/gi, (name: any) => emoji.getUnicode(name));
 
@@ -40,6 +44,7 @@ const ProblemPage = () => {
   const { prob_num }: { prob_num: string | undefined } = useParams();
   const { pathname } = useLocation();
   const history = useHistory();
+  const results = useSelector((state: RootState) => state.results);
   const { title, content }: { title: string; content: string } = prob_num
     ? problemStrings[Number(prob_num)]
     : pathname.includes('main')
@@ -59,12 +64,22 @@ const ProblemPage = () => {
         {prob_num && (
           <>
             <Result prob_num={prob_num} />
-            <Button onClick={() => history.push(`/problem/${prob_num}/submit`)}>제출하기</Button>
+            <Button
+              onClick={() => {
+                if (getResult(prob_num)?.content.last_try !== -1) {
+                  history.push(`/problem/${prob_num}/submit`);
+                } else {
+                  toast.error('채점 중에는 제출할 수 없습니다');
+                }
+              }}
+            >
+              제출하기
+            </Button>
           </>
         )}
         {pathname.includes('coverletter') && (
           <iframe
-            src="https://docs.google.com/forms/d/e/1FAIpQLSdUQMy4umFnz0lEOfqZm2D0SBRh_uUam-dLRsIwEmvpoQn_EQ/viewform?embedded=true"
+            src="https://docs.google.com/forms/d/e/1FAIpQLSdalLD4Zxa_vgJDqbQV1OpzyADwATDCr6g-7aoIQnEtPsPqew/viewform?embedded=true"
             width="900"
             height="100%"
             frameBorder="0"

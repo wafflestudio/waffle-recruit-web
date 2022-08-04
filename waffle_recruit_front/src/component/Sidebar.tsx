@@ -98,6 +98,7 @@ const UsernameTag = styled.div`
   border-radius: 10px;
   wordbreak: 'break-all';
   margin-top: 5px;
+  margin-bottom: 5px;
 `;
 
 const Sidebar: React.FC = () => {
@@ -175,7 +176,7 @@ const Sidebar: React.FC = () => {
   }, []);
  */
   const isSolved = (result: ResultType) => {
-    if (result.isSubmitted && result.content.result) {
+    if (result.isSubmitted && result.content.result === 1) {
       return true;
     }
     return false;
@@ -196,7 +197,7 @@ const Sidebar: React.FC = () => {
         <Image src="/pupuri.png" size="small" className="center" />
       </Logo>
 
-      <LinkItem className={isSelected('/main')} to={'/main/'}>
+      <LinkItem className={isSelected('/main/')} to={'/main/'}>
         [필독] 문제 개요
       </LinkItem>
 
@@ -226,7 +227,7 @@ const Sidebar: React.FC = () => {
 
       <UsernameWrapper>
         <div>Signed as</div>
-        <UsernameTag>username</UsernameTag>
+        <UsernameTag>{username}</UsernameTag>
       </UsernameWrapper>
 
       <LinkItem to={'/'} onClick={onClickSignOut}>

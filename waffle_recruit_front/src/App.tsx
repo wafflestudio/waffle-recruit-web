@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import ReactGA from 'react-ga';
 import { Switch, useHistory, useLocation } from 'react-router-dom';
@@ -6,7 +6,6 @@ import { ToastContainer } from 'react-toastify';
 
 import Footer from './component/Footer';
 import MainModal from './component/Modal/MainModal';
-import { useAuthContext } from './context/authContext';
 import AuthorizedRouter from './pages/AuthorizedRouter';
 import UnauthorizedRouter from './pages/UnauthorizedRouter';
 

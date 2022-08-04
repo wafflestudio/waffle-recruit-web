@@ -81,19 +81,15 @@ const Submit: React.FC = () => {
 
   const submitAnswer = async (language: string, files: FileType[]) => {
     try {
-      setIsSubmitting(true);
       const response: any = await authRequester.post(`/check/${prob_num}/submit/`, {
         req_data: {
           language: language,
           files: files,
         },
       });
-      setTimeout(() => {
-        setIsSubmitting(false);
-      }, 10000);
+      setTimeout(() => {}, 10000);
       return Promise.resolve(response.data);
     } catch (e) {
-      setIsSubmitting(false);
       return Promise.reject(e.response.data);
     }
   };
@@ -298,7 +294,6 @@ const Submit: React.FC = () => {
                 <b>주의사항</b>
               </div>
               <ul>
-                <li>- 다음 표현은 사용 불가합니다: .exec(</li>
                 <li>- java의 경우 public class Main이 아니라 public class main 으로 시작해야 합니다.</li>
               </ul>
             </Warnings>
