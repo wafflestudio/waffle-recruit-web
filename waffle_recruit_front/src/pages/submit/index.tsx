@@ -81,15 +81,19 @@ const Submit: React.FC = () => {
 
   const submitAnswer = async (language: string, files: FileType[]) => {
     try {
+      setIsSubmitting(true);
       const response: any = await authRequester.post(`/check/${prob_num}/submit/`, {
         req_data: {
           language: language,
           files: files,
         },
       });
-      setTimeout(() => {}, 10000);
+      setTimeout(() => {
+        setIsSubmitting(false);
+      }, 10000);
       return Promise.resolve(response.data);
     } catch (e) {
+      setIsSubmitting(false);
       return Promise.reject(e.response.data);
     }
   };
@@ -102,10 +106,13 @@ const Submit: React.FC = () => {
       toast.error(error.error);
     }
     if (error.hasOwnProperty('remain')) {
-      toast.error(`처리중입니다. ${error.remain}초 후에 다시 시도하세요`);
+      toast.error(`이전 제출을 처리중입니다. ${error.remain}초 후에 다시 시도하세요`);
     }
     if (error.hasOwnProperty('detail')) {
       history.push('/signin');
+    }
+    if (error.hasOwnProperty('msg')) {
+      toast.error(error.msg);
     }
   };
 
@@ -227,7 +234,7 @@ const Submit: React.FC = () => {
       <Form
         onSubmit={() => {
           if (isSubmitting) {
-            toast.error('10초에 한 번만 제출할 수 있습니다');
+            toast.error('제출이 처리중입니다');
           } else {
             submitAnswer(language, files).then(
               (res) => {

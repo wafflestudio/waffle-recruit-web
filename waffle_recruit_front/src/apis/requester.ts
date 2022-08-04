@@ -58,9 +58,9 @@ authRequester.interceptors.response.use(
   async (error) => {
     const {
       config,
-      response: { status },
+      response: { status, data },
     } = error;
-    if (status === 401) {
+    if (status === 401 && !data.hasOwnProperty('msg')) {
       try {
         const { data } = await requester.post('/auth/refresh/', { refresh: getRefresh() });
         store.dispatch(setAccess(data.token.access));

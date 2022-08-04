@@ -15,7 +15,7 @@ const FooterWrapper = styled.footer`
 
 const Footer = () => {
   return (
-    <FooterWrapper>
+    <FooterWrapper className="not-in-mobile">
       <a href="https://github.com/wafflestudio/waffle_recruit" target="_blank">
         <Image src="/logo.png" size="small" className="center" />
       </a>

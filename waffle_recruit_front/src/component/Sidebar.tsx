@@ -192,8 +192,8 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <SidebarWrapper>
-      <Logo>
+    <SidebarWrapper className="bottom-in-mobile">
+      <Logo className="not-in-mobile">
         <Image src="/pupuri.png" size="small" className="center" />
       </Logo>
 
@@ -225,7 +225,7 @@ const Sidebar: React.FC = () => {
         문의하기
       </AItem>
 
-      <UsernameWrapper>
+      <UsernameWrapper className="not-in-mobile">
         <div>Signed as</div>
         <UsernameTag>{username}</UsernameTag>
       </UsernameWrapper>

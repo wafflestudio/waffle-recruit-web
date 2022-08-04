@@ -40,6 +40,10 @@ export const ReviewContainer = styled.div`
   font-size: 16px;
 `;
 
+const MobileLInk = styled.a`
+  display: none;
+`;
+
 const ProblemPage = () => {
   const { prob_num }: { prob_num: string | undefined } = useParams();
   const { pathname } = useLocation();
@@ -56,9 +60,9 @@ const ProblemPage = () => {
   }, [pathname]);
 
   return (
-    <MainPageWrapper>
+    <MainPageWrapper className="reverse-in-mobile">
       <Sidebar />
-      <ReviewContainer>
+      <ReviewContainer className="wide-in-mobile">
         <ReactMarkdown source={title} renderers={{ text: emojiSupport }} />
         <ReactMarkdown source={content} />
         {prob_num && (
@@ -78,16 +82,20 @@ const ProblemPage = () => {
           </>
         )}
         {pathname.includes('coverletter') && (
-          <iframe
-            src="https://docs.google.com/forms/d/e/1FAIpQLSdalLD4Zxa_vgJDqbQV1OpzyADwATDCr6g-7aoIQnEtPsPqew/viewform?embedded=true"
-            width="900"
-            height="100%"
-            frameBorder="0"
-            marginHeight={0}
-            marginWidth={0}
-          >
-            로드 중…
-          </iframe>
+          <>
+            <iframe
+              className="not-in-mobile"
+              src="https://docs.google.com/forms/d/e/1FAIpQLSdalLD4Zxa_vgJDqbQV1OpzyADwATDCr6g-7aoIQnEtPsPqew/viewform?embedded=true"
+              width="900"
+              height="100%"
+              frameBorder="0"
+              marginHeight={0}
+              marginWidth={0}
+            >
+              로드 중…
+            </iframe>
+            <a className="only-in-mobile">모바일은 이 링크로 접속하세요</a>
+          </>
         )}
       </ReviewContainer>
     </MainPageWrapper>

@@ -20,7 +20,8 @@ const LoginWrapper = styled.section`
 const NoticeWrapper = styled.article`
   text-align: left;
   font-size: 18px;
-  width: 1000px;
+  width: 100%;
+  max-width: 1000px;
   padding: 80px;
   box-shadow: 0px 3px 10px gray;
   margin-bottom: 120px;
@@ -76,7 +77,7 @@ const Signin: React.FC = () => {
   return (
     <LoginWrapper className="login_page">
       <WaffleBackground />
-      <Title className="Title">
+      <Title className="Title not-in-mobile">
         <h1>WAFFLESTUDIO RECRUIT</h1>
       </Title>
       <NoticeWrapper className="notice">
