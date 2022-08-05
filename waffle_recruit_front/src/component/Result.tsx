@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import styled, { keyframes } from 'styled-components';
 
 import { checkResult, getResult } from '../apis/checkResult';
@@ -20,17 +21,18 @@ const ResultContainer = styled.div`
     border-radius: 5px;
     background: lightgray;
     margin-bottom: 15px;
+    transition: 0.5s;
 
     &.correct {
-      color: white;
-      background-color: #1dbe44;
-      font-weight: bold;
+      color: #179435;
+      background-color: white;
+      border: 3px solid #179435;
     }
 
     &.incorrect {
-      color: white;
-      background-color: #db2828;
-      font-weight: bold;
+      color: #db2828;
+      background-color: white;
+      border: 3px solid #db2828;
     }
   }
 `;
@@ -55,6 +57,28 @@ const Loader = styled.div`
   animation: ${spin} 800ms infinite linear;
 `;
 
+const lastTryErrorMsg = (code: number, msg: string | null) => {
+  if (msg) {
+    toast.error(msg);
+  }
+  if (code === 1) {
+    return '런타임 에러';
+  }
+  if (code === 2) {
+    return '컴파일 에러';
+  }
+  if (code === 3) {
+    return '시간 초과';
+  }
+  if (code === 4) {
+    return '잘못된 답입니다';
+  }
+  if (code === 5) {
+    return '서버 에러: 문의 주시기 바랍니다';
+  }
+  return '';
+};
+
 const Result = ({ prob_num }: ResultParams) => {
   const dispatch = useDispatch();
   const [waiting, setWaiting] = useState<boolean>(false);
@@ -70,6 +94,7 @@ const Result = ({ prob_num }: ResultParams) => {
       setWaiting(false);
     }
   };
+
   const renderResult = () => {
     if (waiting)
       return (
@@ -86,9 +111,14 @@ const Result = ({ prob_num }: ResultParams) => {
           </div>
         );
       return (
-        <div className={`message ${result.content.result === 1 ? 'correct' : 'incorrect'}`}>
+        <div className={`message ${result.content.last_try === 1 ? 'correct' : 'incorrect'}`}>
           <p>최종 결과: {result.content.result === 1 ? '정답입니다' : '오답입니다'}</p>
-          <p>최근 결과: {result.content.last_try === 1 ? '정답입니다' : '오답입니다'}</p>
+          <p>
+            최근 결과:{' '}
+            {result.content.last_try === 1
+              ? '정답입니다'
+              : '오답입니다. ' + lastTryErrorMsg(result.content.err_code, result.content.err_msg)}
+          </p>
         </div>
       );
     }

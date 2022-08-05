@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface ResultType {
   isSubmitted: boolean;
-  content: { result: number; last_try: number };
+  content: { result: number; last_try: number; err_code: number; err_msg: string | null };
 }
 
 interface ResultsState {
@@ -14,10 +14,10 @@ interface ResultsState {
 
 interface ResultInputType {
   prob_num: string;
-  response: { result: number; last_try: number };
+  response: { result: number; last_try: number; err_code: number; err_msg: string | null };
 }
 
-const noResult = { isSubmitted: false, content: { result: 0, last_try: 0 } };
+const noResult = { isSubmitted: false, content: { result: 0, last_try: 0, err_code: 0, err_msg: '' } };
 const initialState = { prob0: noResult, prob1: noResult, prob2: noResult, prob3: noResult } as ResultsState;
 
 const resultsSlice = createSlice({
@@ -27,20 +27,20 @@ const resultsSlice = createSlice({
     setResults(state, action: PayloadAction<ResultInputType>) {
       const {
         prob_num,
-        response: { result, last_try },
+        response: { result, last_try, err_code, err_msg },
       } = action.payload;
       switch (prob_num) {
         case '0':
-          state.prob0 = { isSubmitted: true, content: { result, last_try } };
+          state.prob0 = { isSubmitted: true, content: { result, last_try, err_code, err_msg } };
           break;
         case '1':
-          state.prob1 = { isSubmitted: true, content: { result, last_try } };
+          state.prob1 = { isSubmitted: true, content: { result, last_try, err_code, err_msg } };
           break;
         case '2':
-          state.prob2 = { isSubmitted: true, content: { result, last_try } };
+          state.prob2 = { isSubmitted: true, content: { result, last_try, err_code, err_msg } };
           break;
         case '3':
-          state.prob3 = { isSubmitted: true, content: { result, last_try } };
+          state.prob3 = { isSubmitted: true, content: { result, last_try, err_code, err_msg } };
           break;
         default:
           break;

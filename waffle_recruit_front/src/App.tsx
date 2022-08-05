@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 ReactGA.initialize('UA-204463168-1');
 
 const App = () => {
-  const { pathname, search } = useLocation();
+  const { pathname } = useLocation();
 
   const isAuthNeeded = pathname.includes('problem') || pathname.includes('main') || pathname.includes('coverletter');
 

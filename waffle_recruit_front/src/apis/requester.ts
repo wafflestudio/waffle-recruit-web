@@ -32,10 +32,6 @@ requester.interceptors.response.use(
       response: { status },
     } = error;
     if (config.url === '/auth/refresh/') {
-      if (window.location.hostname === 'localhost') {
-        console.log('개발 중입니다. 최종 배포 시에 이 코드를 제거하십시오.');
-        return Promise.reject(error);
-      }
       window.location.href = 'https://recruit.wafflestudio.com/signin';
     }
     return Promise.reject(error);

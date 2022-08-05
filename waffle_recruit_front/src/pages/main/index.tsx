@@ -94,7 +94,9 @@ const ProblemPage = () => {
             >
               로드 중…
             </iframe>
-            <a className="only-in-mobile">모바일은 이 링크로 접속하세요</a>
+            <a href="https://forms.gle/fGg55XyUJNZYLg9BA" className="only-in-mobile">
+              모바일은 이 링크로 접속하세요
+            </a>
           </>
         )}
       </ReviewContainer>
