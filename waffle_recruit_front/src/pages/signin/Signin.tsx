@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import ReactMarkdown from 'react-markdown';
-import { Button } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import githubLogo from '../../assets/GitHub-Mark-64px.png';

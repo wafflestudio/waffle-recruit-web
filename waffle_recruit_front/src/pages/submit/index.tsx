@@ -1,9 +1,5 @@
 import React, { SyntheticEvent, useEffect, useState } from 'react';
 
-import { AxiosError, AxiosResponse } from 'axios';
-import { useFormik } from 'formik';
-import produce from 'immer';
-import { useIsMutating, useMutation } from 'react-query';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, Confirm, Form, Input, Popup, Select, Tab, TextArea } from 'semantic-ui-react';
@@ -115,37 +111,6 @@ const Submit: React.FC = () => {
       toast.error(error.msg);
     }
   };
-
-  //
-  // const submitAnswerMutation = useMutation<
-  //   AxiosResponse<never>,
-  //   AxiosError<{ remain: number } | { error: string; detail?: string }>,
-  //   ISubmit,
-  //   unknown
-  // >(
-  //   'submit',
-  //   (values) => {
-  //     return requester.post(`/check/${prob_num}/submit/`, values);
-  //   },
-  //   {
-  //     onSuccess: () => {
-  //       toast.info('채점이 시작되었습니다.');
-  //       history.push(`/problem/${prob_num}`);
-  //     },
-  //     onError: (res) => {
-  //       if (res.response?.data && 'error' in res.response.data) {
-  //         toast.error(res.response?.data.error);
-  //         history.push('/problems/0');
-  //       } else if (res.response?.data && 'remain' in res.response.data) {
-  //         const remain = res.response?.data.remain;
-  //         toast.info(remain + ' 초 뒤에 제출할 수 있습니다.');
-  //       } else {
-  //         toast.error('알 수 없는 오류가 발생했습니다. 오류가 지속되면 recruit@wafflestudio.com 으로 문의 부탁드립니다.');
-  //         history.push('/problems/0');
-  //       }
-  //     },
-  //   }
-  // );
 
   const handleFiles = (indexToChange: number, newFile: FileType) =>
     files.map((item, index) => (index === indexToChange ? newFile : item));

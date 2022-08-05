@@ -8,7 +8,6 @@ import { authRequester } from '../apis/requester';
 
 import GitHub from './github/GitHub';
 import Signin from './signin/Signin';
-import Signup from './signup/Signup';
 
 const UnauthorizedRouter: React.FC = () => {
   const history = useHistory();

@@ -4,7 +4,6 @@ import React, { useEffect } from 'react';
 // @ts-ignore
 import emoji from 'emoji-dictionary';
 import ReactMarkdown from 'react-markdown';
-import { useSelector } from 'react-redux';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button } from 'semantic-ui-react';
@@ -13,7 +12,6 @@ import styled from 'styled-components';
 import { getResult } from '../../apis/checkResult';
 import Result from '../../component/Result';
 import Sidebar from '../../component/Sidebar';
-import { RootState } from '../../redux/store';
 
 import { main, problemStrings, coverletter } from './problems/problemStrings';
 
@@ -40,15 +38,10 @@ export const ReviewContainer = styled.div`
   font-size: 16px;
 `;
 
-const MobileLInk = styled.a`
-  display: none;
-`;
-
 const ProblemPage = () => {
   const { prob_num }: { prob_num: string | undefined } = useParams();
   const { pathname } = useLocation();
   const history = useHistory();
-  const results = useSelector((state: RootState) => state.results);
   const { title, content }: { title: string; content: string } = prob_num
     ? problemStrings[Number(prob_num)]
     : pathname.includes('main')

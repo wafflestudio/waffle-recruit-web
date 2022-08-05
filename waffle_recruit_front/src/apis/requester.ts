@@ -6,7 +6,7 @@ import { setAccess } from '../redux/auth';
 import store from '../redux/store';
 
 import { getAccess, getRefresh } from './getAuth';
-import { loadJWT, loadRefresh, saveJWT } from './localStorages';
+import { saveJWT } from './localStorages';
 
 // TODO .env.production
 const isProduction = true;

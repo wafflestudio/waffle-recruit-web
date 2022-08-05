@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 
-import { authRequester, requester } from '../apis/requester';
+import { authRequester } from '../apis/requester';
 
 import ProblemPage from './main';
 import Submit from './submit';
@@ -38,7 +38,6 @@ const Loader = styled.div`
 `;
 
 const AuthorizedRouter: React.FC = () => {
-  const history = useHistory();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const checkLogin = async () => {
