@@ -147,10 +147,10 @@ const problem3 = `
 1. \`move\`
     1. \`move -u <숫자>\` 
         - 현재 선택된 행에서 입력된 숫자만큼 위에 있는 행을 선택합니다.
-        - 만약 이동하려는 행이 0보다 작다면 \`Error 100\` 을 출력합니다.
+        - 만약 이동하려는 행이  \`현재 남아있는 행들의 범위\`를 벗어난다면  \`Error 100\` 을 출력합니다.
     2.  \`move -d <숫자>\`
         - 현재 선택된 행에서 입력된 숫자만큼 아래에 있는 행을 선택합니다.
-        - 만약 이동하려는 행이  \`n\` 보다 크다면 \`Error 100\` 을 출력합니다.
+        - 만약 이동하려는 행이  \`현재 남아있는 행들의 범위\`를 벗어난다면  \`Error 100\` 을 출력합니다.
 2. \`delete\`
     1. \`delete\`
         - 학생이 전학을 간 경우로, 현재 선택된 행을 삭제하고 바로 아래에 있는 행을 선택합니다.
@@ -188,6 +188,8 @@ const problem3 = `
 // >는 사용자가 입력한 줄을, $는 콘솔에 출력된 줄을 뜻합니다.
 > ["aaa","bbb","ccc","ddd","eee","fff","ggg","hhh"]   //학생 리스트
 > move -u 1
+$ Error 100
+> move -u 8
 $ Error 100
 > move -d 4
 > delete
@@ -231,15 +233,15 @@ $ Error 200
 export const problemStrings: { title: string; content: string }[] = [
   { title: '# 테스트 문제', content: '\n\nHello World! 라고 출력해 보세요.' },
   {
-    title: '# 성적 처리',
+    title: '# 와플 뒤집기',
     content: problem1,
   },
   {
-    title: '# 아르바이트',
+    title: '# 와플 우수 고객',
     content: problem2,
   },
   {
-    title: '# 와플고등학교 명단 관리 프로그램',
+    title: '# 와플고등학교 명단 관리 표',
     content: problem3,
   },
 ];
