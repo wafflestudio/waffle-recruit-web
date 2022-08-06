@@ -190,7 +190,7 @@ const problem3 = `
 > ["aaa","bbb","ccc","ddd","eee","fff","ggg","hhh"]   //학생 리스트
 > move -u 1
 $ Error 100
-> move -u 8
+> move -d 8
 $ Error 100
 > move -d 4
 > delete
