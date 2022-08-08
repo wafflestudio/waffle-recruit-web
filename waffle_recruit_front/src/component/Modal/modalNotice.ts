@@ -39,6 +39,31 @@ $ Error 200
 `,
 };
 
+export const msg0807 = {
+  title: '긴급 공지 및 점검 안내 (08/07)',
+  content: `
+  내일(8월 8일) 오전 __6시 45분 ~ 7시 15분__에 서버를 점검할 예정입니다.
+  
+  이 시간대에는 접속이 불가능할 예정이니 양해 부탁드립니다.
+  
+  
+  ------
+  
+  
+  로그인 관련한 이슈가 생겨 __가입한 지 1일 이상이 지난 유저__를 대상으로 무한 새로고침 오류가 잠시동안 발생했습니다.
+  
+  
+  현재는 문제가 해결된 상태이나, 비슷한 증상을 계속 경험하시는 분은
+  
+   
+  \`recruit@wafflestudio.com\`이나 인스타그램 \`@wafflestudio_official\`로 문의 주시기 바랍니다.
+  
+   
+  저희의 불찰로 지원에 차질을 빚어 죄송합니다.
+  
+   `,
+};
+
 export const msgSample = `\`\`\`
 
 와플스튜디오 18.5기 rookies 모집 마감이 3일 남았습니다!
@@ -61,4 +86,6 @@ export const msgSample = `\`\`\`
 
 \`\`\``;
 
-export default {};
+const modalNotice = [msg0805, msg0807];
+
+export default modalNotice;

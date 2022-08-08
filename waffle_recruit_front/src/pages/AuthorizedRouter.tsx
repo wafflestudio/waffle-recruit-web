@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import styled, { keyframes } from 'styled-components';
 
 import { authRequester } from '../apis/requester';
@@ -39,6 +40,7 @@ const Loader = styled.div`
 
 const AuthorizedRouter: React.FC = () => {
   const location = useLocation();
+  const history = useHistory();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const checkLogin = async () => {
     try {
@@ -49,7 +51,12 @@ const AuthorizedRouter: React.FC = () => {
       } else {
         return Promise.reject();
       }
-    } catch (e: any) {}
+    } catch (e: any) {
+      if (e.config.url === '/auth/refresh/') {
+        toast.error('로그인이 만료되었습니다');
+        history.push('/signin');
+      }
+    }
   };
   //check login
   useEffect(() => {

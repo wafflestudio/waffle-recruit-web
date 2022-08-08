@@ -26,16 +26,7 @@ requester.interceptors.response.use(
     if (response.config.url === '/auth/refresh/') toast.success('로그인이 갱신되었습니다');
     return response;
   },
-  (error) => {
-    const {
-      config,
-      response: { status },
-    } = error;
-    if (config.url === '/auth/refresh/') {
-      window.location.href = 'https://recruit.wafflestudio.com/signin';
-    }
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 authRequester.interceptors.request.use(
@@ -61,9 +52,10 @@ authRequester.interceptors.response.use(
         const { data } = await requester.post('/auth/refresh/', { refresh: getRefresh() });
         store.dispatch(setAccess(data.token.access));
         saveJWT(data.token.access);
+        config.headers.Authorization = `Bearer ${getAccess()}`;
         return axios(config);
-      } catch (e) {
-        return Promise.reject(error);
+      } catch (refreshError) {
+        return Promise.reject(refreshError.response);
       }
     }
     return Promise.reject(error);

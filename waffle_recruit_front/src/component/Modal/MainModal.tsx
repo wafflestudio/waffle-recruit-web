@@ -5,7 +5,7 @@ import { useCookies } from 'react-cookie';
 import ReactMarkdown from 'react-markdown';
 import styled from 'styled-components';
 
-import { msg0805 } from './modalNotice';
+import modalNotice, { msg0805 } from './modalNotice';
 
 const ModalWrapper = styled.div`
   position: fixed;
@@ -29,12 +29,16 @@ const ModalHeader = styled.div`
 `;
 const Modal = styled.div`
   width: 940px;
+  max-height: 800px;
   display: flex;
   flex-direction: column;
   padding: 80px 40px 80px 40px;
   background-color: white;
   box-sizing: border-box;
   overflow: auto;
+  pre {
+    overflow: visible;
+  }
 `;
 const ModalButtons = styled.div`
   display: flex;
@@ -50,6 +54,14 @@ const ModalButtons = styled.div`
     color: white;
     font-weight: bold;
 
+    &.otherNotice {
+      background-color: #de8234;
+
+      &:hover {
+        background-color: #af6220;
+      }
+    }
+
     &.closeModal {
       background-color: #0a942c;
 
@@ -60,6 +72,7 @@ const ModalButtons = styled.div`
 
     &.no-more {
       background-color: #dc2724;
+
       &:hover {
         background-color: #e81c18;
       }
@@ -70,7 +83,8 @@ const ModalButtons = styled.div`
 const MainModal = () => {
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [cookies, setCookie] = useCookies();
-  const { title, content } = msg0805;
+  const [noticeNumber, setNoticeNumber] = useState<number>(modalNotice.length - 1);
+  //  const [{ title, content }, setNotice] = useState<{ title: string; content: string }>(modalNotice[modalNotice.length - 1]);
 
   useEffect(() => {
     const { isPopupDisabled } = cookies;
@@ -93,9 +107,29 @@ const MainModal = () => {
           e.stopPropagation();
         }}
       >
-        <ModalHeader> {title}</ModalHeader>
-        <ReactMarkdown source={content} />
+        <ModalHeader> {modalNotice[noticeNumber].title}</ModalHeader>
+        <ReactMarkdown source={modalNotice[noticeNumber].content} />
         <ModalButtons>
+          {noticeNumber !== 0 && (
+            <button
+              className="otherNotice"
+              onClick={() => {
+                setNoticeNumber(noticeNumber - 1);
+              }}
+            >
+              이전
+            </button>
+          )}
+          {noticeNumber !== modalNotice.length - 1 && (
+            <button
+              className="otherNotice"
+              onClick={() => {
+                setNoticeNumber(noticeNumber + 1);
+              }}
+            >
+              다음
+            </button>
+          )}
           <button
             className="closeModal"
             onClick={() => {

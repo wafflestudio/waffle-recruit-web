@@ -57,10 +57,7 @@ const Loader = styled.div`
   animation: ${spin} 800ms infinite linear;
 `;
 
-const lastTryErrorMsg = (code: number, msg: string | null) => {
-  if (msg) {
-    toast.error(msg);
-  }
+const lastTryErrorMsg = (code: number) => {
   if (code === 1) {
     return '런타임 에러';
   }
@@ -83,17 +80,6 @@ const Result = ({ prob_num }: ResultParams) => {
   const dispatch = useDispatch();
   const [waiting, setWaiting] = useState<boolean>(false);
   const result = Object.values(useSelector((state: RootState) => state.results))[Number(prob_num)];
-  const handleResult = async () => {
-    try {
-      setWaiting(true);
-      const response = await authRequester.get(`/check/${prob_num}/result/`);
-      return Promise.resolve(response.data);
-    } catch (e) {
-      return Promise.reject(e.response.data);
-    } finally {
-      setWaiting(false);
-    }
-  };
 
   const renderResult = () => {
     if (waiting)
@@ -104,36 +90,37 @@ const Result = ({ prob_num }: ResultParams) => {
       );
     if (result) {
       if (!result.isSubmitted) return <div className="message">아직 풀지 않은 문제입니다</div>;
-      if (result.content.last_try === -1)
+      if (result.content.last_try === -1) {
         return (
           <div className="message">
             채점 중입니다 <Loader />
           </div>
         );
+      }
       return (
         <div className={`message ${result.content.last_try === 1 ? 'correct' : 'incorrect'}`}>
           <p>최종 결과: {result.content.result === 1 ? '정답입니다' : '오답입니다'}</p>
           <p>
-            최근 결과:{' '}
-            {result.content.last_try === 1
-              ? '정답입니다'
-              : '오답입니다. ' + lastTryErrorMsg(result.content.err_code, result.content.err_msg)}
+            최근 결과: {result.content.last_try === 1 ? '정답입니다' : '오답입니다. ' + lastTryErrorMsg(result.content.err_code)}
           </p>
         </div>
       );
     }
     return <div>문제 번호가 잘못되었습니다</div>;
   };
-  const refreshResult = () => {
+  const refreshResult = (isToast: boolean) => {
     setWaiting(true);
     checkResult(prob_num).then((res) => {
       if (res === 'no submit') {
         dispatch(clearResult(prob_num));
       } else if (res.last_try === -1) {
         setTimeout(() => {
-          refreshResult();
+          refreshResult(true);
         }, 5000);
       } else {
+        if (res.err_msg && isToast) {
+          toast.error(res.err_msg);
+        }
         dispatch(setResults({ prob_num, response: res }));
       }
       setWaiting(false);
@@ -142,7 +129,7 @@ const Result = ({ prob_num }: ResultParams) => {
   };
 
   useEffect(() => {
-    refreshResult();
+    refreshResult(false);
   }, [prob_num]);
 
   return <ResultContainer>{renderResult()}</ResultContainer>;

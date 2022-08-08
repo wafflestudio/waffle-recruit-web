@@ -18,20 +18,18 @@ const UnauthorizedRouter: React.FC = () => {
     try {
       const res = await authRequester.get('/auth/ping/');
       if (res.data.login) {
+        history.push('/main');
         return Promise.resolve();
       } else {
         return Promise.reject();
       }
     } catch (e: any) {
-      return Promise.reject();
+      console.dir(e);
     }
   };
 
   useEffect(() => {
-    checkLogin().then(() => {
-      toast.success('자동 로그인 되었습니다');
-      history.push('/main');
-    });
+    checkLogin();
   }, []);
 
   return (
