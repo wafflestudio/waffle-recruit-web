@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
